@@ -37,5 +37,9 @@ react-native-pushdy-example/package.json
 
 Every time you make changes for `react-native-pushdy`, just update it to `react-native-pushdy-example`
 ```bash
+# update changes
 $ [react-native-pushdy-example]    yarn upgrade react-native-pushdy
+
+# restart js bundle server (sometime)
+$ [react-native-pushdy-example]    react-native start
 ```
