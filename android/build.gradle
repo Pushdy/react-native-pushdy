@@ -68,11 +68,15 @@ repositories {
     }
     google()
     jcenter()
+
+    // Pushdy was hosted on jitpack
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'  // From node_modules
+    api 'com.github.Pushdy:android-pushdy-sdk:0.0.3'
 }
 
 def configureReactNativePom(def pom) {
