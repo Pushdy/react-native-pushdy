@@ -58,6 +58,11 @@ public class PushdyModule extends ReactContextBaseJavaModule {
 //    }
 
     @ReactMethod
+    public void isRemoteNotificationRegistered(Promise promise) {
+        promise.resolve(pushdySdk.isRemoteNotificationRegistered());
+    }
+
+    @ReactMethod
     public void isNotificationEnabled(Promise promise) {
         promise.resolve(pushdySdk.isNotificationEnabled());
     }

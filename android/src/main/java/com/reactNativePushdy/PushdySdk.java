@@ -11,8 +11,11 @@ import com.pushdy.Pushdy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import com.facebook.react.modules.core.DeviceEventManagerModule;
@@ -23,6 +26,14 @@ import com.facebook.react.bridge.Arguments;
 public class PushdySdk implements Pushdy.PushdyDelegate {
   private static PushdySdk instance = null;
   private ReactApplicationContext reactContext = null;
+
+  /**
+   * onRemoteNotificationRegistered fired when react context was not ready
+   * OR when react-native-pushdy's JS thread have not subscribed to event
+   * The result is your event will be fired and forgot,
+   * Because of that, we change onRemoteNotificationRegistered to isRemoteNotificationRegistered
+   */
+  private boolean isRemoteNotificationRegistered = false;
 
   public static PushdySdk getInstance() {
     if (instance == null) instance = new PushdySdk();
@@ -53,22 +64,28 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
    * If the reactConetext has not available yet, => retry
    */
   private void sendEvent(String eventName, @Nullable WritableMap params) {
-    if (this.reactContext != null) {
+    if (this.reactContext != null && this.reactContext.hasActiveCatalystInstance()) {
       this.reactContext
           .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
           .emit(eventName, params);
     } else {
-      Log.e("Pushdy", "sendEvent: " + eventName + " was skipped because reactContext is null");
+      Log.e("Pushdy", "sendEvent: " + eventName + " was skipped because reactContext is null or not ready");
 
-      // Retry after 1s
-      // TODO: Retry in another thread
-//      try {
-//        TimeUnit.MILLISECONDS.sleep(500);
-//      } catch (InterruptedException e) {
-//        e.printStackTrace();
-//      }
-//
-//      sendEvent(eventName, params);
+      /**
+       * Retry after 1s
+       * NOTE: You must do this in non-blocking mode to ensure program
+       * will continue to run without any dependant on this code
+       */
+      SentEventTimerTask task = new SentEventTimerTask() {
+        public void run() {
+          Log.d("Pushdy", "[" + Thread.currentThread().getName() + "] Task performed on: " + new Date());
+          sendEvent(this.getEventName(), this.getParams());
+        }
+      };
+      task.setEventName(eventName);
+      task.setParams(params);
+      Timer timer = new Timer("PushdySendEventRetry");
+      timer.schedule(task, 200L); // delay in ms
     }
   }
 
@@ -125,6 +142,10 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
   /**
    * ===========  Pushdy methods: Messaging ===========
    */
+  public boolean isRemoteNotificationRegistered() {
+    return this.isRemoteNotificationRegistered;
+  }
+
   public boolean isNotificationEnabled() {
     return Pushdy.isNotificationEnabled();
   }
