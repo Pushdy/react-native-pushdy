@@ -71,21 +71,25 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
     } else {
       Log.e("Pushdy", "sendEvent: " + eventName + " was skipped because reactContext is null or not ready");
 
-      /**
-       * Retry after 1s
-       * NOTE: You must do this in non-blocking mode to ensure program
-       * will continue to run without any dependant on this code
-       */
-      SentEventTimerTask task = new SentEventTimerTask() {
-        public void run() {
-          Log.d("Pushdy", "[" + Thread.currentThread().getName() + "] Task performed on: " + new Date());
-          sendEvent(this.getEventName(), this.getParams());
-        }
-      };
-      task.setEventName(eventName);
-      task.setParams(params);
-      Timer timer = new Timer("PushdySendEventRetry");
-      timer.schedule(task, 200L); // delay in ms
+      // We decide to avoid retry
+      // In case of app in BG, this will retry forever
+      // TODO: Retry on foreground only
+
+//      /**
+//       * Retry after 1s
+//       * NOTE: You must do this in non-blocking mode to ensure program
+//       * will continue to run without any dependant on this code
+//       */
+//      SentEventTimerTask task = new SentEventTimerTask() {
+//        public void run() {
+//          Log.d("Pushdy", "[" + Thread.currentThread().getName() + "] Task performed on: " + new Date());
+//          sendEvent(this.getEventName(), this.getParams());
+//        }
+//      };
+//      task.setEventName(eventName);
+//      task.setParams(params);
+//      Timer timer = new Timer("PushdySendEventRetry");
+//      timer.schedule(task, 200L); // delay in ms
     }
   }
 
@@ -100,9 +104,13 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
 
   @Override
   public void onNotificationOpened(@NotNull Map<String, ?> notification, @NotNull String fromState) {
-    // WritableMap noti = ReactNativeJson.convertJavaMapToJson(notification);
-    // TODO: Convert HashMap to WritableMap
+    WritableMap data = ReactNativeJson.convertMapToWritableMap(notification);
+
     WritableMap noti = new WritableNativeMap();
+    noti.putString("title", data.getString("title"));
+    noti.putString("body", data.getString("body"));
+    noti.putMap("data", data);
+
     WritableMap params = Arguments.createMap();
     params.putString("fromState", fromState);
     params.putMap("notification", noti);
@@ -111,11 +119,17 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
 
   @Override
   public void onNotificationReceived(@NotNull Map<String, ?> notification, @NotNull String fromState) {
-    // TODO: Convert HashMap to WritableMap
+    WritableMap data = ReactNativeJson.convertMapToWritableMap(notification);
+
     WritableMap noti = new WritableNativeMap();
+    noti.putString("title", data.getString("title"));
+    noti.putString("body", data.getString("body"));
+    noti.putMap("data", data);
+
     WritableMap params = Arguments.createMap();
     params.putString("fromState", fromState);
     params.putMap("notification", noti);
+
     sendEvent("onNotificationReceived", params);
   }
 
@@ -128,6 +142,8 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
 
   @Override
   public void onRemoteNotificationRegistered(@NotNull String deviceToken) {
+    this.isRemoteNotificationRegistered = true;
+
     WritableMap params = Arguments.createMap();
     params.putString("deviceToken", deviceToken);
     sendEvent("onRemoteNotificationRegistered", params);

@@ -1,4 +1,4 @@
-import { NativeModules, NativeEventEmitter } from 'react-native';
+import { NativeModules, NativeEventEmitter, DeviceEventEmitter } from 'react-native';
 
 const { Pushdy } = NativeModules;
 // console.log('Pushdy: ', Pushdy);
@@ -29,6 +29,13 @@ class RnPushdy {
 
   async getDeviceToken() {
     return this.callNative(Pushdy.getDeviceToken);
+  }
+
+  /**
+   * react-native only
+   */
+  async isRemoteNotificationRegistered() {
+    return this.callNative(Pushdy.isRemoteNotificationRegistered);
   }
 
   async isNotificationEnabled() {
@@ -100,13 +107,20 @@ class RnPushdy {
       const listener = listeners[eventName];
 
       this.subscribers[eventName] = eventEmitter.addListener(eventName, (event) => {
+        console.log('{RnPushdy.got event} eventName, event: ', eventName, event);
         listener(event)
       });
     }
+
+    // console.log('{startSubscribers} this.subscribers: ', this.subscribers);
   }
 
   stopSubscribers() {
-    this.subscribers.map(i => i.remove());
+    const keys = Object.keys(this.subscribers);
+    for (let i = 0, c = keys.length; i < c; i++) {
+      const k = keys[i];
+      this.subscribers[k].remove();
+    }
     this.subscribers = {};
   }
 
