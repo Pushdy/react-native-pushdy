@@ -55,6 +55,11 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
     Pushdy.registerForRemoteNotification();
   }
 
+  public void initWithContext(String clientKey, android.content.Context mainAppContext, Integer smallIcon) {
+    Pushdy.initWith(mainAppContext, clientKey, this, smallIcon);
+    Pushdy.registerForRemoteNotification();
+  }
+
   private void sendEvent(String eventName) {
     this.sendEvent(eventName, null);
   }
