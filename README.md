@@ -17,6 +17,27 @@ import Pushdy from 'react-native-pushdy';
 Pushdy;
 ```
 
+## Versioning
+
+We maintain compatible version here.
+Versioning followed by `semver`
+
+
+## Architecture
+
+iOS data flows:
+
+* Init app: AppDelegate.m ---> PushdySDK.init
+* JS --> native: JS --> Pushdy.m --> Pushdy.swift --> PushdySDK
+* Native --> JS: PushdySDK --> Pushdy.swift --> Pushdy.m --> JS event listener
+* Get App context:  Pushdy.swift --> PushdySDK.getAppContext()
+
+Android data flows:
+* Init app: MainApplication ---> PushdyModule.init -> PushdySDK.init
+* JS --> native: JS --> PushdyModule --> PushdySDK
+* Native --> JS: PushdySDK --> PushdyModule --> JS event listener
+* Get App context:  PushdyModule.reactContext
+
 
 ## Development & contribution
 
@@ -40,13 +61,18 @@ Every time you make changes for `react-native-pushdy`, just update it to `react-
 # update changes
 $ [react-native-pushdy-example]    yarn upgrade react-native-pushdy
 
-# restart js bundle server (sometime)
+# restart js bundle server (if there was the new files)
 $ [react-native-pushdy-example]    react-native start
 
 # Sometime, you need to sync android studio project with graddle file
+
+# If you change some native code
+react-native run-android
 ```
 
-OR you just need to create a soft link to `react-native-pushdy`
+OR
+---- A more convenient way BUT
+you just need to create a soft link to `react-native-pushdy`
 https://medium.com/dailyjs/how-to-use-npm-link-7375b6219557
 
 ```
@@ -74,4 +100,4 @@ Remember to remove this in package.json:
 "react-native-pushdy": "file:../react-native-pushdy",
 ```
 
-NOTE: This npm link method haven't got successful yet :((
+NOTE: I never have got successful with this method yet :((

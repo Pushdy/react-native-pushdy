@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		63CF296F8D53643BC4903CC7 /* Pods_Pushdy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0531F56B59989F2152C14FD1 /* Pods_Pushdy.framework */; };
 		B3E7B58A1CC2AC0600A0062D /* Pushdy.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* Pushdy.m */; };
+		D6BB65F023AB64FA0020FCF2 /* Pushdy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6BB65EF23AB64FA0020FCF2 /* Pushdy.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -23,9 +25,15 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		134814201AA4EA6300B7C361 /* libPushdy.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPushdy.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3E7B5881CC2AC0600A0062D /* Pushdy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pushdy.h; sourceTree = "<group>"; };
+		0531F56B59989F2152C14FD1 /* Pods_Pushdy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Pushdy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		134814201AA4EA6300B7C361 /* libRNPushdy.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNPushdy.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		8317189268C15526FB107116 /* Pods-Pushdy.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pushdy.debug.xcconfig"; path = "Target Support Files/Pods-Pushdy/Pods-Pushdy.debug.xcconfig"; sourceTree = "<group>"; };
 		B3E7B5891CC2AC0600A0062D /* Pushdy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Pushdy.m; sourceTree = "<group>"; };
+		C4A2107C576AB632CBBD4D8C /* Pods-Pushdy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pushdy.release.xcconfig"; path = "Target Support Files/Pods-Pushdy/Pods-Pushdy.release.xcconfig"; sourceTree = "<group>"; };
+		D6BB65ED23AB64E90020FCF2 /* Pushdy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pushdy.h; sourceTree = "<group>"; };
+		D6BB65EF23AB64FA0020FCF2 /* Pushdy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pushdy.swift; sourceTree = "<group>"; };
+		D6BB65F123AB650F0020FCF2 /* react-native-pushdy-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "react-native-pushdy-Bridging-Header.h"; sourceTree = "<group>"; };
+		D6BB65F223AB653C0020FCF2 /* Pushdy.xcworkspace */ = {isa = PBXFileReference; lastKnownFileType = wrapper.workspace; path = Pushdy.xcworkspace; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,6 +41,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				63CF296F8D53643BC4903CC7 /* Pods_Pushdy.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -42,7 +51,7 @@
 		134814211AA4EA7D00B7C361 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				134814201AA4EA6300B7C361 /* libPushdy.a */,
+				134814201AA4EA6300B7C361 /* libRNPushdy.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -50,10 +59,32 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
-				B3E7B5881CC2AC0600A0062D /* Pushdy.h */,
+				D6BB65F223AB653C0020FCF2 /* Pushdy.xcworkspace */,
+				D6BB65F123AB650F0020FCF2 /* react-native-pushdy-Bridging-Header.h */,
+				D6BB65EF23AB64FA0020FCF2 /* Pushdy.swift */,
 				B3E7B5891CC2AC0600A0062D /* Pushdy.m */,
+				D6BB65ED23AB64E90020FCF2 /* Pushdy.h */,
 				134814211AA4EA7D00B7C361 /* Products */,
+				7175F73E0A81D531A03F3CA1 /* Pods */,
+				7A470769D8F862D6BE12F6EA /* Frameworks */,
 			);
+			sourceTree = "<group>";
+		};
+		7175F73E0A81D531A03F3CA1 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				8317189268C15526FB107116 /* Pods-Pushdy.debug.xcconfig */,
+				C4A2107C576AB632CBBD4D8C /* Pods-Pushdy.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		7A470769D8F862D6BE12F6EA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0531F56B59989F2152C14FD1 /* Pods_Pushdy.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -63,6 +94,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "Pushdy" */;
 			buildPhases = (
+				8A08E5EDDB044B4263075D61 /* [CP] Check Pods Manifest.lock */,
 				58B511D71A9E6C8500147676 /* Sources */,
 				58B511D81A9E6C8500147676 /* Frameworks */,
 				58B511D91A9E6C8500147676 /* CopyFiles */,
@@ -73,7 +105,7 @@
 			);
 			name = Pushdy;
 			productName = RCTDataManager;
-			productReference = 134814201AA4EA6300B7C361 /* libPushdy.a */;
+			productReference = 134814201AA4EA6300B7C361 /* libRNPushdy.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -87,6 +119,7 @@
 				TargetAttributes = {
 					58B511DA1A9E6C8500147676 = {
 						CreatedOnToolsVersion = 6.1.1;
+						LastSwiftMigration = 1020;
 					};
 				};
 			};
@@ -95,6 +128,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 58B511D21A9E6C8500147676;
@@ -107,11 +141,37 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		8A08E5EDDB044B4263075D61 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Pushdy-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		58B511D71A9E6C8500147676 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D6BB65F023AB64FA0020FCF2 /* Pushdy.swift in Sources */,
 				B3E7B58A1CC2AC0600A0062D /* Pushdy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -145,6 +205,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEFINES_MODULE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -163,8 +224,10 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MODULE_NAME = RNPushdy;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = RNPushdy;
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -195,6 +258,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
+				DEFINES_MODULE = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -206,7 +270,9 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MODULE_NAME = RNPushdy;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = RNPushdy;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -214,33 +280,46 @@
 		};
 		58B511F01A9E6C8500147676 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8317189268C15526FB107116 /* Pods-Pushdy.debug.xcconfig */;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-				"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"$(SRCROOT)/../../../React/**",
-					"$(SRCROOT)/../../react-native/React/**",
-				);
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = Pushdy;
-				SKIP_INSTALL = YES;
-			};
-			name = Debug;
-		};
-		58B511F11A9E6C8500147676 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../../../React/**",
 					"$(SRCROOT)/../../react-native/React/**",
 				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				MODULE_NAME = RNPushdy;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = Pushdy;
+				PRODUCT_NAME = RNPushdy;
 				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Pushdy-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		58B511F11A9E6C8500147676 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C4A2107C576AB632CBBD4D8C /* Pods-Pushdy.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../../../React/**",
+					"$(SRCROOT)/../../react-native/React/**",
+				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				MODULE_NAME = RNPushdy;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = RNPushdy;
+				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Pushdy-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
