@@ -7,10 +7,11 @@
 
 import Foundation
 import os
+import PushdySDK
 
 
 @objc(Pushdy)
-class Pushdy: NSObject {
+class RNPushdy: NSObject {
     // private var osLogEnabled = false
 
     @objc

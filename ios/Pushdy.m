@@ -18,6 +18,7 @@
  * This guide might be useful for you:
  * https://teabreak.e-spres-oh.com/swift-in-react-native-the-ultimate-guide-part-1-modules-9bb8d054db03#f662
  */
+// ====== Expose Class and function to JS ========
 #import <React/RCTBridgeModule.h>
 
 @interface RCT_EXTERN_MODULE(Pushdy, NSObject)
@@ -28,5 +29,25 @@ RCT_EXTERN_METHOD(
   resolve: (RCTPromiseResolveBlock)resolve
   rejecter: (RCTPromiseRejectBlock)reject
 )
+
+/**
+ Swift: Calling Swift functions from Objective-C
+ https://ericasadun.com/2014/08/21/swift-calling-swift-functions-from-objective-c/
+ */
+//+ (void)initWithContext:(NSString*)clientKey
+//            delegate:(UIApplication *)delegate
+//            didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+//{
+//    NSLog(@"OK initWithContext!");
+//    // [Pushdy initWithContext:clientKey delegate:delegate launchOptions:launchOptions];
+//}
+
+/**
+ Test
+ import
+ */
++(void)doSthFoo:(NSString*)message {
+    NSLog(@"OK doSthFoo! %@", message);
+}
 
 @end
