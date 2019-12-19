@@ -14,7 +14,11 @@ Pod::Spec.new do |s|
   # s.license    = { :type => "MIT", :file => "FILE_LICENSE" }
   s.authors      = { "Your Name" => "yourname@email.com" }
   s.platforms    = { :ios => "9.0" }
-  s.source       = { :git => "https://github.com/github_account/react-native-pushdy.git", :tag => "#{s.version}" }
+
+  # TODO: Update this source
+  # s.source       = { :git => "https://github.com/github_account/react-native-pushdy.git", :tag => "#{s.version}" }
+  # Temperary install from local
+  s.source       = { :http => 'file:' + __dir__ + '/Archive.zip'}
 
   s.source_files = "ios/**/*.{h,m,swift}"
   s.requires_arc = true
@@ -22,5 +26,6 @@ Pod::Spec.new do |s|
   s.dependency "React"
   # ...
   # s.dependency "..."
+  s.dependency 'PushdySDK', '~> 0.0.6'
 end
 
