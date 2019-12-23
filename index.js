@@ -1,9 +1,21 @@
-import { NativeModules, NativeEventEmitter, DeviceEventEmitter } from 'react-native';
+import { NativeModules, NativeEventEmitter, Platform } from 'react-native';
 
-const { Pushdy } = NativeModules;
-// console.log('Pushdy: ', Pushdy);
+// TODO: Rename both ios android to RNPushdy
+const { Pushdy: androidPushdy, RNPushdy: iosPushdy } = NativeModules;
+
+// console.log('Pushdy, RNPushdy: ', Pushdy, RNPushdy);
 
 // export default Pushdy;
+
+const isIos = Platform.OS === 'ios';
+const isAndroid = Platform.OS === 'android';
+const logStyle = {
+  warning: 'background: orange',
+  error: 'background: red',
+}
+
+const Pushdy = isIos ? iosPushdy : isAndroid ? androidPushdy : null;
+console.log('{react-native-pushdy/index} Pushdy: ', Pushdy);
 
 /**
  * Wrapper to Pushdy native module
@@ -14,7 +26,7 @@ const { Pushdy } = NativeModules;
  * [x] User can catch promise, do not cast all result to resolve
  */
 
-class RnPushdy {
+class RNPushdyWrapper {
   // Promise will reject if execution time is over this value in milisecs
   ttl = 10000;
   subscribers = {};
@@ -27,15 +39,32 @@ class RnPushdy {
     return this.callNative(Pushdy.sampleMethod, str, num);
   }
 
-  async getDeviceToken() {
-    return this.callNative(Pushdy.getDeviceToken);
-  }
-
   /**
-   * react-native only
+   * Android only:
+   * On android:
+   *    registerForPushNotification was called automatically after PushdySDK's initilization
+   *    true mean registered, false mean registering or failed.
+   * On iOS:
+   *    you need to call ios_registerForPushNotification manually from JS, that mean JS context was already be ready,
+   *    so that you can listen to onRemoteNotificationRegistered event perfectly
+   *    Or you can use isRemoteNotificationRegistered variable, it's depend!
    */
   async isRemoteNotificationRegistered() {
     return this.callNative(Pushdy.isRemoteNotificationRegistered);
+  }
+
+  /**
+   * https://guide.pushdy.com/i/tham-chieu-sdk-api/ios-native-sdk#registerforpushnotification
+   *
+   * @returns {Promise<void>}
+   */
+  async ios_registerForPushNotification() {
+    if (isIos) {
+      return this.callNative(Pushdy.registerForPushNotifications);
+    } else {
+      console.log('%c{RnPushdy.ios_registerForPushNotification} support iOS only: ', logStyle.warning);
+      return false;
+    }
   }
 
   async isNotificationEnabled() {
@@ -95,7 +124,10 @@ class RnPushdy {
    */
 
   /**
-   * 
+   * To see a list of supported events and its data structure
+   * See guide on https://guide.pushdy.com/
+   * TODO: Update this guide url
+   *
    * @param listeners {[eventName]: function onEventNameTriggered() => {}}
    */
   startSubscribers(listeners) {
@@ -107,7 +139,7 @@ class RnPushdy {
       const listener = listeners[eventName];
 
       this.subscribers[eventName] = eventEmitter.addListener(eventName, (event) => {
-        console.log('{RnPushdy.got event} eventName, event: ', eventName, event);
+        // console.log('{RnPushdy.got event} eventName, event: ', eventName, event);
         listener(event)
       });
     }
@@ -128,6 +160,21 @@ class RnPushdy {
    * ============ Internal function ===========
    */
   async callNative(fn, ...args) {
+    /**
+     * Report error with call stack
+     * Find stack path
+     */
+    if (!fn) {
+      try {
+        throw Error("Native function was not defined. Ensure that Pushdy.XXX is exposed to JS");
+      }
+      catch (e) {
+        console.error(e);
+      }
+
+      return undefined;
+    }
+
     return new Promise(async (resolve, reject) => {
       setTimeout(() => {
         // reject('Execution time is over ' + this.ttl);
@@ -143,4 +190,4 @@ class RnPushdy {
   }
 }
 
-export default new RnPushdy();
+export default new RNPushdyWrapper();

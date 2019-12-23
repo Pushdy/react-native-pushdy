@@ -8,8 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		63CF296F8D53643BC4903CC7 /* Pods_Pushdy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0531F56B59989F2152C14FD1 /* Pods_Pushdy.framework */; };
-		B3E7B58A1CC2AC0600A0062D /* Pushdy.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* Pushdy.m */; };
-		D6BB65F023AB64FA0020FCF2 /* Pushdy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6BB65EF23AB64FA0020FCF2 /* Pushdy.swift */; };
+		B3E7B58A1CC2AC0600A0062D /* RNPushdy.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* RNPushdy.m */; };
+		D6A5F81323AB8CA50061D2E8 /* RNPushdyDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A5F81223AB8CA50061D2E8 /* RNPushdyDelegate.swift */; };
+		D6BB65F023AB64FA0020FCF2 /* RNPushdy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6BB65EF23AB64FA0020FCF2 /* RNPushdy.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,12 +29,14 @@
 		0531F56B59989F2152C14FD1 /* Pods_Pushdy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Pushdy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		134814201AA4EA6300B7C361 /* libRNPushdy.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNPushdy.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8317189268C15526FB107116 /* Pods-Pushdy.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pushdy.debug.xcconfig"; path = "Target Support Files/Pods-Pushdy/Pods-Pushdy.debug.xcconfig"; sourceTree = "<group>"; };
-		B3E7B5891CC2AC0600A0062D /* Pushdy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Pushdy.m; sourceTree = "<group>"; };
+		B3E7B5891CC2AC0600A0062D /* RNPushdy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNPushdy.m; sourceTree = "<group>"; };
 		C4A2107C576AB632CBBD4D8C /* Pods-Pushdy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pushdy.release.xcconfig"; path = "Target Support Files/Pods-Pushdy/Pods-Pushdy.release.xcconfig"; sourceTree = "<group>"; };
-		D6BB65ED23AB64E90020FCF2 /* Pushdy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pushdy.h; sourceTree = "<group>"; };
-		D6BB65EF23AB64FA0020FCF2 /* Pushdy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pushdy.swift; sourceTree = "<group>"; };
+		D6A5F81223AB8CA50061D2E8 /* RNPushdyDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RNPushdyDelegate.swift; sourceTree = "<group>"; };
+		D6A5F81423AB8E300061D2E8 /* RNPushdyDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RNPushdyDelegate.h; sourceTree = "<group>"; };
+		D6BB65ED23AB64E90020FCF2 /* RNPushdy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNPushdy.h; sourceTree = "<group>"; };
+		D6BB65EF23AB64FA0020FCF2 /* RNPushdy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RNPushdy.swift; sourceTree = "<group>"; };
 		D6BB65F123AB650F0020FCF2 /* react-native-pushdy-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "react-native-pushdy-Bridging-Header.h"; sourceTree = "<group>"; };
-		D6BB65F223AB653C0020FCF2 /* Pushdy.xcworkspace */ = {isa = PBXFileReference; lastKnownFileType = wrapper.workspace; path = Pushdy.xcworkspace; sourceTree = "<group>"; };
+		D6BB65F223AB653C0020FCF2 /* RNPushdy.xcworkspace */ = {isa = PBXFileReference; lastKnownFileType = wrapper.workspace; path = RNPushdy.xcworkspace; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,11 +62,13 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
-				D6BB65F223AB653C0020FCF2 /* Pushdy.xcworkspace */,
+				D6A5F81223AB8CA50061D2E8 /* RNPushdyDelegate.swift */,
+				D6A5F81423AB8E300061D2E8 /* RNPushdyDelegate.h */,
+				D6BB65F223AB653C0020FCF2 /* RNPushdy.xcworkspace */,
 				D6BB65F123AB650F0020FCF2 /* react-native-pushdy-Bridging-Header.h */,
-				D6BB65EF23AB64FA0020FCF2 /* Pushdy.swift */,
-				B3E7B5891CC2AC0600A0062D /* Pushdy.m */,
-				D6BB65ED23AB64E90020FCF2 /* Pushdy.h */,
+				D6BB65EF23AB64FA0020FCF2 /* RNPushdy.swift */,
+				B3E7B5891CC2AC0600A0062D /* RNPushdy.m */,
+				D6BB65ED23AB64E90020FCF2 /* RNPushdy.h */,
 				134814211AA4EA7D00B7C361 /* Products */,
 				7175F73E0A81D531A03F3CA1 /* Pods */,
 				7A470769D8F862D6BE12F6EA /* Frameworks */,
@@ -90,9 +95,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		58B511DA1A9E6C8500147676 /* Pushdy */ = {
+		58B511DA1A9E6C8500147676 /* RNPushdy */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "Pushdy" */;
+			buildConfigurationList = 58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "RNPushdy" */;
 			buildPhases = (
 				8A08E5EDDB044B4263075D61 /* [CP] Check Pods Manifest.lock */,
 				58B511D71A9E6C8500147676 /* Sources */,
@@ -103,7 +108,7 @@
 			);
 			dependencies = (
 			);
-			name = Pushdy;
+			name = RNPushdy;
 			productName = RCTDataManager;
 			productReference = 134814201AA4EA6300B7C361 /* libRNPushdy.a */;
 			productType = "com.apple.product-type.library.static";
@@ -123,7 +128,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "Pushdy" */;
+			buildConfigurationList = 58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "RNPushdy" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -136,7 +141,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				58B511DA1A9E6C8500147676 /* Pushdy */,
+				58B511DA1A9E6C8500147676 /* RNPushdy */,
 			);
 		};
 /* End PBXProject section */
@@ -171,8 +176,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D6BB65F023AB64FA0020FCF2 /* Pushdy.swift in Sources */,
-				B3E7B58A1CC2AC0600A0062D /* Pushdy.m in Sources */,
+				D6A5F81323AB8CA50061D2E8 /* RNPushdyDelegate.swift in Sources */,
+				D6BB65F023AB64FA0020FCF2 /* RNPushdy.swift in Sources */,
+				B3E7B58A1CC2AC0600A0062D /* RNPushdy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -326,7 +332,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "Pushdy" */ = {
+		58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "RNPushdy" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				58B511ED1A9E6C8500147676 /* Debug */,
@@ -335,7 +341,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "Pushdy" */ = {
+		58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "RNPushdy" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				58B511F01A9E6C8500147676 /* Debug */,

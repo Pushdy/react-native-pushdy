@@ -20,15 +20,29 @@
  */
 // ====== Expose Class and function to JS ========
 #import <React/RCTBridgeModule.h>
+#import "React/RCTEventEmitter.h"
 
-@interface RCT_EXTERN_MODULE(Pushdy, NSObject)
+// Expose to JS as Pushdy instead of RNPushdy
+// Objective-C type in Swift: https://www.natashatherobot.com/swift-the-deceptively-simple-programming-language/
+
+@interface RCT_EXTERN_MODULE(RNPushdy, RCTEventEmitter)
 
 RCT_EXTERN_METHOD(
-  sampleMethod: (NSString *)stringArgument
-  numberArgument: (nonnull NSNumber *)numberArgument
-  resolve: (RCTPromiseResolveBlock)resolve
-  rejecter: (RCTPromiseRejectBlock)reject
-)
+                  sampleMethod: (NSString *)stringArgument
+                  numberArgument: (nonnull NSNumber *)numberArgument
+                  resolve: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
+
+RCT_EXTERN_METHOD(
+                  getDeviceToken: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
+
+RCT_EXTERN_METHOD(
+                  registerForPushNotifications: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
 
 /**
  Swift: Calling Swift functions from Objective-C
