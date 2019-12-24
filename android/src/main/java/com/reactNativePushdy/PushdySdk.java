@@ -10,7 +10,10 @@ import com.pushdy.Pushdy;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +77,7 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
           .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
           .emit(eventName, params);
     } else {
-      Log.e("Pushdy", "sendEvent: " + eventName + " was skipped because reactContext is null or not ready");
+      Log.e("RNPushdy", "sendEvent: " + eventName + " was skipped because reactContext is null or not ready");
 
       // We decide to avoid retry
       // In case of app in BG, this will retry forever
@@ -87,7 +90,7 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
 //       */
 //      SentEventTimerTask task = new SentEventTimerTask() {
 //        public void run() {
-//          Log.d("Pushdy", "[" + Thread.currentThread().getName() + "] Task performed on: " + new Date());
+//          Log.d("RNPushdy", "[" + Thread.currentThread().getName() + "] Task performed on: " + new Date());
 //          sendEvent(this.getEventName(), this.getParams());
 //        }
 //      };
@@ -108,34 +111,31 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
   }
 
   @Override
-  public void onNotificationOpened(@NotNull Map<String, ?> notification, @NotNull String fromState) {
-    WritableMap data = ReactNativeJson.convertMapToWritableMap(notification);
+  public void onNotificationOpened(@NotNull String notification, @NotNull String fromState) {
+    WritableMap data = new WritableNativeMap();
+    try {
+      JSONObject jo = new JSONObject(notification);
+      data = ReactNativeJson.convertJsonToMap(jo);
+    } catch (JSONException e) {
+      e.printStackTrace();
+      Log.e("RNPushdy", "onNotificationOpened Exception " + e.getMessage());
+    }
 
-    WritableMap noti = new WritableNativeMap();
-    noti.putString("title", data.getString("title"));
-    noti.putString("body", data.getString("body"));
-    noti.putMap("data", data);
-
-    WritableMap params = Arguments.createMap();
-    params.putString("fromState", fromState);
-    params.putMap("notification", noti);
-    sendEvent("onNotificationOpened", params);
+    sendEvent("onNotificationOpened", data);
   }
 
   @Override
-  public void onNotificationReceived(@NotNull Map<String, ?> notification, @NotNull String fromState) {
-    WritableMap data = ReactNativeJson.convertMapToWritableMap(notification);
+  public void onNotificationReceived(@NotNull String notification, @NotNull String fromState) {
+    WritableMap data = new WritableNativeMap();
+    try {
+      JSONObject jo = new JSONObject(notification);
+      data = ReactNativeJson.convertJsonToMap(jo);
+    } catch (JSONException e) {
+      e.printStackTrace();
+      Log.e("RNPushdy", "onNotificationReceived Exception " + e.getMessage());
+    }
 
-    WritableMap noti = new WritableNativeMap();
-    noti.putString("title", data.getString("title"));
-    noti.putString("body", data.getString("body"));
-    noti.putMap("data", data);
-
-    WritableMap params = Arguments.createMap();
-    params.putString("fromState", fromState);
-    params.putMap("notification", noti);
-
-    sendEvent("onNotificationReceived", params);
+    sendEvent("onNotificationReceived", data);
   }
 
   @Override
@@ -202,12 +202,37 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
     return Pushdy.getDeviceToken();
   }
 
-  public Map<String, Object> getPendingNotification() {
-    return Pushdy.getPendingNotification();
+  public WritableMap getPendingNotification() {
+    String notification = Pushdy.getPendingNotification();
+    WritableMap data = new WritableNativeMap();
+    try {
+      JSONObject jo = new JSONObject(notification);
+      data = ReactNativeJson.convertJsonToMap(jo);
+    } catch (JSONException e) {
+      e.printStackTrace();
+      Log.e("RNPushdy", "getPendingNotification Exception " + e.getMessage());
+    }
+
+    return data;
   }
 
-  public List<Map<String, Object>> getPendingNotifications() {
-    return Pushdy.getPendingNotifications();
+  public List<WritableMap> getPendingNotifications() {
+    List<String> notifications = Pushdy.getPendingNotifications();
+    List<WritableMap> items = new ArrayList();
+    for (String notification : notifications) {
+      WritableMap data = new WritableNativeMap();
+      try {
+        JSONObject jo = new JSONObject(notification);
+        data = ReactNativeJson.convertJsonToMap(jo);
+      } catch (JSONException e) {
+        e.printStackTrace();
+        Log.e("RNPushdy", "getPendingNotification Exception " + e.getMessage());
+      }
+
+      items.add(data);
+    }
+
+    return items;
   }
 
   public void setAttribute(String attr, Object value) {

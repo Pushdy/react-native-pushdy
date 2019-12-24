@@ -22,6 +22,13 @@ Pushdy;
 We maintain compatible version here.
 Versioning followed by `semver`
 
+Every time we have breaking change,
+
+* RNPushdy | android-pushdy-sdk | ios-pushdy-sdk | Note |
+* @0.0.3 | 0.0.4 | 0.0.6 | develoment stage
+* latest | latest | latest | develoment stage
+
+
 
 ## Architecture
 
