@@ -7,6 +7,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.WritableNativeArray;
 
 import java.util.concurrent.TimeUnit;
 
@@ -28,11 +29,12 @@ public class PushdyModule extends ReactContextBaseJavaModule {
 
     @Override
     public String getName() {
-        return "Pushdy";
+        return "RNPushdy";
     }
 
     @ReactMethod
     public void sampleMethod(String stringArgument, int numberArgument, Promise promise) {
+        Log.d("Pushdy", "sampleMethod: " + stringArgument + " | " + numberArgument);
         // Fake heavy work that take some seconds to completed
         try {
             TimeUnit.SECONDS.sleep(2);
@@ -41,10 +43,9 @@ public class PushdyModule extends ReactContextBaseJavaModule {
             e.printStackTrace();
         }
 
-        Object[] a = {
-            "Received numberArgument: " + numberArgument + " stringArgument: " + stringArgument,
-            numberArgument * 2,
-        };
+        WritableNativeArray a = new WritableNativeArray();
+        a.pushString("Received numberArgument: " + numberArgument + " stringArgument: " + stringArgument);
+        a.pushInt(numberArgument * 2);
 
         promise.resolve(a);
     }
