@@ -123,7 +123,7 @@ const react_native_pushdy_notification = {
 
 
 // ============================================================
-const android_notification = {
+const android_notification_from_PushdySDK = {
   "data": {
     "_notification_id": "2a2a5a61-b011-4a39-a1a9-4bc15fe243d8",
     "title": "Bão số 6 hướng đi khó lường",
@@ -138,7 +138,7 @@ const android_notification = {
   "title": "Bão số 6 hướng đi khó lường"
 }
 
-const ios_notification = {
+const ios_notification_from_PushdySDK = {
   // Origin aps message receive from APNs
   "aps": {
     "alert": {

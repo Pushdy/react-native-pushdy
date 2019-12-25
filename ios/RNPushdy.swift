@@ -9,11 +9,7 @@ import Foundation
 import os
 import PushdySDK
 
-// typealias PushdySdk = PushdySDK.Pushdy
 
-
-//@objc(Pushdy)
-//class RNPushdy: RCTEventEmitter {
 @objc(RNPushdy)
 public class RNPushdy: RCTEventEmitter, PushdyDelegate {
     // private static var delegate:RNPushdyDelegate;
@@ -273,14 +269,16 @@ public class RNPushdy: RCTEventEmitter, PushdyDelegate {
     
     public func onNotificationOpened(_ notification: [String : Any], fromState: String) {
         print("{RNPushdy.onNotificationOpened} from state: \(fromState)")
-        sendEventToJs(eventName: "onNotificationOpened", body:["notification": notification, "fromState": fromState])
+
+        let universalNotification = RNPushdy.toRNPushdyStructure(notification)
+        sendEventToJs(eventName: "onNotificationOpened", body:["notification": universalNotification, "fromState": fromState])
     }
     
     public func onNotificationReceived(_ notification: [String : Any], fromState: String) {
         print("{RNPushdy.onNotificationReceived} from state: \(fromState)")
         
-        // TODO: Check notification data structure supportation
-        sendEventToJs(eventName: "onNotificationReceived", body:["notification": notification, "fromState": fromState])
+        let universalNotification = RNPushdy.toRNPushdyStructure(notification)
+        sendEventToJs(eventName: "onNotificationReceived", body:["notification": universalNotification, "fromState": fromState])
     }
     
     public func onRemoteNotificationRegistered(_ deviceToken: String) {
@@ -294,29 +292,4 @@ public class RNPushdy: RCTEventEmitter, PushdyDelegate {
         
         sendEventToJs(eventName: "onRemoteNotificationFailedToRegister", body:["error": error])
     }
-    
-    //    // This function is not completed :(
-    //    func safeOsLog(msg: StaticString, type: String, _ args: CVarArg...) {
-    //        if #available(iOS 10.0, *) {
-    //            var logType = OSLogType.default
-    //            switch type {
-    //                case "info":
-    //                    logType = .info
-    //                    break
-    //                case "debug":
-    //                    logType = .debug
-    //                    break
-    //                case "error":
-    //                    logType = .error
-    //                    break
-    //                case "fault":
-    //                    logType = .fault
-    //                    break
-    //                default:
-    //                    logType = OSLogType.default
-    //            }
-    //
-    //            os_log(msg, log: OSLog.default, type: logType, args)
-    //        }
-    //    }
 }

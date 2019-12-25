@@ -11,12 +11,8 @@ import com.pushdy.Pushdy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.bridge.WritableMap;
@@ -124,16 +120,11 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
 
   @Override
   public void onNotificationReceived(@NotNull Map<String, ?> notification, @NotNull String fromState) {
-    WritableMap data = ReactNativeJson.convertMapToWritableMap(notification);
-
-    WritableMap noti = new WritableNativeMap();
-    noti.putString("title", data.getString("title"));
-    noti.putString("body", data.getString("body"));
-    noti.putMap("data", data);
+    WritableMap noti = ReactNativeJson.convertMapToWritableMap(notification);
 
     WritableMap params = Arguments.createMap();
     params.putString("fromState", fromState);
-    params.putMap("notification", noti);
+    params.putMap("notification", RNPushdyData.toRNPushdyStructure(noti));
 
     sendEvent("onNotificationReceived", params);
   }
