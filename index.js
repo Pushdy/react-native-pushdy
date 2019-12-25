@@ -241,11 +241,12 @@ class RNPushdyWrapper {
   }
 
   async getPendingNotification() {
-    return this.callNative(RNPushdy.getPendingNotification);
+    return PushdyNotification.from(await this.callNative(RNPushdy.getPendingNotification));
   }
 
   async getPendingNotifications() {
-    return this.callNative(RNPushdy.getPendingNotifications);
+    const items = await this.callNative(RNPushdy.getPendingNotifications);
+    return items.map(i => new PushdyNotification(i));
   }
 
   async setAttribute(attr: String, value) {
@@ -281,7 +282,14 @@ class RNPushdyWrapper {
 
       this.subscribers[eventName] = eventEmitter.addListener(eventName, (event) => {
         // console.log('{RnPushdy.got event} eventName, event: ', eventName, event);
-        listener(event)
+
+        if (eventName === 'onNotificationReceived' || eventName === 'onNotificationOpened') {
+          // Convert notification to PushdyNotification
+          event.notification = new PushdyNotification(event.notification);
+          listener(event)
+        } else {
+          listener(event)
+        }
       });
     }
 
@@ -328,6 +336,37 @@ class RNPushdyWrapper {
 
       resolve(fn(...args));
     })
+  }
+}
+
+export class PushdyNotification {
+  title = null
+  subtitle = null
+  body = null
+  image = null
+  data = {}
+  android = {}
+  ios = {}
+
+  /**
+   * a = new PushdyNotification({title: 1, body: "test"})
+   */
+  constructor(data) {
+    if (data) {
+      const keys = Object.keys(data);
+      for (let i = 0, c = keys.length; i < c; i++) {
+        const k = keys[i];
+        const v = data[k];
+        this[k] = v;
+      }
+    }
+  }
+
+  /**
+   * a = PushdyNotification.from({title: 1, body: "test"})
+   */
+  static from(genericObject) {
+    return Object.assign(new PushdyNotification(), genericObject)
   }
 }
 

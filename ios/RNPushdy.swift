@@ -220,14 +220,25 @@ public class RNPushdy: RCTEventEmitter, PushdyDelegate {
     func getPendingNotification(_
         resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
         ) -> Void {
-        resolve(Pushdy.getPendingNotification())
+        let pendingNotification = Pushdy.getPendingNotification()
+        if pendingNotification == nil {
+            resolve(nil)
+        } else {
+            let universalNotification = RNPushdy.toRNPushdyStructure(pendingNotification!)
+            resolve(universalNotification)
+        }
     }
     
     @objc
     func getPendingNotifications(_
         resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
         ) -> Void {
-        resolve(Pushdy.getPendingNotifications())
+        let pendingNotifications:[[String:Any]] = Pushdy.getPendingNotifications()
+        let universalNotifications:[[String:Any]] = pendingNotifications.map({(i) -> [String:Any] in
+            return RNPushdy.toRNPushdyStructure(i)
+        })
+
+        resolve(universalNotifications)
     }
     
     @objc
