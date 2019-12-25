@@ -307,7 +307,7 @@ class RNPushdyWrapper {
      */
     if (!fn) {
       try {
-        throw Error("Native function was not defined. Ensure that RNPushdy.XXX is exposed to JS");
+        throw Error("Native function was not defined. Ensure that RNPushdy.XXX is exposed to JS. Please investigate the Browser Console stack trace to know the missing function");
       }
       catch (e) {
         console.error(e);

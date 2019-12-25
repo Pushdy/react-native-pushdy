@@ -44,6 +44,81 @@ RCT_EXTERN_METHOD(
                   rejecter: (RCTPromiseRejectBlock)reject
                   )
 
+RCT_EXTERN_METHOD(
+                  isRemoteNotificationRegistered: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
+
+RCT_EXTERN_METHOD(
+                  isNotificationEnabled: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
+
+RCT_EXTERN_METHOD(
+                  setPushBannerAutoDismiss: (BOOL)autoDismiss
+                  resolve: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
+
+RCT_EXTERN_METHOD(
+                  setPushBannerDismissDuration: (nonnull NSNumber *)seconds
+                  resolve: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
+
+RCT_EXTERN_METHOD(
+                  setCustomPushBanner: (NSString *)viewType
+                  resolve: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
+
+RCT_EXTERN_METHOD(
+                  setCustomMediaKey: (NSString *)mediaKey
+                  resolve: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
+
+RCT_EXTERN_METHOD(
+                  setDeviceId: (NSString *)deviceId
+                  resolve: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
+
+RCT_EXTERN_METHOD(
+                  getDeviceId: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
+
+RCT_EXTERN_METHOD(
+                  getPendingNotification: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
+
+RCT_EXTERN_METHOD(
+                  getPendingNotifications: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
+
+RCT_EXTERN_METHOD(
+                  setAttribute: (NSString *)attr
+                  value:(NSString *)value
+                  resolve: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
+
+
+RCT_EXTERN_METHOD(
+                  pushAttribute: (NSString *)attr
+                  values:(NSArray *)values
+                  resolve: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
+
+RCT_EXTERN_METHOD(
+                  getPlayerID: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
+
 /**
  Swift: Calling Swift functions from Objective-C
  https://ericasadun.com/2014/08/21/swift-calling-swift-functions-from-objective-c/
