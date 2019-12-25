@@ -17,9 +17,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.bridge.WritableMap;
@@ -112,30 +109,38 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
 
   @Override
   public void onNotificationOpened(@NotNull String notification, @NotNull String fromState) {
-    WritableMap data = new WritableNativeMap();
+    WritableMap noti = new WritableNativeMap();
     try {
       JSONObject jo = new JSONObject(notification);
-      data = ReactNativeJson.convertJsonToMap(jo);
-    } catch (JSONException e) {
-      e.printStackTrace();
-      Log.e("RNPushdy", "onNotificationOpened Exception " + e.getMessage());
-    }
-
-    sendEvent("onNotificationOpened", data);
-  }
-
-  @Override
-  public void onNotificationReceived(@NotNull String notification, @NotNull String fromState) {
-    WritableMap data = new WritableNativeMap();
-    try {
-      JSONObject jo = new JSONObject(notification);
-      data = ReactNativeJson.convertJsonToMap(jo);
+      noti = ReactNativeJson.convertJsonToMap(jo);
     } catch (JSONException e) {
       e.printStackTrace();
       Log.e("RNPushdy", "onNotificationReceived Exception " + e.getMessage());
     }
 
-    sendEvent("onNotificationReceived", data);
+    WritableMap params = Arguments.createMap();
+    params.putString("fromState", fromState);
+    params.putMap("notification", RNPushdyData.toRNPushdyStructure(noti));
+
+    sendEvent("onNotificationOpened", params);
+  }
+
+  @Override
+  public void onNotificationReceived(@NotNull String notification, @NotNull String fromState) {
+    WritableMap noti = new WritableNativeMap();
+    try {
+      JSONObject jo = new JSONObject(notification);
+      noti = ReactNativeJson.convertJsonToMap(jo);
+    } catch (JSONException e) {
+      e.printStackTrace();
+      Log.e("RNPushdy", "onNotificationReceived Exception " + e.getMessage());
+    }
+
+    WritableMap params = Arguments.createMap();
+    params.putString("fromState", fromState);
+    params.putMap("notification", RNPushdyData.toRNPushdyStructure(noti));
+
+    sendEvent("onNotificationReceived", params);
   }
 
   @Override
