@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.common.LifecycleState;
 import com.pushdy.Pushdy;
@@ -27,9 +28,19 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.Arguments;
 
 
-public class PushdySdk implements Pushdy.PushdyDelegate {
+public class PushdySdk {
+  private static String TAG = "RNPushdySdk";
   private static PushdySdk instance = null;
+
   private ReactApplicationContext reactContext = null;
+  private ReactContextBaseJavaModule baseJavaModule = null;
+
+  /**
+   * Lazy info
+   */
+  private String clientKey;
+  private android.content.Context mainAppContext;
+  private Integer smallIcon;
 
   /**
    * onRemoteNotificationRegistered fired when react context was not ready
@@ -38,22 +49,17 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
    * Because of that, we change onRemoteNotificationRegistered to isRemoteNotificationRegistered
    */
   private boolean isRemoteNotificationRegistered = false;
-  private boolean readyForHandlingNotification = true;
-
-  /**
-   * This is list of event name those JS was already subscribed
-   * Save this list to ensure that event will be sent to JS successfully
-   *
-   * - If this set size = 0 then JS event handler was not ready
-   * - A default `enableFlag` event was subscribed to ensure that Set size always > 0 if JS was ready to handle
-   *   So If RNPushdyJS subscribe to no event, we will subscribe to default `enableFlag` event
-   */
-  private Set<String> subscribedEventNames = new HashSet<>();
 
   public static PushdySdk getInstance() {
     if (instance == null) instance = new PushdySdk();
 
     return instance;
+  }
+
+  public PushdySdk setReactBaseModule(ReactContextBaseJavaModule module) {
+    this.baseJavaModule = module;
+
+    return this;
   }
 
   public PushdySdk setReactContext(ReactApplicationContext reactContext) {
@@ -62,222 +68,61 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
     return this;
   }
 
+  public PushdySdk initNativeSDK() {
+    Log.d(TAG, "initNativeSDK: ");
+    if (this.smallIcon != null) {
+      this.initWithContext(this.clientKey, this.mainAppContext, this.smallIcon);
+    } else {
+      this.initWithContext(this.clientKey, this.mainAppContext);
+    }
+
+    return this;
+  }
+
+  public void lazyInitWithContext(String clientKey, android.content.Context mainAppContext, Integer smallIcon) {
+    Log.e(TAG, "lazyInitWithContext: lazyInitWithContext");
+    this.clientKey = clientKey;
+    this.mainAppContext = mainAppContext;
+    this.smallIcon = smallIcon;
+  }
+
   /**
    * Call initWithContext from MainApplication.java to init sdk
    */
   public void initWithContext(String clientKey, android.content.Context mainAppContext) {
-    Pushdy.initWith(mainAppContext, clientKey, this);
-    Pushdy.registerForRemoteNotification();
-    Pushdy.setBadgeOnForeground(true);
+//    Pushdy.initWith(mainAppContext, clientKey, this);
+//    Pushdy.registerForRemoteNotification();
+//    Pushdy.setBadgeOnForeground(true);
+    PushdyModule instance = PushdyModule.getInstance();
+    if (instance != null) {
+      // instance.initWithContext(clientKey, mainAppContext);
+      instance.initWithContext(clientKey, mainAppContext);
+    } else {
+      Log.e(TAG, "initWithContext: Native module was not initialized");
+    }
   }
 
   public void initWithContext(String clientKey, android.content.Context mainAppContext, Integer smallIcon) {
-    Pushdy.initWith(mainAppContext, clientKey, this, smallIcon);
-    Pushdy.registerForRemoteNotification();
-    Pushdy.setBadgeOnForeground(true);
-  }
-
-  private void sendEvent(String eventName) {
-    this.sendEvent(eventName, null);
-  }
-
-  /**
-   * Send event from native to JsThread
-   * If the reactConetext has not available yet, => retry
-   */
-  private void sendEvent(String eventName, @Nullable WritableMap params) {
-    sendEvent(eventName, params, 0);
-  }
-
-  private void sendEvent(String eventName, @Nullable WritableMap params, int retryCount) {
-    long delayRetry = 1000L;
-    int maxRetry = 5;
-    if (this.reactContext != null) {
-      /**
-       * When you wake up your app from BG/closed state,
-       * JS thread might not be available or ready to receive event
-       */
-      LifecycleState jsThreadState = this.reactContext.getLifecycleState();
-      boolean reactActivated = this.reactContext.hasActiveCatalystInstance();
-      boolean jsHandlerReady = this.subscribedEventNames.size() > 0;
-      boolean jsSubscribeThisEvent = this.subscribedEventNames.contains(eventName);
-
-      // Log.d("RNPushdy", "this.subscribedEventNames.size() = " + this.subscribedEventNames.size());
-
-      if (reactActivated && jsThreadState == LifecycleState.RESUMED) {
-        if (jsHandlerReady) {
-          // Delay for some second to ensure react context work
-          if (jsSubscribeThisEvent) {
-            // this.sendEventWithDelay(eventName, params, 0);
-            this.reactContext
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                .emit(eventName, params);
-            Log.d("RNPushdy", "sendEvent: Emitted: " + eventName);
-          } else {
-            Log.d("RNPushdy", "sendEvent: Skip because JS not register the " + eventName);
-          }
-
-          // exit function to Prevent retry
-          return;
-        } else {
-          // Continue to Retry section
-          // JS handle was ready so we increase the retry interval
-          delayRetry = 300L;
-          maxRetry = 10;
-        }
-      } else {
-        // Reset if subscribedEventNames JS is not ready
-        // This is on subscribedEventNames
-        this.subscribedEventNames = new HashSet<>();
-        // continue to retry section
-      }
+//    Pushdy.initWith(mainAppContext, clientKey, this, smallIcon);
+//    Pushdy.registerForRemoteNotification();
+//    Pushdy.setBadgeOnForeground(true);
+    PushdyModule instance = PushdyModule.getInstance();
+    if (instance != null) {
+      instance.initWithContext(clientKey, mainAppContext, smallIcon);
+    } else {
+      Log.e(TAG, "initWithContext: Native module was not initialized");
     }
-
-    // ====== If cannot send then retry: ====
-
-    Log.e("RNPushdy", "sendEvent: " + eventName + " was skipped because reactContext is null or not ready");
-
-    // We decide to avoid retry
-    // In case of app in BG, this will retry forever
-    // I already implement retryCount to prevent retry over 5 times
-
-    /**
-     * Retry after 1s
-     * NOTE: You must do this in non-blocking mode to ensure program
-     * will continue to run without any dependant on this code
-     */
-    SentEventTimerTask task = new SentEventTimerTask() {
-      public void run() {
-        if (getRetryCount() >= getMaxRetryCount()) {
-          Log.e("RNPushdy", "[" + Thread.currentThread().getName() + "] " + this.getEventName() + " skipped after " + getRetryCount() + "  times retry on: " + new Date());
-        } else {
-          Log.e("RNPushdy", "[" + Thread.currentThread().getName() + "] " + this.getEventName() + " performed (" + getRetryCount() + ") on: " + new Date());
-          sendEvent(getEventName(), getParams(), getRetryCount() + 1);
-        }
-      }
-    };
-    task.setEventName(eventName);
-    task.setParams(params);
-    task.setRetryCount(retryCount);
-    task.setMaxRetryCount(maxRetry);
-    Timer timer = new Timer("SendEventRetry");
-    timer.schedule(task, delayRetry); // delay in ms
   }
-
-  /**
-   * Send event to JS thread and retry
-   *
-   * @deprecated
-   *
-   * @param eventName
-   * @param params
-   * @param retryCount
-   */
-  private void sendEventWithDelay(String eventName, @Nullable WritableMap params, int retryCount) {
-//          this.reactContext
-//              .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-//              .emit(eventName, params);
-//          Log.d("RNPushdy", "sendEvent: Emitted: " + eventName);
-    SentEventTimerTask task = new SentEventTimerTask() {
-      public void run() {
-        this.getReactContext()
-            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-            .emit(getEventName(), getParams());
-        Log.d("RNPushdy", "sendEvent: Emitted: " + getEventName());
-      }
-    };
-    task.setEventName(eventName);
-    task.setParams(params);
-    task.setReactContext(this.reactContext);
-
-    Timer timer = new Timer("EmitEvent");
-    timer.schedule(task, 50L); // delay in ms
-  }
-
-  /**
-   * ===================  Pushdy hook =============================
-   */
-  @Nullable
-  @Override
-  public Notification customNotification(@NotNull String s, @NotNull String s1, @NotNull String s2, @NotNull Map<String, ?> map) {
-    return null;
-  }
-
-  @Override
-  public void onNotificationOpened(@NotNull String notification, @NotNull String fromState) {
-    Log.d("RNPushdy", "onNotificationOpened: notification: " + notification);
-
-    WritableMap noti = new WritableNativeMap();
-    try {
-      JSONObject jo = new JSONObject(notification);
-      noti = ReactNativeJson.convertJsonToMap(jo);
-    } catch (JSONException e) {
-      e.printStackTrace();
-      Log.e("RNPushdy", "onNotificationReceived Exception " + e.getMessage());
-    }
-
-    WritableMap params = Arguments.createMap();
-    params.putString("fromState", fromState);
-    params.putMap("notification", RNPushdyData.toRNPushdyStructure(noti));
-
-    sendEvent("onNotificationOpened", params);
-  }
-
-  @Override
-  public void onNotificationReceived(@NotNull String notification, @NotNull String fromState) {
-    Log.d("RNPushdy", "onNotificationReceived: notification: " + notification);
-
-    WritableMap noti = new WritableNativeMap();
-    try {
-      JSONObject jo = new JSONObject(notification);
-      noti = ReactNativeJson.convertJsonToMap(jo);
-    } catch (JSONException e) {
-      e.printStackTrace();
-      Log.e("RNPushdy", "onNotificationReceived Exception " + e.getMessage());
-    }
-
-    WritableMap params = Arguments.createMap();
-    params.putString("fromState", fromState);
-    params.putMap("notification", RNPushdyData.toRNPushdyStructure(noti));
-
-    sendEvent("onNotificationReceived", params);
-  }
-
-  @Override
-  public void onRemoteNotificationFailedToRegister(@NotNull Exception e) {
-    WritableMap params = Arguments.createMap();
-    params.putString("exceptionMessage", e.getMessage());
-    sendEvent("onRemoteNotificationFailedToRegister", params);
-  }
-
-  @Override
-  public void onRemoteNotificationRegistered(@NotNull String deviceToken) {
-    this.isRemoteNotificationRegistered = true;
-
-    WritableMap params = Arguments.createMap();
-    params.putString("deviceToken", deviceToken);
-    sendEvent("onRemoteNotificationRegistered", params);
-  }
-
-  @Override
-  public boolean readyForHandlingNotification() {
-    return readyForHandlingNotification;
-  }
-
 
   /**
    * ===========  Pushdy methods: Messaging ===========
    */
-  public void startHandleIncommingNotification() {
-    readyForHandlingNotification = true;
-  }
-
-  public void stopHandleIncommingNotification() {
-    readyForHandlingNotification = false;
-  }
 
   public boolean isRemoteNotificationRegistered() {
     return this.isRemoteNotificationRegistered;
+  }
+  public void setRemoteNotificationRegistered(boolean enable) {
+    this.isRemoteNotificationRegistered = enable;
   }
 
   public boolean isNotificationEnabled() {
@@ -369,9 +214,5 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
 
   public String getPlayerID() {
     return Pushdy.getPlayerID();
-  }
-
-  public void setSubscribedEvents(ArrayList<String> subscribedEventNames) {
-    this.subscribedEventNames = new HashSet<String>(subscribedEventNames);
   }
 }
