@@ -1,10 +1,14 @@
 package com.reactNativePushdy;
 
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
+import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.bridge.WritableNativeMap;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -129,11 +133,12 @@ public class RNPushdyData {
         dstMap.putString(key, srcMap.getString(key));
         break;
       case Map:
-        dstMap.putMap(key, srcMap.getMap(key));
+        // dstMap.putMap(key, DataHelper.toWritableMap(srcMap.getMap(key))); // react-native@0.60.x
+        dstMap.putMap(key, srcMap.getMap(key)); // react-native@0.61.x
         break;
       case Array:
-        dstMap.putArray(key, srcMap.getArray(key));
-        break;
+        // dstMap.putArray(key, DataHelper.toWritableArray(srcMap.getArray(key))); // react-native@0.60.x
+        dstMap.putArray(key, srcMap.getArray(key)); // react-native@0.61.x
     }
   }
 
@@ -154,10 +159,12 @@ public class RNPushdyData {
         dstMap.putString(key, srcMap.getString(key));
         break;
       case Map:
-        dstMap.putMap(key, srcMap.getMap(key));
+         // dstMap.putMap(key, DataHelper.toWritableMap(srcMap.getMap(key))); // react-native@0.60.x
+        dstMap.putMap(key, srcMap.getMap(key)); // react-native@0.61.x
         break;
       case Array:
-        dstMap.putArray(key, srcMap.getArray(key));
+        // dstMap.putArray(key, DataHelper.toWritableArray(srcMap.getArray(key))); // react-native@0.60.x
+        dstMap.putArray(key, srcMap.getArray(key)); // react-native@0.61.x
         break;
     }
   }

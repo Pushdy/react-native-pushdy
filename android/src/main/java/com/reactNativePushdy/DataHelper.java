@@ -12,6 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -124,5 +125,40 @@ public class DataHelper {
       }
     }
     return array;
+  }
+
+  static WritableMap toWritableMap(ReadableMap map) {
+    WritableMap out = new WritableNativeMap();
+    out.merge(map);
+    return out;
+  }
+
+  static WritableArray toWritableArray(ReadableArray readableArray) {
+    WritableArray out = new WritableNativeArray();
+    for (int i = 0; i < readableArray.size(); i++) {
+      switch (readableArray.getType(i)) {
+        case Null:
+          break;
+        case Boolean:
+          out.pushBoolean(readableArray.getBoolean(i));
+          break;
+        case Number:
+          out.pushDouble(readableArray.getDouble(i));
+          break;
+        case String:
+          out.pushString(readableArray.getString(i));
+          break;
+        case Map:
+          out.pushMap(toWritableMap(readableArray.getMap(i))); // react-native@0.60.x
+//          out.pushMap(readableArray.getMap(i)); // react-native@0.61.x
+          break;
+        case Array:
+          out.pushArray(toWritableArray(readableArray.getArray(i))); // react-native@0.60.x
+//          out.pushArray(readableArray.getArray(i));  // react-native@0.61.x
+          break;
+      }
+    }
+
+    return out;
   }
 }

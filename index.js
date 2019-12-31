@@ -4,12 +4,17 @@ import MessageQueue from 'react-native/Libraries/BatchedBridge/MessageQueue';
 MessageQueue.spy((msg) => {
   if (
     msg.module === "RNPushdy" ||
-    (msg.module === null && msg.method.indexOf('RNPushdy') >= 0)
+    (msg.module === null && msg.method.toString().indexOf('RNPushdy') >= 0)
   ) {
     const fromTo = msg.type === 0 ? '[To JS]' : '[To Native]';
     const color = msg.type === 0 ? '#693' : '#639';
     console.log('%c' + fromTo + ' msg:', 'color: ' + color, msg)
   } else if (msg.module === "RCTDeviceEventEmitter") {
+    // Ignore websocketMessage
+    if (msg.args && msg.args[0] === "websocketMessage") {
+      return;
+    }
+
     const fromTo = msg.type === 0 ? '[To JS]' : '[To Native]';
     const color = msg.type === 0 ? '#693' : '#639';
     console.log('%c' + fromTo + ' args, msg:', 'color: ' + color, msg.args, msg)
