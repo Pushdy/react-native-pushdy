@@ -7,8 +7,12 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.WritableNativeArray;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -69,6 +73,23 @@ public class PushdyModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void startHandleIncommingNotification(Promise promise) {
+        pushdySdk.startHandleIncommingNotification();
+        promise.resolve(true);
+    }
+
+    @ReactMethod
+    public void stopHandleIncommingNotification(Promise promise) {
+        pushdySdk.stopHandleIncommingNotification();
+        promise.resolve(true);
+    }
+
+    @ReactMethod
+    public void getReadyForHandlingNotification(Promise promise) {
+        promise.resolve(pushdySdk.readyForHandlingNotification());
+    }
+
+    @ReactMethod
     public void setPushBannerAutoDismiss(boolean autoDismiss, Promise promise) {
         pushdySdk.setPushBannerAutoDismiss(autoDismiss);
         promise.resolve(true);
@@ -82,20 +103,21 @@ public class PushdyModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void setCustomPushBanner(String viewType, Promise promise) {
-        View banner = null;
-
-        switch (viewType) {
-            case "largeIconAsBigImage":
-                banner = null;
-                break;
-            case "todo":
-                banner = null;
-                break;
-            default:
-                Log.d("Pushdy", "setCustomPushBanner: Invalid viewType: " + viewType);
-        }
-
-        pushdySdk.setCustomPushBanner(banner);
+        Log.d("Pushdy", "setCustomPushBanner: ");
+//        View banner = null;
+//
+//        switch (viewType) {
+//            case "largeIconAsBigImage":
+//                banner = null;
+//                break;
+//            case "todo":
+//                banner = null;
+//                break;
+//            default:
+//                Log.d("Pushdy", "setCustomPushBanner: Invalid viewType: " + viewType);
+//        }
+//
+//        pushdySdk.setCustomPushBanner(banner);
         promise.resolve(true);
     }
 
@@ -148,5 +170,27 @@ public class PushdyModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void getPlayerID(Promise promise) {
         promise.resolve(pushdySdk.getPlayerID());
+    }
+
+
+    @ReactMethod
+    public void setBadgeOnForeground(boolean enable, Promise promise) {
+        pushdySdk.setBadgeOnForeground(enable);
+        promise.resolve(true);
+    }
+
+    // https://facebook.github.io/react-native/docs/native-modules-android#argument-types
+    @ReactMethod
+    public void setSubscribedEvents(ReadableArray subscribedEventNames, Promise promise) {
+        ArrayList<String> eventNames = new ArrayList<>();
+        for (int i = 0; i < subscribedEventNames.size(); i++) {
+            if (subscribedEventNames.getType(i) == ReadableType.String) {
+                String str = subscribedEventNames.getString(i);
+                eventNames.add(str);
+            }
+        }
+        pushdySdk.setSubscribedEvents(eventNames);
+
+        promise.resolve(true);
     }
 }

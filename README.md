@@ -20,12 +20,13 @@ Pushdy;
 ## Versioning
 
 We maintain compatible version here.
-Versioning followed by `semver`
+Versioning use `semver` since RNPushdy version 1.x (0.x is development stage)
 
 Every time we have breaking change,
 
 * RNPushdy | android-pushdy-sdk | ios-pushdy-sdk | Note |
 * @0.0.3 | 0.0.4 | 0.0.6 | develoment stage
+* @0.0.4 | 0.0.6 | 0.0.6 | develoment stage: android sdk change data structure
 * latest | latest | latest | develoment stage
 
 

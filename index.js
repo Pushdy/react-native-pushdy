@@ -1,4 +1,20 @@
 import { NativeModules, NativeEventEmitter, Platform } from 'react-native';
+import MessageQueue from 'react-native/Libraries/BatchedBridge/MessageQueue';
+
+MessageQueue.spy((msg) => {
+  if (
+    msg.module === "RNPushdy" ||
+    (msg.module === null && msg.method.indexOf('RNPushdy') >= 0)
+  ) {
+    const fromTo = msg.type === 0 ? '[To JS]' : '[To Native]';
+    const color = msg.type === 0 ? '#693' : '#639';
+    console.log('%c' + fromTo + ' msg:', 'color: ' + color, msg)
+  } else if (msg.module === "RCTDeviceEventEmitter") {
+    const fromTo = msg.type === 0 ? '[To JS]' : '[To Native]';
+    const color = msg.type === 0 ? '#693' : '#639';
+    console.log('%c' + fromTo + ' args, msg:', 'color: ' + color, msg.args, msg)
+  }
+})
 
 const { RNPushdy } = NativeModules;
 console.log('{react-native-pushdy/index} RNPushdy: ', RNPushdy);
@@ -212,6 +228,26 @@ class RNPushdyWrapper {
     return this.callNative(RNPushdy.isNotificationEnabled);
   }
 
+  /**
+   * Turn on or off Pushdy built-in InAppBanner
+   *
+   * When you receive a notification in foreground:
+   * - If enable: Pushdy SDK will show a notification in a built-in InAppBanner UI
+   * - If NOT enable: Default to OS behavior
+   *
+   * Default to `true` on both android and ios
+   *
+   */
+  async enablePushdyInAppBanner(enable) {
+    if (isAndroid) {
+      return this.callNative(RNPushdy.setBadgeOnForeground, enable);
+    }
+    else {
+      console.error("[WIP] TODO: Check if this function is supported on iOS. For now, You should use this function on Android only");
+      return false;
+    }
+  }
+
   async setPushBannerAutoDismiss(autoDismiss: boolean) {
     return this.callNative(RNPushdy.setPushBannerAutoDismiss, autoDismiss);
   }
@@ -224,7 +260,13 @@ class RNPushdyWrapper {
     return this.callNative(RNPushdy.setCustomPushBanner, viewType);
   }
 
+  /**
+   *
+   * @deprecated
+   */
   async setCustomMediaKey(mediaKey: String) {
+    console.error("Do not supported");
+    return false;
     return this.callNative(RNPushdy.setCustomMediaKey, mediaKey);
   }
 
@@ -240,8 +282,27 @@ class RNPushdyWrapper {
     return this.callNative(RNPushdy.getDeviceToken);
   }
 
+  async setReadyForHandlingNotification(enable) {
+    return enable
+      ? this.startHandleIncommingNotification()
+      : this.stopHandleIncommingNotification();
+  }
+
+  async getReadyForHandlingNotification() {
+    return this.callNative(RNPushdy.getReadyForHandlingNotification);
+  }
+
+  async startHandleIncommingNotification() {
+    return this.callNative(RNPushdy.startHandleIncommingNotification);
+  }
+
+  async stopHandleIncommingNotification() {
+    return this.callNative(RNPushdy.stopHandleIncommingNotification);
+  }
+
   async getPendingNotification() {
-    return PushdyNotification.from(await this.callNative(RNPushdy.getPendingNotification));
+    const a = await this.callNative(RNPushdy.getPendingNotification);
+    return a ? PushdyNotification.from(a) : undefined;
   }
 
   async getPendingNotifications() {
@@ -280,20 +341,36 @@ class RNPushdyWrapper {
       const eventName = keys[i];
       const listener = listeners[eventName];
 
-      this.subscribers[eventName] = eventEmitter.addListener(eventName, (event) => {
-        // console.log('{RnPushdy.got event} eventName, event: ', eventName, event);
-
-        if (eventName === 'onNotificationReceived' || eventName === 'onNotificationOpened') {
-          // Convert notification to PushdyNotification
+      if (eventName === 'onNotificationReceived' || eventName === 'onNotificationOpened') {
+        // Convert notification to PushdyNotification
+        this.subscribers[eventName] = eventEmitter.addListener(eventName, (event) => {
           event.notification = new PushdyNotification(event.notification);
           listener(event)
-        } else {
+        });
+      } else {
+        this.subscribers[eventName] = eventEmitter.addListener(eventName, (event) => {
           listener(event)
-        }
-      });
+        });
+      }
     }
 
     // console.log('{startSubscribers} this.subscribers: ', this.subscribers);
+    /**
+     * On some android devices, you need to check if events was successfully subscribed then you can send events to JS
+     * Otherwise, Native will send event while NativeEventEmitter.addListener was not ready => Cause event was lost
+     *
+     * Reproduction:
+     *  1. Press a noti in noti center while app is in BG / closed state
+     *  2. App opened > React was init > JS was init / re-int(if BG) > subscribed again > Ready to receive event
+     *  3. Native send a onNotificationOpen event when JS is not "Ready to receive event"
+     *
+     *
+     */
+    if (isAndroid) {
+      // Read more about "enableFlag" at com.reactNativePushdy.PushdySdk#subscribedEventNames
+      this.subscribers["enableFlag"] = eventEmitter.addListener("enableFlag", (event) => {});
+      this.callNative(RNPushdy.setSubscribedEvents, keys);
+    }
   }
 
   stopSubscribers() {
@@ -359,6 +436,8 @@ export class PushdyNotification {
         const v = data[k];
         this[k] = v;
       }
+    } else {
+      console.error("[PushdyNotification] data is null");
     }
   }
 
@@ -366,6 +445,10 @@ export class PushdyNotification {
    * a = PushdyNotification.from({title: 1, body: "test"})
    */
   static from(genericObject) {
+    if (!genericObject) {
+      console.error("[PushdyNotification] genericObject is null");
+    }
+
     return Object.assign(new PushdyNotification(), genericObject)
   }
 }
