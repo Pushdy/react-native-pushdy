@@ -133,12 +133,12 @@ public class RNPushdyData {
         dstMap.putString(key, srcMap.getString(key));
         break;
       case Map:
-        // dstMap.putMap(key, DataHelper.toWritableMap(srcMap.getMap(key))); // react-native@0.60.x
-        dstMap.putMap(key, srcMap.getMap(key)); // react-native@0.61.x
+        dstMap.putMap(key, DataHelper.toWritableMap(srcMap.getMap(key))); // react-native@0.60.x
+        // dstMap.putMap(key, srcMap.getMap(key)); // react-native@0.61.x
         break;
       case Array:
-        // dstMap.putArray(key, DataHelper.toWritableArray(srcMap.getArray(key))); // react-native@0.60.x
-        dstMap.putArray(key, srcMap.getArray(key)); // react-native@0.61.x
+        dstMap.putArray(key, DataHelper.toWritableArray(srcMap.getArray(key))); // react-native@0.60.x
+        // dstMap.putArray(key, srcMap.getArray(key)); // react-native@0.61.x
     }
   }
 
@@ -159,12 +159,12 @@ public class RNPushdyData {
         dstMap.putString(key, srcMap.getString(key));
         break;
       case Map:
-         // dstMap.putMap(key, DataHelper.toWritableMap(srcMap.getMap(key))); // react-native@0.60.x
-        dstMap.putMap(key, srcMap.getMap(key)); // react-native@0.61.x
+        dstMap.putMap(key, DataHelper.toWritableMap(srcMap.getMap(key))); // react-native@0.60.x
+        // dstMap.putMap(key, srcMap.getMap(key)); // react-native@0.61.x
         break;
       case Array:
-        // dstMap.putArray(key, DataHelper.toWritableArray(srcMap.getArray(key))); // react-native@0.60.x
-        dstMap.putArray(key, srcMap.getArray(key)); // react-native@0.61.x
+        dstMap.putArray(key, DataHelper.toWritableArray(srcMap.getArray(key))); // react-native@0.60.x
+        // dstMap.putArray(key, srcMap.getArray(key)); // react-native@0.61.x
         break;
     }
   }
