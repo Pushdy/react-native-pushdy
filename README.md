@@ -1,13 +1,27 @@
-# react-native-pushdy
+# react-native-pushdy (RNPushdy)
 
 ## Getting started
 
-`$ npm install react-native-pushdy --save`
-`$ yarn add react-native-pushdy`
+**Installing** using yarn or npm:
+```
+$ npm install react-native-pushdy --save
+$ yarn add react-native-pushdy
+```
 
-### Mostly automatic installation
+**Linking**
+- For react-native@0.60.x and above: Autolink was introduce, you don't need to do anything further, for more detail: https://github.com/react-native-community/cli/blob/master/docs/autolinking.md
+- For react-native@0.5x.x, run:
+```
+$ react-native link react-native-pushdy
+```
 
-`$ react-native link react-native-pushdy`
+Additional setup:
+Push notification require very deep integration, additional setup is required to support handy feature:
+### Android
+TODO:
+
+### iOS
+TODO:
 
 ## Usage
 ```javascript
@@ -17,20 +31,41 @@ import Pushdy from 'react-native-pushdy';
 Pushdy;
 ```
 
-## Versioning
+[WIP] This usage guide has not completed yet.
 
-We maintain compatible version here.
+### Common use case
+Bellow is common use cases, for api references, please see [API References](#API-References) section
+
+**Initialization**
+Android:
+```
+```
+
+
+### API References
+Bellow is RNPushdy's API References, for common use cases, please see [Common use case](#Common-use-case) section
+
+
+## Version compatible
+
+We've maintained compatible version here.
 Versioning use `semver` since RNPushdy version 1.x (0.x is development stage)
 
-Every time we have breaking change,
-
+react-native@0.61.x and above
 * RNPushdy | android-pushdy-sdk | ios-pushdy-sdk | Note |
-* @0.0.3 | 0.0.4 | 0.0.6 | develoment stage
-* @0.0.4 | 0.0.6 | 0.0.6 | develoment stage: android sdk change data structure
+* --     | --     | --     | develoment stage
+* @0.0.4-rn0_60 | 0.0.6  | 0.0.6  | develoment stage: android sdk change data structure
+* @0.0.4 | 0.0.6  | 0.0.6  | develoment stage: android sdk change data structure
 * latest | latest | latest | develoment stage
 
+react-native@0.60.x and bellow
+*  RNPushdy | android-pushdy-sdk | ios-pushdy-sdk | Note |
+*  --     | --     | --     | develoment stage
+*  @0.0.4 | 0.0.6  | 0.0.6  | develoment stage: android sdk change data structure
+*  latest | latest | latest | develoment stage
 
 
+# === Development ===
 ## Architecture
 
 iOS data flows:
