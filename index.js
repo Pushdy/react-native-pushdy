@@ -1,25 +1,29 @@
 import { NativeModules, NativeEventEmitter, Platform } from 'react-native';
 import MessageQueue from 'react-native/Libraries/BatchedBridge/MessageQueue';
 
-MessageQueue.spy((msg) => {
-  if (
-    msg.module === "RNPushdy" ||
-    (msg.module === null && msg.method.toString().indexOf('RNPushdy') >= 0)
-  ) {
-    const fromTo = msg.type === 0 ? '[To JS]' : '[To Native]';
-    const color = msg.type === 0 ? '#693' : '#639';
-    console.log('%c' + fromTo + ' msg:', 'color: ' + color, msg)
-  } else if (msg.module === "RCTDeviceEventEmitter") {
-    // Ignore websocketMessage
-    if (msg.args && msg.args[0] === "websocketMessage") {
+if (__DEV__) {
+  MessageQueue.spy((msg) => {
+    if (
+      msg.module === "RNPushdy" ||
+      (msg.module === null && msg.method.toString().indexOf('RNPushdy') >= 0)
+    ) {
+      const fromTo = msg.type === 0 ? '[To JS]' : '[To Native]';
+      const color = msg.type === 0 ? '#693' : '#639';
+      console.log('%c' + fromTo + ' msg:', 'color: ' + color, msg)
+    } else if (msg.module === "RCTDeviceEventEmitter") {
       return;
-    }
 
-    const fromTo = msg.type === 0 ? '[To JS]' : '[To Native]';
-    const color = msg.type === 0 ? '#693' : '#639';
-    console.log('%c' + fromTo + ' args, msg:', 'color: ' + color, msg.args, msg)
-  }
-})
+      // Ignore websocketMessage
+      if (msg.args && msg.args[0] === "websocketMessage") {
+        return;
+      }
+
+      const fromTo = msg.type === 0 ? '[To JS]' : '[To Native]';
+      const color = msg.type === 0 ? '#693' : '#639';
+      console.log('%c' + fromTo + ' args, msg:', 'color: ' + color, msg.args, msg)
+    }
+  })  
+}
 
 const { RNPushdy } = NativeModules;
 console.log('{react-native-pushdy/index} RNPushdy: ', RNPushdy);
@@ -193,6 +197,9 @@ class RNPushdyWrapper {
   ttl = 10000;
   subscribers = {};
 
+  /**
+   * @param {Number} ttl Time to live in miliseconds. Default to 10,000 ms
+   */
   setTimeout(ttl) {
     this.ttl = ttl;
   }
