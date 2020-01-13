@@ -36,6 +36,19 @@ Android:
 > Chú ý: bỏ qua bước **3. Cài đặt SDK cho Android app**
 
 
+Để đảm bảo push được nhận từ background nhanh chóng, cần sửa main activity `launchMode="singleTop"`:
+```
+<activity
+          android:name=".MainActivity"
+          android:label="@string/app_name"
+          ...
+          android:launchMode="singleTop"     <----- Add this line
+          ...
+          android:windowSoftInputMode="adjustResize">
+```
+Như vậy, mỗi khi open app từ backround lên app sẽ không bị recreate lại JS thread, vẫn dùng JS thread cũ, sẽ không bị miss các message từ Native truyền qua.
+
+
 ## Usage
 ```javascript
 import Pushdy from 'react-native-pushdy';
