@@ -130,10 +130,10 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
           maxRetry = 10;
         }
       } else {
-        if (!reactActivated) {
-          // Reset if subscribedEventNames JS is not ready
-          this.subscribedEventNames = new HashSet<>();
-        }
+        // if (!reactActivated) {
+        //   // Reset if subscribedEventNames JS is not ready
+        //   this.subscribedEventNames = new HashSet<>();
+        // }
         // continue to retry section
       }
     }
