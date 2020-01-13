@@ -22,7 +22,10 @@ if (__DEV__) {
       const color = msg.type === 0 ? '#693' : '#639';
       console.log('%c' + fromTo + ' args, msg:', 'color: ' + color, msg.args, msg)
     }
-  })  
+  })
+  console.log('{PushdyMessaging} Spy enabled: ', );
+} else {
+  console.log('{PushdyMessaging} Spy disabled: ', );
 }
 
 const { RNPushdy } = NativeModules;
