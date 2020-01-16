@@ -136,9 +136,11 @@ public class RNPushdy: RCTEventEmitter, PushdyDelegate {
     
     @objc
     func isNotificationEnabled(_
-        resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
+        resolve: @escaping RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
         ) -> Void {
-        resolve(Pushdy.checkNotificationEnabled())
+        Pushdy.checkNotificationEnabled { (enabled:Bool) in
+            resolve(enabled)
+        }
     }
     
     @objc

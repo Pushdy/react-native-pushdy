@@ -17,11 +17,29 @@ $ react-native link react-native-pushdy
 
 Additional setup:
 Push notification require very deep integration, additional setup is required to support handy feature:
+
 ### Android
 TODO:
 
+```
+  MainApplication
+  
+
+  // Add this fn to MainActivity
+  @Override
+  public void onNewIntent(Intent intent) {
+    setIntent(intent);
+    super.onNewIntent(intent);
+  }
+```
+
 ### iOS
 TODO:
+
+```
+```
+
+
 
 
 ## Pushdy configuration

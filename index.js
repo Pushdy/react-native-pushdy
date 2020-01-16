@@ -317,7 +317,7 @@ class RNPushdyWrapper {
 
   async getPendingNotification() {
     const a = await this.callNative(RNPushdy.getPendingNotification);
-    return a ? PushdyNotification.from(a) : undefined;
+    return a ? new PushdyNotification(a) : undefined;
   }
 
   async getPendingNotifications() {
@@ -454,17 +454,6 @@ export class PushdyNotification {
     } else {
       console.error("[PushdyNotification] data is null");
     }
-  }
-
-  /**
-   * a = PushdyNotification.from({title: 1, body: "test"})
-   */
-  static from(genericObject) {
-    if (!genericObject) {
-      console.error("[PushdyNotification] genericObject is null");
-    }
-
-    return Object.assign(new PushdyNotification(), genericObject)
   }
 }
 
