@@ -11,7 +11,7 @@ import PushdySDK
 
 
 @objc(RNPushdy)
-public class RNPushdy: RCTEventEmitter, PushdyDelegate {
+public class RNPushdy: RCTEventEmitter {
     // private static var delegate:RNPushdyDelegate;
     @objc private static var instance:RNPushdy? = nil;
     
@@ -68,6 +68,9 @@ public class RNPushdy: RCTEventEmitter, PushdyDelegate {
     public func sendEventToJs(eventName:String, body:[AnyHashable : Any] = [:]) {
         sendEvent(withName: eventName, body: body)
     }
+    public static func sendEventToJs(eventName:String, body:[AnyHashable : Any] = [:]) {
+        self.getInstance().sendEventToJs(eventName: eventName, body: body)
+    }
     // End --- Setup event listeners
     
     // Variable type correlation:  https://medium.com/ios-os-x-development/swift-and-objective-c-interoperability-2add8e6d6887
@@ -86,10 +89,14 @@ public class RNPushdy: RCTEventEmitter, PushdyDelegate {
      */
     @objc
     public static func initWith(clientKey:String, delegate:UIApplicationDelegate, launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
-        // TODO:
         Pushdy.initWith(clientKey: clientKey
             , delegate: delegate
+            , delegaleHandler: RNPushdyDelegate()
             , launchOptions: launchOptions)
+
+//        Pushdy.initWith(clientKey: clientKey
+//            , delegate: delegate
+//            , launchOptions: launchOptions)
     }
 
     @objc
@@ -136,9 +143,11 @@ public class RNPushdy: RCTEventEmitter, PushdyDelegate {
     
     @objc
     func isNotificationEnabled(_
-        resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
+        resolve: @escaping RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
         ) -> Void {
-        resolve(Pushdy.checkNotificationEnabled())
+        Pushdy.checkNotificationEnabled { (enabled:Bool) in
+            resolve(enabled)
+        }
     }
     
     @objc
@@ -274,33 +283,36 @@ public class RNPushdy: RCTEventEmitter, PushdyDelegate {
         resolve(Pushdy.getPlayerID())
     }
     
-    /*
-     ======== HOOKS ==========
-     */
-    
-    public func onNotificationOpened(_ notification: [String : Any], fromState: String) {
-        print("{RNPushdy.onNotificationOpened} from state: \(fromState)")
 
-        let universalNotification = RNPushdy.toRNPushdyStructure(notification)
-        sendEventToJs(eventName: "onNotificationOpened", body:["notification": universalNotification, "fromState": fromState])
-    }
-    
-    public func onNotificationReceived(_ notification: [String : Any], fromState: String) {
-        print("{RNPushdy.onNotificationReceived} from state: \(fromState)")
-        
-        let universalNotification = RNPushdy.toRNPushdyStructure(notification)
-        sendEventToJs(eventName: "onNotificationReceived", body:["notification": universalNotification, "fromState": fromState])
-    }
-    
-    public func onRemoteNotificationRegistered(_ deviceToken: String) {
-        print("{RNPushdy.onRemoteNotificationRegistered} deviceToken: \(deviceToken)")
-        
-        sendEventToJs(eventName: "onRemoteNotificationRegistered", body:["deviceToken": deviceToken])
-    }
-    
-    public func onRemoteNotificationFailedToRegister(_ error: NSError) {
-        print("{RNPushdy.onRemoteNotificationFailedToRegister} error: \(error)")
-        
-        sendEventToJs(eventName: "onRemoteNotificationFailedToRegister", body:["error": error])
-    }
+    // MARK: Hooks
+    /*
+    ======== HOOKS ==========
+     Hooks was migrated to RNPushdyDelegate.swift due 
+     Do not use hook here anymore
+    */
+//    public func onNotificationOpened(_ notification: [String : Any], fromState: String) {
+//        print("{RNPushdy.onNotificationOpened} from state: \(fromState)")
+//
+//        let universalNotification = RNPushdy.toRNPushdyStructure(notification)
+//        sendEventToJs(eventName: "onNotificationOpened", body:["notification": universalNotification, "fromState": fromState])
+//    }
+//
+//    public func onNotificationReceived(_ notification: [String : Any], fromState: String) {
+//        print("{RNPushdy.onNotificationReceived} from state: \(fromState)")
+//
+//        let universalNotification = RNPushdy.toRNPushdyStructure(notification)
+//        sendEventToJs(eventName: "onNotificationReceived", body:["notification": universalNotification, "fromState": fromState])
+//    }
+//
+//    public func onRemoteNotificationRegistered(_ deviceToken: String) {
+//        print("{RNPushdy.onRemoteNotificationRegistered} deviceToken: \(deviceToken)")
+//
+//        sendEventToJs(eventName: "onRemoteNotificationRegistered", body:["deviceToken": deviceToken])
+//    }
+//
+//    public func onRemoteNotificationFailedToRegister(_ error: NSError) {
+//        print("{RNPushdy.onRemoteNotificationFailedToRegister} error: \(error)")
+//
+//        sendEventToJs(eventName: "onRemoteNotificationFailedToRegister", body:["error": error])
+//    }
 }

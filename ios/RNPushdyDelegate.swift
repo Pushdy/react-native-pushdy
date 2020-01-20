@@ -11,37 +11,38 @@ import PushdySDK
 import React
 import React.RCTEventEmitter
 
-// @objc class RNPushdyDelegate: RCTEventEmitter {
-class RNPushdyDelegate: PushdyDelegate {
-    func onNotificationOpened(_ notification: [String : Any], fromState: String) {
-        // call RNPushdy.sendEventToJS(name, body)
+/**
+ This class was intend to send event from RNPushdy to JS thread on PushdySDK events triggered
+ All configuration was done in RNPushdy
+ */
+@objc class RNPushdyDelegate: NSObject, PushdyDelegate {
+    public func sendEventToJs(eventName:String, body:[AnyHashable : Any] = [:]) {
+        RNPushdy.sendEventToJs(eventName: eventName, body: body)
     }
     
-    
-    /*
-     --- Setup event listeners
-     Note: since use override, we don't need to specify the @objc directive.
-     */
-//    override static func requiresMainQueueSetup() -> Bool {
-//        // https://facebook.github.io/react-native/docs/native-modules-ios#implementing--requiresmainqueuesetup
-//        // As document said: only do this if your module initialization relies on calling UIKit!
-//        return true
-//    }
-//
-//    override func constantsToExport() -> [AnyHashable : Any]! {
-//        return [:]
-//    }
-//
-//    /**
-//     - Usage:
-//     sendEvent(withName: "onIncrement", body: ["count": count])
-//     */
-//    override func supportedEvents() -> [String]! {
-//        return [
-//            "readyForHandlingNotification",
-//            "onNotificationReceived",
-//            "onNotificationOpened",
-//        ]
-//    }
-    // End --- Setup event listeners
+   public func onNotificationOpened(_ notification: [String : Any], fromState: String) {
+       print("{RNPushdy.onNotificationOpened} from state: \(fromState)")
+
+       let universalNotification = RNPushdy.toRNPushdyStructure(notification)
+       sendEventToJs(eventName: "onNotificationOpened", body:["notification": universalNotification, "fromState": fromState])
+   }
+   
+   public func onNotificationReceived(_ notification: [String : Any], fromState: String) {
+       print("{RNPushdy.onNotificationReceived} from state: \(fromState)")
+       
+       let universalNotification = RNPushdy.toRNPushdyStructure(notification)
+       sendEventToJs(eventName: "onNotificationReceived", body:["notification": universalNotification, "fromState": fromState])
+   }
+   
+   public func onRemoteNotificationRegistered(_ deviceToken: String) {
+       print("{RNPushdy.onRemoteNotificationRegistered} deviceToken: \(deviceToken)")
+       
+       sendEventToJs(eventName: "onRemoteNotificationRegistered", body:["deviceToken": deviceToken])
+   }
+   
+   public func onRemoteNotificationFailedToRegister(_ error: NSError) {
+       print("{RNPushdy.onRemoteNotificationFailedToRegister} error: \(error)")
+       
+       sendEventToJs(eventName: "onRemoteNotificationFailedToRegister", body:["error": error])
+   }
 }

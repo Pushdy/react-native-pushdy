@@ -103,6 +103,10 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
       boolean jsSubscribeThisEvent = this.subscribedEventNames.contains(eventName);
 
       // Log.d("RNPushdy", "this.subscribedEventNames.size() = " + this.subscribedEventNames.size());
+       Log.d("RNPushdy", "jsThreadState = " + jsThreadState);
+       Log.d("RNPushdy", "reactActivated = " + Boolean.toString(reactActivated));
+       Log.d("RNPushdy", "jsHandlerReady = " + Integer.toString(this.subscribedEventNames.size()));
+       Log.d("RNPushdy", "subscribedEventNames = " + this.subscribedEventNames.toString());
 
       if (reactActivated && jsThreadState == LifecycleState.RESUMED) {
         if (jsHandlerReady) {
@@ -126,9 +130,10 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
           maxRetry = 10;
         }
       } else {
-        // Reset if subscribedEventNames JS is not ready
-        // This is on subscribedEventNames
-        this.subscribedEventNames = new HashSet<>();
+        // if (!reactActivated) {
+        //   // Reset if subscribedEventNames JS is not ready
+        //   this.subscribedEventNames = new HashSet<>();
+        // }
         // continue to retry section
       }
     }

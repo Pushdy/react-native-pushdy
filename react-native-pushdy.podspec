@@ -1,4 +1,5 @@
 require "json"
+# pod 'GRDB.swift'
 
 package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 
@@ -15,6 +16,9 @@ Pod::Spec.new do |s|
   s.authors      = { "Your Name" => "yourname@email.com" }
   s.platforms    = { :ios => "9.0" }
 
+  # Force support Swift version
+  s.swift_versions = ['4.2', '5.0']
+
   # TODO: Update this source
   # s.source       = { :git => "https://github.com/github_account/react-native-pushdy.git", :tag => "#{s.version}" }
   # Temperary install from local
@@ -26,6 +30,15 @@ Pod::Spec.new do |s|
   s.dependency "React"
   # ...
   # s.dependency "..."
-  s.dependency 'PushdySDK', '~> 0.0.6'
+  s.dependency 'PushdySDK', '~> 0.0.9'
 end
 
+# post_install do |installer|
+#   installer.pods_project.targets.each do |target|
+#     if target.name == 'GRDB.swift'
+#       target.build_configurations.each do |config|
+#         config.build_settings['SWIFT_VERSION'] = '4.2'
+#       end
+#     end
+#   end
+# end
