@@ -5,12 +5,14 @@
   "description": "Pushdy Sdk implement for React Native",
   "main": "index.js",
   "scripts": {
+    "publish": "npm publish",
+    "publish-dry-run": "npm publish --dry-run",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/github_account/react-native-pushdy.git",
-    "baseUrl": "https://github.com/github_account/react-native-pushdy"
+    "url": "git+https://github.com/Pushdy/react-native-pushdy.git",
+    "baseUrl": "https://github.com/Pushdy/react-native-pushdy"
   },
   "keywords": [
     "react-native"

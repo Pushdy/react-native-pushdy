@@ -1,6 +1,16 @@
 # react-native-pushdy (RNPushdy)
 This README is for Pushdy's developer, isn't intend for user
 
+# Deploy
+Publish to npm
+
+```
+npm login
+npm publish --dry-run
+npm publish
+```
+
+
 # === Development ===
 ## Architecture
 
