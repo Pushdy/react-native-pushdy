@@ -15,31 +15,86 @@ $ yarn add react-native-pushdy
 $ react-native link react-native-pushdy
 ```
 
-Additional setup:
+---
+### Additional setup:
 Push notification require very deep integration, additional setup is required to support handy feature:
 
-### Android
-TODO:
+NOTE: You need to complete [Pushdy configuration](#Pushdy-configuration) to receive push notification
 
+
+##### Android
+
+android/app/src/main/java/**/MainApplication.java
 ```
-  MainApplication
-  
+    // Import RNPushdy
+    import com.reactNativePushdy.PushdySdk;
+    ...
 
+    @Override
+    public void onCreate() {
+      ...
+
+      // ----- Add Pushdy module
+      // Add Pushdy init at the end of `onCreate`
+      String pushdyClientKey = BuildConfig.DEBUG
+          ? "debug_client_key_copied_from_pushdy"
+          : "prod_client_key_copied_from_pushdy";
+
+      PushdySdk.getInstance().initWithContext(pushdyClientKey, this, R.mipmap.ic_notification);
+      // ----- Add Pushdy module
+    }
+```
+
+
+Override your MainActivity (ussually MainActivity.java)
+```
   // Add this fn to MainActivity
   @Override
   public void onNewIntent(Intent intent) {
     setIntent(intent);
     super.onNewIntent(intent);
   }
+  ...
 ```
 
-### iOS
-TODO:
+##### iOS
+Pre-requisite:
+- react-native@0.61.x and above. The reason:
+    - 0.5x was not tested yet, and too old to support
+    - 0.60.x does not support `use_frameworks!`
+- Swift enabled, support `use_frameworks!` in your Podfile
 
+
+
+AppDelegate.m
 ```
+#import <react_native_pushdy/react_native_pushdy-Swift.h>
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+  ...
+
+  // ----- Add Pushdy module
+  NSString *clientKey;
+  #if DEBUG
+    clientKey = @"debug_client_key_copied_from_pushdy";
+  #else
+    clientKey = @"prod_client_key_copied_from_pushdy";
+  #endif
+
+  [RNPushdy initWithClientKey:clientKey delegate:self launchOptions:launchOptions];
+  // ----- End add Pushdy module
+
+  ...
+  return YES;
+}
 ```
 
 
+
+Next steps:
+- [Pushdy dashboard configuration](#Pushdy-configuration)
+- [Common use case > Initialization in React-native](#Common-use-case)
 
 
 ## Pushdy configuration
@@ -87,13 +142,76 @@ Bellow is common use cases, for api references, please see [API References](#API
 
 [WIP] This usage guide has not completed yet.
 
-**Initialization**
+**Initialization in react-native**
 Initialization flow:
 1. PushdySDK (native ios/android sdk) connect to FCM / APNS and get the push token
 1. RNPushdy (react-native-pushdy) register some needed event listeners to handle events sent by PushdySDK to JS
 
 ```
 
+```
+Done.
+
+Now go to https://dashboard.pushdy.com/#/application/your_project_id/notification and create a new notification.
+
+A notification should appear on your device.
+
+You may take a look at [Common issues](#Common-issues) section in the future.
+
+
+**Subscribe to notification open event**
+**Subscribe to new notification**
+```
+Pushdy.startSubscribers({
+  onNotificationOpened: _this.onNotificationOpened.bind(_this),
+  onNotificationReceived: _this.onNotificationReceived.bind(_this),
+  onRemoteNotificationFailedToRegister: _this.onRemoteNotificationFailedToRegister.bind(_this),
+  onRemoteNotificationRegistered: _this.onRemoteNotificationRegistered.bind(_this),
+  onTokenUpdated: _this.onTokenUpdated.bind(_this),
+});
+```
+
+See [docs](#) for more details
+
+**Ensure permission**
+Permission was automatically request permission while ios requires you to request manually:
+```
+await Pushdy.ios_registerForPushNotification();
+```
+
+**Handle user click on notification in notification tray**
+If app is closed, click on a notification will open app, you need to manually get the clicked notification and handle it.
+```
+  /**
+   * When your app is in closed state (not background), incomming notification message will be handled and show by OS, you can find it in the OS's notification center
+   * Then user press the notification, the app will be opened with that notification data, that data called pendingPushNotification
+   *
+   * After JS thread was ready, PushdySDK was ready, you need to check if there is a pendingPushNotification
+   * and handle it
+   *
+   * In some other SDK, pendingPushNotifications also known as initialNotifications
+   */
+  async handleInitialNotification() {
+    // Get the clicked push notification while app is closed or in background
+    const pendingNotification = await Pushdy.getPendingNotification();
+
+    if (pendingNotification) {
+      /**
+       * Handle the bug if notification was re-handle if Codepush.restart()
+       */
+      const lastInitialId = getLastNotiIdFromLocalStorage();
+      const initialId = pendingNotification._notificationId;
+      if (lastInitialId && lastInitialId === initialId) {
+        // Ignore if this notification have been handled
+        console.log('Notification was already handled in last session, skip:  notificationId: ', lastInitialId);
+        return
+      }
+
+      setLastNotiIdFromLocalStorage(initialId);
+
+      this.handleMyAppPushAction(pendingNotification, 'background')
+    }
+  }
 ```
 
 
@@ -145,11 +263,13 @@ Signature:
 
 Desc:
 > Android only:
+>
 > On android:
 >    registerForPushNotification was called automatically after PushdySDK's initilization
 >    true mean registered, false mean registering or failed.
+>
 > On iOS:
->    you need to call ios_registerForPushNotification manually from JS, that mean JS context was already be ready,
+> you need to call ios_registerForPushNotification manually from JS, that mean JS context was already be ready,
 >    so that you can listen to onRemoteNotificationRegistered event perfectly
 >    Or you can use isRemoteNotificationRegistered variable, it's depend!
 
@@ -263,3 +383,23 @@ react-native@0.60.x and bellow
 *  --     | --     | --     | develoment stage
 *  @0.0.4 | 0.0.6  | 0.0.6  | develoment stage: android sdk change data structure
 *  latest | latest | latest | develoment stage
+
+
+## Common issues
+
+Almost issue comes from miss-configuration.
+
+You should re-check the step by step installation, pre-requirement first
+
+#### ios Setup
+> xCode Compile ERROR: react_native_pushdy-Swift.h not found
+
+Check hỗ trợ swift theo hướng dẫn:
+https://medium.com/ios-os-x-development/swift-and-objective-c-interoperability-2add8e6d6887
+
+Lưu ý: Cần phải Setting Defines module cho cả project chính và project react-native-pushdy (đã setup sẵn)
+
+![Enable module](assets/Packaging.png "xCode config Enable module")
+
+
+More error: [README_SETUP_ERROR.md](README_SETUP_ERROR.md)
