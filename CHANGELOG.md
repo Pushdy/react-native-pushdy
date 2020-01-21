@@ -1,5 +1,9 @@
 # react-native-pushdy change logs
 
+
+new update here
+
+----------
 rnpushdy@0.x was used for react-native@0.60 and bellow
 
 rnpushdy@1.x was used for react-native@0.61 and above

@@ -1,7 +1,7 @@
 {
   "name": "react-native-pushdy",
   "title": "React Native Pushdy",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Pushdy Sdk implement for React Native",
   "main": "index.js",
   "scripts": {
@@ -18,8 +18,8 @@
     "react-native"
   ],
   "author": {
-    "name": "MobileTech",
-    "email": "contact@mobiletech.vn"
+    "name": "Pushdy",
+    "email": "contact@pushdy.com"
   },
   "license": "MIT",
   "licenseFilename": "LICENSE",

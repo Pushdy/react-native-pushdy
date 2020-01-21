@@ -15,6 +15,19 @@ $ yarn add react-native-pushdy
 $ react-native link react-native-pushdy
 ```
 
+**Update new RNPushdy version (if needed)**
+
+Fetch new version from npm:
+```
+yarn upgrade react-native-pushdy
+```
+
+Then update Pushdy's native library:
+```
+Android Studio: File > Sync project with graddle files (don't need this if you using react-native run-android)
+ios: run `pod install`
+```
+
 ---
 ### Additional setup:
 Push notification require very deep integration, additional setup is required to support handy feature:
