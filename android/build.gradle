@@ -77,7 +77,9 @@ dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'  // From node_modules
     implementation 'com.google.code.gson:gson:2.8.6'
-    api 'com.github.Pushdy:android-pushdy-sdk:-SNAPSHOT'
+
+    // api 'com.github.Pushdy:android-pushdy-sdk:-SNAPSHOT'
+    api 'com.github.Pushdy:android-pushdy-sdk:0.0.8'
 }
 
 def configureReactNativePom(def pom) {

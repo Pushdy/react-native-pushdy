@@ -10,19 +10,19 @@ Pod::Spec.new do |s|
   s.description  = <<-DESC
                   react-native-pushdy
                    DESC
-  s.homepage     = "https://github.com/github_account/react-native-pushdy"
+  s.homepage     = "https://github.com/Pushdy/react-native-pushdy"
   s.license      = "MIT"
-  # s.license    = { :type => "MIT", :file => "FILE_LICENSE" }
-  s.authors      = { "Your Name" => "yourname@email.com" }
+  # s.license    = { :type => "MIT", :file => "LICENSE" }
+  s.authors      = { "Pushdy" => "contact@pushdy.com" }
   s.platforms    = { :ios => "9.0" }
 
   # Force support Swift version
   s.swift_versions = ['4.2', '5.0']
 
   # TODO: Update this source
-  # s.source       = { :git => "https://github.com/github_account/react-native-pushdy.git", :tag => "#{s.version}" }
+  s.source       = { :git => "https://github.com/Pushdy/react-native-pushdy.git", :tag => "#{s.version}" }
   # Temperary install from local
-  s.source       = { :http => 'file:' + __dir__ + '/Archive.zip'}
+  # s.source       = { :http => 'file:' + __dir__ + '/Archive.zip'}
 
   s.source_files = "ios/**/*.{h,m,swift}"
   s.requires_arc = true

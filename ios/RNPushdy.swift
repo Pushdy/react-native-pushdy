@@ -27,7 +27,7 @@ public class RNPushdy: RCTEventEmitter {
     
     /*
      - Expose singleton instance for using in AppDelegate.m
-     - TODO: Remove this function and modify PushdySDK to implement delegate func in this class instead of AppDelegate
+     - TODO: Check this fn is still be used or not
     */
     @objc public static func getInstance() -> RNPushdy {
         if RNPushdy.instance == nil {
@@ -211,18 +211,15 @@ public class RNPushdy: RCTEventEmitter {
         id: String,
                      resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
         ) -> Void {
-        // TODO: Waiting PushdySDK imlementing Pushdy.setDeviceId
-        // Pushdy.setDeviceId(id)
-        resolve(false)
+        Pushdy.setDeviceID(id)
+        resolve(true)
     }
     
     @objc
     func getDeviceId(_
         resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
         ) -> Void {
-        // TODO: Waiting PushdySDK imlementing Pushdy.setDeviceId
-        // Pushdy.getDeviceId()
-        resolve(false)
+        resolve(Pushdy.getDeviceID())
     }
     
     @objc
