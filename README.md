@@ -1,22 +1,52 @@
 # react-native-pushdy (RNPushdy)
+## Table of contents
+- [Table of contents](#table-of-contents)
+- [Getting started](#getting-started)
+  - [Installing](#installing)
+  - [Linking](#linking)
+  - [Update new RNPushdy version (if needed)](#update-new-rnpushdy-version-if-needed)
+- [Additional setup:](#additional-setup)
+  - [Android](#android)
+  - [iOS](#ios)
+- [Pushdy configuration](#pushdy-configuration)
+- [Usage](#usage)
+- [Common use case](#common-use-case)
+  - [1. Initialization in react-native](#1-initialization-in-react-native)
+  - [2. Subscribe to notification open event](#2-subscribe-to-notification-open-event)
+  - [3. And Subscribe to new notification](#3-and-subscribe-to-new-notification)
+  - [4. Ensure permission](#4-ensure-permission)
+  - [5. Handle user click on notification in notification tray](#5-handle-user-click-on-notification-in-notification-tray)
+- [API References](#api-references)
+  - [setTimeout(ttl)](#settimeoutttl)
+  - [sampleMethod(str, num)](#samplemethodstr-num)
+  - [isRemoteNotificationRegistered()](#isremotenotificationregistered)
+  - [ios_registerForPushNotification()](#ios_registerforpushnotification)
+  - [isNotificationEnabled()](#isnotificationenabled)
+  - [enablePushdyInAppBanner(enable)](#enablepushdyinappbannerenable)
+  - [methodFoo(...args)](#methodfooargs)
+- [Version compatible](#version-compatible)
+- [Common issues](#common-issues)
+  - [ios Setup](#ios-setup)
+
+TOC was generated [here](https://magnetikonline.github.io/markdown-toc-generate/)
 
 ## Getting started
 
-**Installing** using yarn or npm:
+#### Installing
+using yarn or npm:
 ```
 $ npm install react-native-pushdy --save
 $ yarn add react-native-pushdy
 ```
 
-**Linking**
+#### Linking
 - For react-native@0.60.x and above: Autolink was introduce, you don't need to do anything further, for more detail: https://github.com/react-native-community/cli/blob/master/docs/autolinking.md
 - For react-native@0.5x.x, run:
 ```
 $ react-native link react-native-pushdy
 ```
 
-**Update new RNPushdy version (if needed)**
-
+#### Update new RNPushdy version (if needed)
 Fetch new version from npm:
 ```
 yarn upgrade react-native-pushdy
@@ -28,14 +58,13 @@ Android Studio: File > Sync project with graddle files (don't need this if you u
 ios: run `pod install`
 ```
 
----
-### Additional setup:
+## Additional setup:
 Push notification require very deep integration, additional setup is required to support handy feature:
 
 NOTE: You need to complete [Pushdy configuration](#Pushdy-configuration) to receive push notification
 
 
-##### Android
+#### Android
 
 android/app/src/main/java/**/MainApplication.java
 ```
@@ -70,7 +99,7 @@ Override your MainActivity (ussually MainActivity.java)
   ...
 ```
 
-##### iOS
+#### iOS
 Pre-requisite:
 - react-native@0.61.x and above. The reason:
     - 0.5x was not tested yet, and too old to support
@@ -144,24 +173,45 @@ const [msg, x2num] = await Pushdy.sampleMethod('Hello from JS with', 500);
 See more at [API References](#API-References) and **common use case** section bellow.
 
 Checkout RNPushdy in this example project: react-native-pushdy-example: 
-http://git.mobiletech.vn/MobileTech/react-native-pushdy-example
+https://github.com/Pushdy/react-native-pushdy-example
 
 and `react-native-pushdy-example/src/services/Pushdy/PushdyMessaging.js`
 
-TODO: Move react-native-pushdy-example to github
-
-### Common use case
+## Common use case
 Bellow is common use cases, for api references, please see [API References](#API-References) section
 
 [WIP] This usage guide has not completed yet.
 
-**Initialization in react-native**
+#### 1. Initialization in react-native
+
 Initialization flow:
-1. PushdySDK (native ios/android sdk) connect to FCM / APNS and get the push token
-1. RNPushdy (react-native-pushdy) register some needed event listeners to handle events sent by PushdySDK to JS
+- PushdySDK (native ios/android sdk) connect to FCM / APNS and get the push token
+- RNPushdy (react-native-pushdy) register some needed event listeners to handle events sent by PushdySDK to JS
+
 
 ```
+  async register() {
+    // Remember to subscribe event first
+    const _this = this;
+    Pushdy.startSubscribers({
+      onNotificationOpened: _this.onNotificationOpened.bind(_this),
+      onNotificationReceived: _this.onNotificationReceived.bind(_this),
+      onRemoteNotificationFailedToRegister: _this.onRemoteNotificationFailedToRegister.bind(_this),
+      onRemoteNotificationRegistered: _this.onRemoteNotificationRegistered.bind(_this),
+      onTokenUpdated: _this.onTokenUpdated.bind(_this),
+    });
 
+    // After setting up subscribers, you can continue to work with Pushdy
+    // Pushdy token was handled by Pushdy SDK, if you don't need to read it, just comment out this getDeviceToken() section.
+    this.ensurePermission().then(enabled => {});
+
+    // Check for non-executed push on app opening
+    this.handleInitialNotification();
+  }
+
+  unregister() {
+    Pushdy.stopSubscribers();
+  }
 ```
 Done.
 
@@ -172,8 +222,8 @@ A notification should appear on your device.
 You may take a look at [Common issues](#Common-issues) section in the future.
 
 
-**Subscribe to notification open event**
-**Subscribe to new notification**
+#### 2. Subscribe to notification open event
+#### 3. And Subscribe to new notification
 ```
 Pushdy.startSubscribers({
   onNotificationOpened: _this.onNotificationOpened.bind(_this),
@@ -186,49 +236,49 @@ Pushdy.startSubscribers({
 
 See [docs](#) for more details
 
-**Ensure permission**
-Permission was automatically request permission while ios requires you to request manually:
-```
-await Pushdy.ios_registerForPushNotification();
-```
+#### 4. Ensure permission
 
-**Handle user click on notification in notification tray**
-If app is closed, click on a notification will open app, you need to manually get the clicked notification and handle it.
-```
-  /**
-   * When your app is in closed state (not background), incomming notification message will be handled and show by OS, you can find it in the OS's notification center
-   * Then user press the notification, the app will be opened with that notification data, that data called pendingPushNotification
-   *
-   * After JS thread was ready, PushdySDK was ready, you need to check if there is a pendingPushNotification
-   * and handle it
-   *
-   * In some other SDK, pendingPushNotifications also known as initialNotifications
-   */
-  async handleInitialNotification() {
-    // Get the clicked push notification while app is closed or in background
-    const pendingNotification = await Pushdy.getPendingNotification();
+    Permission was automatically request permission while ios requires you to request manually:
+    ```
+    await Pushdy.ios_registerForPushNotification();
+    ```
 
-    if (pendingNotification) {
-      /**
-       * Handle the bug if notification was re-handle if Codepush.restart()
-       */
-      const lastInitialId = getLastNotiIdFromLocalStorage();
-      const initialId = pendingNotification._notificationId;
-      if (lastInitialId && lastInitialId === initialId) {
-        // Ignore if this notification have been handled
-        console.log('Notification was already handled in last session, skip:  notificationId: ', lastInitialId);
-        return
+#### 5. Handle user click on notification in notification tray
+
+    If app is closed, click on a notification will open app, you need to manually get the clicked notification and handle it.
+
+    When your app is in closed state (not background), incomming notification message will be handled and show by OS, you can find it in the OS's notification center
+    Then user press the notification, the app will be opened with that notification data, that data called pendingPushNotification
+
+    After JS thread was ready, PushdySDK was ready, you need to check if there is a pendingPushNotification and handle it
+    In some other SDK, pendingPushNotifications also known as initialNotifications
+
+    ```
+      async handleInitialNotification() {
+        // Get the clicked push notification while app is closed or in background
+        const pendingNotification = await Pushdy.getPendingNotification();
+
+        if (pendingNotification) {
+          /**
+           * Handle the bug if notification was re-handle if Codepush.restart()
+           */
+          const lastInitialId = getLastNotiIdFromLocalStorage();
+          const initialId = pendingNotification._notificationId;
+          if (lastInitialId && lastInitialId === initialId) {
+            // Ignore if this notification have been handled
+            console.log('Notification was already handled in last session, skip:  notificationId: ', lastInitialId);
+            return
+          }
+
+          setLastNotiIdFromLocalStorage(initialId);
+
+          this.handleMyAppPushAction(pendingNotification, 'background')
+        }
       }
-
-      setLastNotiIdFromLocalStorage(initialId);
-
-      this.handleMyAppPushAction(pendingNotification, 'background')
-    }
-  }
-```
+    ```
 
 
-### API References
+## API References
 Bellow is RNPushdy's API References, for common use cases, please see [Common use case](#Common-use-case) section
 
 
