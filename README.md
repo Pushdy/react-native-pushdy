@@ -1,6 +1,5 @@
 # react-native-pushdy (RNPushdy)
 ## Table of contents
-- [Table of contents](#table-of-contents)
 - [Getting started](#getting-started)
   - [Installing](#installing)
   - [Linking](#linking)
@@ -101,9 +100,9 @@ Override your MainActivity (ussually MainActivity.java)
 
 #### iOS
 Pre-requisite:
-- react-native@0.61.x and above. The reason:
+- react-native@0.61.x and above. The reasons:
     - 0.5x was not tested yet, and too old to support
-    - 0.60.x does not support `use_frameworks!`
+    - 0.60.x does not support `use_frameworks!`, and WritableMap, ReadableMap have breaking changes from 0.60 to 0.61
 - Swift enabled, support `use_frameworks!` in your Podfile
 
 
