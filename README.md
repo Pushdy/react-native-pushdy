@@ -445,6 +445,7 @@ react-native@0.60.x and bellow
 *  RNPushdy | android-pushdy-sdk | ios-pushdy-sdk | Note |
 *  --     | --     | --     | develoment stage
 *  @0.0.4 | 0.0.6  | 0.0.6  | develoment stage: android sdk change data structure
+*  @0.0.6 | 0.0.6  | 0.0.9  | develoment stage: ios sdk breaking change
 *  latest | latest | latest | develoment stage
 
 
