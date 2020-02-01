@@ -1,4 +1,9 @@
 # react-native-pushdy (RNPushdy)
+![github_version](https://img.shields.io/github/package-json/v/Pushdy/react-native-pushdy?label=github "github_version")
+![npm_version](https://img.shields.io/npm/v/react-native-pushdy "npm_version")
+
+React Native SDK for [Pushdy](https://guide.pushdy.com/i/) services
+
 ## Table of contents
 - [Getting started](#getting-started)
   - [Installing](#installing)
