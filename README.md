@@ -87,6 +87,10 @@ Push notification require very deep integration, additional setup is required to
 
 NOTE: You need to complete [Pushdy configuration](#Pushdy-configuration) to receive push notification
 
+Prerequisite:
+- react-native@0.61.x and above. The reasons:
+    - 0.5x was not tested yet, and too old to support
+    - 0.60.x does not support `use_frameworks!`, and WritableMap, ReadableMap have breaking changes from 0.60 to 0.61
 
 #### Android
 
@@ -124,10 +128,7 @@ Override your MainActivity (ussually MainActivity.java)
 ```
 
 #### iOS
-Pre-requisite:
-- react-native@0.61.x and above. The reasons:
-    - 0.5x was not tested yet, and too old to support
-    - 0.60.x does not support `use_frameworks!`, and WritableMap, ReadableMap have breaking changes from 0.60 to 0.61
+Prerequisite:
 - Swift enabled, support `use_frameworks!` in your Podfile
 
 
