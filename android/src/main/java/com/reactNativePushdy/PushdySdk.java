@@ -103,8 +103,8 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
       boolean jsSubscribeThisEvent = this.subscribedEventNames.contains(eventName);
 
       // Log.d("RNPushdy", "this.subscribedEventNames.size() = " + this.subscribedEventNames.size());
-       Log.d("RNPushdy", "jsThreadState = " + jsThreadState);
-       Log.d("RNPushdy", "reactActivated = " + Boolean.toString(reactActivated));
+//       Log.d("RNPushdy", "jsThreadState = " + jsThreadState);
+//       Log.d("RNPushdy", "reactActivated = " + Boolean.toString(reactActivated));
        Log.d("RNPushdy", "jsHandlerReady = " + Integer.toString(this.subscribedEventNames.size()));
        Log.d("RNPushdy", "subscribedEventNames = " + this.subscribedEventNames.toString());
 
@@ -127,7 +127,7 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
           // Continue to Retry section
           // JS handle was ready so we increase the retry interval
           delayRetry = 300L;
-          maxRetry = 10;
+          maxRetry = 100; // around 30 secs
         }
       } else {
         // if (!reactActivated) {

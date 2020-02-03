@@ -344,11 +344,10 @@ class RNPushdyWrapper {
   /**
    * To see a list of supported events and its data structure
    * See guide on https://guide.pushdy.com/
-   * TODO: Update this guide url
    *
-   * @param listeners {[eventName]: function onEventNameTriggered() => {}}
+   * @param {{}} listeners {[eventName]: function onEventNameTriggered() => {}}
    */
-  startSubscribers(listeners) {
+  startSubscribers(listeners = {}) {
     const eventEmitter = new NativeEventEmitter(RNPushdy);
 
     const keys = Object.keys(listeners);
