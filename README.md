@@ -24,10 +24,30 @@ React Native SDK for [Pushdy](https://guide.pushdy.com/i/) services
   - [setTimeout(ttl)](#settimeoutttl)
   - [sampleMethod(str, num)](#samplemethodstr-num)
   - [isRemoteNotificationRegistered()](#isremotenotificationregistered)
-  - [ios_registerForPushNotification()](#ios_registerforpushnotification)
   - [isNotificationEnabled()](#isnotificationenabled)
   - [enablePushdyInAppBanner(enable)](#enablepushdyinappbannerenable)
+  - [setPushBannerAutoDismiss(autoDismiss: boolean)](#setpushbannerautodismissautodismiss-boolean)
+  - [setPushBannerDismissDuration(sec: number)](#setpushbannerdismissdurationsec-number)
+  - [setCustomPushBanner(viewType: String)](#setcustompushbannerviewtype-string)
+  - [setCustomMediaKey(mediaKey: String)](#setcustommediakeymediakey-string)
+  - [setDeviceId(id: String)](#setdeviceidid-string)
+  - [getDeviceId()](#getdeviceid)
+  - [setReadyForHandlingNotification(enable)](#setreadyforhandlingnotificationenable)
+  - [getReadyForHandlingNotification()](#getreadyforhandlingnotification)
+  - [startHandleIncommingNotification()](#starthandleincommingnotification)
+  - [stopHandleIncommingNotification()](#stophandleincommingnotification)
+  - [getPendingNotification()](#getpendingnotification)
+  - [getPendingNotifications()](#getpendingnotifications)
+  - [setAttribute(attr: String, value)](#setattributeattr-string-value)
+  - [pushAttribute(attr: String, value, commitImmediately: boolean)](#pushattributeattr-string-value-commitimmediately-boolean)
+  - [getPlayerID()](#getplayerid)
   - [methodFoo(...args)](#methodfooargs)
+- [Events References](#events-references)
+  - [onTokenUpdated](#ontokenupdated)
+  - [onNotificationOpened](#onnotificationopened)
+  - [onNotificationReceived](#onnotificationreceived)
+  - [onRemoteNotificationRegistered](#onremotenotificationregistered)
+  - [onRemoteNotificationFailedToRegister](#onremotenotificationfailedtoregister)
 - [Version compatible](#version-compatible)
 - [Common issues](#common-issues)
   - [ios Setup](#ios-setup)
@@ -195,7 +215,8 @@ Initialization flow:
 
 ```
   async register() {
-    // Remember to subscribe event first
+    // Remember to subscribe first
+    // On android: You must call this fn, at least with no params: Pushdy.startSubscribers();
     const _this = this;
     Pushdy.startSubscribers({
       onNotificationOpened: _this.onNotificationOpened.bind(_this),
@@ -205,11 +226,10 @@ Initialization flow:
       onTokenUpdated: _this.onTokenUpdated.bind(_this),
     });
 
-    // After setting up subscribers, you can continue to work with Pushdy
-    // Pushdy token was handled by Pushdy SDK, if you don't need to read it, just comment out this getDeviceToken() section.
+    // After setting up subscribers, you can continue to work with Pushdy, Please see PushdyMessaging.js for more detail
     this.ensurePermission().then(enabled => {});
 
-    // Check for non-executed push on app opening
+    // Check for non-executed push on app opening, Please see PushdyMessaging.js for more detail
     this.handleInitialNotification();
   }
 
@@ -329,40 +349,13 @@ Signature:
 ```
 
 Desc:
-> Android only:
->
-> On android:
->    registerForPushNotification was called automatically after PushdySDK's initilization
->    true mean registered, false mean registering or failed.
->
-> On iOS:
-> you need to call ios_registerForPushNotification manually from JS, that mean JS context was already be ready,
->    so that you can listen to onRemoteNotificationRegistered event perfectly
->    Or you can use isRemoteNotificationRegistered variable, it's depend!
+> App finished registering notification with APNs / FCM
+> From now on, your app is valid to receive notification
+> NOTE: This does not mean you can receive notification, please check `isNotificationEnabled()` and `getReadyForHandlingNotification()`
 
 Usage:
 ```
 const isRegistered = await Pushdy.isRemoteNotificationRegistered();
-```
-
-##### ios_registerForPushNotification()
-Signature: 
-```
-/**
- * @returns {Promise<void>}
- */
-async ios_registerForPushNotification()
-```
-
-Desc: 
-> See [isRemoteNotificationRegistered](#isRemoteNotificationRegistered) above.
->
-> And https://guide.pushdy.com/i/tham-chieu-sdk-api/ios-native-sdk#registerforpushnotification
-
-Usage:
-```
-await Pushdy.ios_registerForPushNotification();
-
 ```
 
 
@@ -411,25 +404,309 @@ Desc:
 
 Usage:
 ```
-const result = await Pushdy.methodFoo();
+await Pushdy.enablePushdyInAppBanner(false);
 ```
 
 
+##### setPushBannerAutoDismiss(autoDismiss: boolean)
+Signature:
+```
+async setPushBannerAutoDismiss(autoDismiss: boolean)
+```
+
+Desc:
+> https://guide.pushdy.com/i/tham-chieu-sdk-api/android-native-sdk#setpushbannerautodismiss
+>
+> https://guide.pushdy.com/i/tham-chieu-sdk-api/ios-native-sdk#setpushbannerautodismiss
+
+Usage:
+```
+await Pushdy.setPushBannerAutoDismiss(true);
+```
 
 
+##### setPushBannerDismissDuration(sec: number)
+Signature:
+```
+async setPushBannerDismissDuration(sec: number)
+```
+
+Desc:
+> https://guide.pushdy.com/i/tham-chieu-sdk-api/android-native-sdk#setpushbannerautodismiss
+>
+> https://guide.pushdy.com/i/tham-chieu-sdk-api/ios-native-sdk#setpushbannerautodismiss
+
+Usage:
+```
+await Pushdy.setPushBannerDismissDuration(5)
+```
+
+
+##### setCustomPushBanner(viewType: String)
+Signature:
+```
+async setCustomPushBanner(viewType: String)
+```
+
+Desc:
+> This feature is not completed yet, do not use it.
+>
+> viewType can be one of: \[ "largeIconAsBigImage" \]
+
+Usage:
+```
+await Pushdy.setCustomPushBanner('large')
+```
+
+
+##### setCustomMediaKey(mediaKey: String)
+Signature:
+```
+async setCustomMediaKey(mediaKey: String)
+```
+
+Desc:
+> https://guide.pushdy.com/i/tham-chieu-sdk-api/android-native-sdk#setcustommediakey
+> https://guide.pushdy.com/i/tham-chieu-sdk-api/ios-native-sdk#setcustommediakey
+
+Usage:
+```
+await Pushdy.setCustomMediaKey('_nms_image')
+```
+
+
+##### setDeviceId(id: String)
+##### getDeviceId()
+Signature:
+```
+async setDeviceId(id: String)
+async getDeviceId()
+```
+
+Desc:
+methodFoo...
+
+Usage:
+```
+const result = await Pushdy.setDeviceId('1234567890')
+const deviceId = await Pushdy.getDeviceId()
+```
+
+
+##### setReadyForHandlingNotification(enable)
+##### getReadyForHandlingNotification()
+Signature:
+```
+async setReadyForHandlingNotification(enable)
+```
+
+Desc:
+> https://guide.pushdy.com/i/tham-chieu-sdk-api/android-native-sdk#readyforhandlingnotification
+
+Usage:
+```
+await Pushdy.setReadyForHandlingNotification(false);
+const enabled = await Pushdy.getReadyForHandlingNotification();
+```
+
+
+##### startHandleIncommingNotification()
+##### stopHandleIncommingNotification()
+Signature:
+```
+async startHandleIncommingNotification()
+async stopHandleIncommingNotification()
+```
+
+Desc:
+> stopHandleIncommingNotification: Pushdy will still receive new incomming notification but will not handle it, this notification will be pushed to a pending queue. Sometime in the future, when you need to check notification, you can use `getPendingNotification()` to get the un-handled notification.
+>
+> startHandleIncommingNotification: This is default behavior. Pushdy will handle new incomming noti, display, send `onNotificationReceived` event to JS.
+>
+> Alias of setReadyForHandlingNotification(enable):
+> setReadyForHandlingNotification(true) <=> startHandleIncommingNotification()
+> setReadyForHandlingNotification(false) <=> stopHandleIncommingNotification()
+
+Usage:
+```
+await Pushdy.startHandleIncommingNotification();
+await Pushdy.stopHandleIncommingNotification();
+```
+
+
+##### getPendingNotification()
+##### getPendingNotifications()
+Signature:
+```
+// Get a latest pending notification
+async getPendingNotification()
+
+// Get all pending notifications
+async getPendingNotifications()
+```
+
+Desc:
+> In comming notification was not be handled and send to pending queue in case of:
+> * app is in FG and stopHandleIncommingNotification():
+> * app is in BG and no notification's background service of the app is running
+> * app is not open
+>
+> See `stopHandleIncommingNotification()` method above
+
+Usage:
+```
+const pendingNotification:PushdyNotification = await Pushdy.getPendingNotification();
+const pendingNotifications:PushdyNotification[] = await Pushdy.getPendingNotifications();
+```
+
+
+##### setAttribute(attr: String, value)
+Signature:
+```
+async setAttribute(attr: String, value)
+```
+
+Desc:
+> https://guide.pushdy.com/i/tham-chieu-sdk-api/android-native-sdk#setattribute
+
+Usage:
+```
+await Pushdy.setAttribute('phone', '1234567890')
+```
+
+
+##### pushAttribute(attr: String, value, commitImmediately: boolean)
+Signature:
+```
+async pushAttribute(attr: String, value, commitImmediately: boolean)
+```
+
+Desc:
+> https://guide.pushdy.com/i/tham-chieu-sdk-api/android-native-sdk#pushattribute
+
+Usage:
+```
+await Pushdy.pushAttribute(attr: String, value, commitImmediately: boolean)
+```
+
+##### getPlayerID()
+Signature:
+```
+async getPlayerID()
+```
+
+Desc:
+> https://guide.pushdy.com/i/tham-chieu-sdk-api/android-native-sdk#getplayerid
+
+Usage:
+```
+const playerId = await Pushdy.getPlayerID()
+```
 
 ##### methodFoo(...args)
-Signature: 
+Signature:
 ```
 async methodFoo(...args)
 ```
 
-Desc: 
+Desc:
 methodFoo...
 
 Usage:
 ```
 const result = await Pushdy.methodFoo();
+```
+
+## Events References
+Pushdy SDK will send some event from native to JS, if you need to listen to Pushdy Events, you need to subscribe to event names in register() function (see common use case section):
+```
+const _this = this;
+Pushdy.startSubscribers({
+  onNotificationOpened: _this.onNotificationOpened.bind(_this),
+  onNotificationReceived: _this.onNotificationReceived.bind(_this),
+  onRemoteNotificationFailedToRegister: _this.onRemoteNotificationFailedToRegister.bind(_this),
+  onRemoteNotificationRegistered: _this.onRemoteNotificationRegistered.bind(_this),
+  onTokenUpdated: _this.onTokenUpdated.bind(_this),
+});
+```
+
+##### onTokenUpdated
+Signature:
+```
+onTokenUpdated(event)
+```
+
+Desc:
+> Push token was changed by APNs / FCM, if this token is changed, Pushdy SDK will notice JS thread by onTokenUpdated event
+
+Usage:
+```
+onTokenUpdated({ deviceToken }) {
+  console.log('new deviceToken: ', deviceToken)
+}
+```
+
+##### onNotificationOpened
+Signature:
+```
+onNotificationOpened(event)
+```
+
+Desc:
+> https://guide.pushdy.com/i/tham-chieu-sdk-api/android-native-sdk#onnotificationopened
+>
+> Was triggered when:
+> * User tap on push notification in the notification tray
+> * User tap on InAppNotificationBanner
+
+Usage:
+```
+onNotificationOpened({notification, fromState}) {
+  console.log('tapped on notification: ', notification, fromState)
+}
+```
+
+##### onNotificationReceived
+Signature:
+```
+onNotificationReceived(event)
+```
+
+Desc:
+> https://guide.pushdy.com/i/tham-chieu-sdk-api/android-native-sdk#onnotificationreceived
+>
+> Was triggered when:
+> * Notification comming and app is in foreground
+>
+> When app is in background or not open, notification will be handled by OS except you have a custom notification service/extension
+
+Usage:
+```
+onNotificationReceived({notification, fromState}) {
+  console.log('{onNotificationReceived} event: ', {notification, fromState});
+}
+```
+
+##### onRemoteNotificationRegistered
+##### onRemoteNotificationFailedToRegister
+Signature:
+```
+onRemoteNotificationRegistered(event)
+onRemoteNotificationFailedToRegister(event)
+```
+
+Desc:
+> Pushdy SDK initialization process will take a hand shake with APNs/FCM, then fire these events on failed/succeed
+
+Usage:
+```
+onRemoteNotificationFailedToRegister(event) {
+  this.log.info('{onRemoteNotificationFailedToRegister} event: ', event);
+}
+
+onRemoteNotificationRegistered(event) {
+  this.log.info('{onRemoteNotificationRegistered} event: ', event);
+}
 ```
 
 
@@ -444,13 +721,6 @@ react-native@0.61.x and above
 * @0.0.4-rn0_60 | 0.0.6  | 0.0.6  | develoment stage: android sdk change data structure
 * @0.0.4 | 0.0.6  | 0.0.6  | develoment stage: android sdk change data structure
 * latest | latest | latest | develoment stage
-
-react-native@0.60.x and bellow
-*  RNPushdy | android-pushdy-sdk | ios-pushdy-sdk | Note |
-*  --     | --     | --     | develoment stage
-*  @0.0.4 | 0.0.6  | 0.0.6  | develoment stage: android sdk change data structure
-*  @0.0.6 | 0.0.6  | 0.0.9  | develoment stage: ios sdk breaking change
-*  latest | latest | latest | develoment stage
 
 
 ## Common issues
