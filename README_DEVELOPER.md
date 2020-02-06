@@ -28,6 +28,24 @@ npm publish
 | Get App context: | PushdyModule.reactContext                                     |
 
 
+## Git branching model
+| Purpose           |  branch       | Note |
+|-------------------|---------------| ---  |
+| release           | master        | Every time you publish a release & release to npm |
+| develop           | master        | Every time you publish a release & release to npm |
+
+Because only 1 or 2 peoples working on project, so we use simple tree structure, with only 2-3 main branch
+
+Release new version:
+- develop was checked out from `master`:
+    - develop maintain all development progress,
+    - all new commit was commit into `development`
+    - In case multiple features were developed parallelly, all of them was checked out from develop, when complete, merge back to develop
+- When we need to release:
+    - increase the version in package.json,
+    - merge `develop` into `master`,
+    - tag + publish a release on github
+
 ## Development & contribution
 
 For faster local development experience, you might need to use local package instead of npm:
