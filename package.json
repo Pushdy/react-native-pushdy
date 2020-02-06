@@ -5,7 +5,7 @@
   "description": "Pushdy Sdk implement for React Native",
   "main": "index.js",
   "scripts": {
-    "publish": "npm publish",
+    "publish-to-npm": "npm publish",
     "publish-dry-run": "npm publish --dry-run",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
