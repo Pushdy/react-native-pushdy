@@ -14,18 +14,18 @@ npm publish
 # === Development ===
 ## Architecture
 
-iOS data flows:
+| iOS data flows:  |                                                               |
+|------------------|---------------------------------------------------------------|
+| Init app:      | AppDelegate.m ---> Pushdy.swift --> PushdySDK.init              |
+| JS --> native:   | JS --> Pushdy.m --> Pushdy.swift --> PushdySDK                |
+| Native --> JS:   | PushdySDK --> RNPushdyDelegate.swift --> Pushdy.swift --> JS event listener |
 
-* Init app: AppDelegate.m ---> PushdySDK.init
-* JS --> native: JS --> Pushdy.m --> Pushdy.swift --> PushdySDK
-* Native --> JS: PushdySDK --> Pushdy.swift --> Pushdy.m --> JS event listener
-* Get App context:  Pushdy.swift --> PushdySDK.getAppContext()
-
-Android data flows:
-* Init app: MainApplication ---> PushdyModule.init -> PushdySDK.init
-* JS --> native: JS --> PushdyModule --> PushdySDK
-* Native --> JS: PushdySDK --> PushdyModule --> JS event listener
-* Get App context:  PushdyModule.reactContext
+| Android data flows: |                                                            |
+|------------------|---------------------------------------------------------------|
+| Init app:        | MainApplication ---> PushdyModule.init -> PushdySDK.init      |                         |
+| JS --> native:   | JS --> PushdyModule --> PushdySDK                             |
+| Native --> JS:   | PushdySDK --> PushdyModule --> JS event listener              |
+| Get App context: | PushdyModule.reactContext                                     |
 
 
 ## Development & contribution
