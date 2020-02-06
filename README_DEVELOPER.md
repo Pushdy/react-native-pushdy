@@ -46,6 +46,19 @@ Release new version:
     - merge `develop` into `master`,
     - tag + publish a release on github
 
+```
+tags:      #v0.0.5                       #v0.0.6                                                 v0.0.7                v0.0.8
+master  ---*-----------------------------*-------------------------------------------------------*--------------------*---------> master
+            \                           /                                                       /                    /
+develop      *------------*------------*---*-----------*---*---------------------------*---*---*--------*-----------*-----------> develop
+             feature 1    feature 2    v0.0.6          |   |\ feature x1 ...   ...    /   /    v0.0.7   feature n   v0.0.8
+                                           feature 3   |   | *-----------*-----*-----*   /  develop/big_feature_x
+                                                       |    \ feature y1    feature y2  /
+                                                       |     *--------------*----------*    develop/big_feature_y
+                                                        \
+                                                         *--------*---------*---------------------------------------------------> develop/big_feature_z (not completed yet)
+```
+
 ## Development & contribution
 
 For faster local development experience, you might need to use local package instead of npm:
