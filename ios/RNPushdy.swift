@@ -14,8 +14,7 @@ import PushdySDK
 public class RNPushdy: RCTEventEmitter {
     // private static var delegate:RNPushdyDelegate;
     @objc public static var instance:RNPushdy? = nil;
-    
-    @objc private static var clientKey:String? = nil
+
     @objc private static var delegate:UIApplicationDelegate? = nil
     @objc private static var launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     
@@ -91,14 +90,9 @@ public class RNPushdy: RCTEventEmitter {
         
         NSLog(msg);
     }
-    
-    /**
-     - Usage:
-     [RNPushdy initWithClientKey:...]
-     */
+
     @objc
-    public static func initWith(clientKey:String, delegate:UIApplicationDelegate, launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
-        self.clientKey = clientKey
+    public static func registerSdk(_ delegate:UIApplicationDelegate, launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         self.delegate = delegate
         self.launchOptions = launchOptions
     }
@@ -108,15 +102,21 @@ public class RNPushdy: RCTEventEmitter {
         options: NSDictionary,
         resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
     ) {
+        var clientKey:String = "";
         if options["clientKey"] != nil {
-            RNPushdy.clientKey = options["clientKey"] as? String
+            clientKey = options["clientKey"] as! String
+        } else {
+            reject("InvalidArgument", "RNPushdy.initPushdy: Invalid param: options.clientKey is required", NSError(domain: "", code: 200, userInfo: nil))
+        }
+        if clientKey.isEmpty {
+            reject("InvalidArgument", "RNPushdy.initPushdy: Invalid param: options.clientKey cannot be empty", NSError(domain: "", code: 200, userInfo: nil))
         }
 
         if options["deviceId"] != nil {
             Pushdy.setDeviceID(options["deviceId"] as! String);
         }
 
-        Pushdy.initWith(clientKey: RNPushdy.clientKey!
+        Pushdy.initWith(clientKey: clientKey
         , delegate: RNPushdy.delegate!
         , delegaleHandler: RNPushdyDelegate()
         , launchOptions: RNPushdy.launchOptions)

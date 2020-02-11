@@ -32,7 +32,6 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
   private static PushdySdk instance = null;
   private ReactApplicationContext reactContext = null;
 
-  private String clientKey = null;
   private android.content.Context mainAppContext = null;
   private Integer smallIcon = null;
 
@@ -70,8 +69,7 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
   /**
    * Call initWithContext from MainApplication.java to init sdk
    */
-  public void initWithContext(String clientKey, android.content.Context mainAppContext, Integer smallIcon) {
-    this.clientKey = clientKey;
+  public void registerSdk(android.content.Context mainAppContext, Integer smallIcon) {
     this.mainAppContext = mainAppContext;
     this.smallIcon = smallIcon;
 
@@ -204,9 +202,16 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
   /**
    * ===================  Pushdy hook =============================
    */
-  public void initPushdy(ReadableMap options) {
-    if (options.hasKey("clientKey")) {
-      this.clientKey = options.getString("clientKey");
+  public void initPushdy(ReadableMap options) throws Exception {
+    String clientKey = "";
+    if (!options.hasKey("clientKey")) {
+      throw new Exception("RNPushdy.initPushdy: Invalid param: options.clientKey is required");
+    } else {
+      clientKey = options.getString("clientKey");
+
+      if (clientKey == null) {
+        throw new Exception("RNPushdy.initPushdy: Invalid param: options.clientKey cannot be empty");
+      }
     }
 
     if (options.hasKey("deviceId")) {
@@ -214,9 +219,9 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
     }
 
     if (this.smallIcon != null) {
-      Pushdy.initWith(this.mainAppContext, this.clientKey, this, this.smallIcon);
+      Pushdy.initWith(this.mainAppContext, clientKey, this, this.smallIcon);
     } else {
-      Pushdy.initWith(this.mainAppContext, this.clientKey, this);
+      Pushdy.initWith(this.mainAppContext, clientKey, this);
     }
     Pushdy.registerForRemoteNotification();
     Pushdy.setBadgeOnForeground(true);

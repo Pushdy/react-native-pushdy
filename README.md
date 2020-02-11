@@ -97,22 +97,16 @@ Prerequisite:
 
 android/app/src/main/java/**/MainApplication.java
 ```
-    // Import RNPushdy
-    import com.reactNativePushdy.PushdySdk;
+    import com.reactNativePushdy.PushdySdk;  // <---- Import RNPushdy
     ...
 
     @Override
     public void onCreate() {
       ...
-
       // ----- Add Pushdy module
-      // Add Pushdy init at the end of `onCreate`
-      String pushdyClientKey = BuildConfig.DEBUG
-          ? "debug_client_key_copied_from_pushdy"
-          : "prod_client_key_copied_from_pushdy";
-
-      PushdySdk.getInstance().initWithContext(pushdyClientKey, this, R.mipmap.ic_notification);
-      // ----- Add Pushdy module
+      PushdySdk.getInstance().registerSdk(this, R.mipmap.ic_notification);
+      // ----- End add Pushdy module
+      ...
     }
 ```
 
@@ -359,15 +353,14 @@ Desc:
 > - options: An json object contain key-value configuration pair, all pair are optional.
 >
 > Available optional key:
-> - clientKey: You can declare Pushdy clientKey in JS or in native
-> - deviceId: Custom user id, read [setDeviceId()](#setdeviceidid-string) for more detail.
+> - clientKey: [REQUIRED] You can declare Pushdy clientKey in JS or in native
+> - deviceId: [OPTIONAL] Custom user id, read [setDeviceId()](#setdeviceidid-string) for more detail.
 
 Usage:
 ```
-await Pushdy.initPushdy();
 await Pushdy.initPushdy({
-    clientKey: 'Pushdy client key here',
-    deviceId: 'set custom user device ID, read docs for more detail',
+    clientKey: 'Pushdy client key',   // <----- required key
+    deviceId: 'read docs above',      // <----- optional key
 });
 ```
 
