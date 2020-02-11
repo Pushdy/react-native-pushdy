@@ -9,6 +9,7 @@
     "publish-dry-run": "npm publish --dry-run",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "homepage": "http://pushdy.com",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Pushdy/react-native-pushdy.git",
