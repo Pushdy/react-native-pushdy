@@ -74,6 +74,9 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
     this.clientKey = clientKey;
     this.mainAppContext = mainAppContext;
     this.smallIcon = smallIcon;
+
+    // Listen to activity change
+    Pushdy.registerActivityLifecycle(mainAppContext);
   }
 
   private void sendEvent(String eventName) {
