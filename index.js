@@ -211,6 +211,10 @@ class RNPushdyWrapper {
     return this.callNative(RNPushdy.sampleMethod, str, num);
   }
 
+  async initPushdy(options) {
+    return this.callNative(RNPushdy.initPushdy, options);
+  }
+
   /**
    * Android only:
    * On android:

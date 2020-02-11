@@ -13,10 +13,18 @@ import PushdySDK
 @objc(RNPushdy)
 public class RNPushdy: RCTEventEmitter {
     // private static var delegate:RNPushdyDelegate;
-    @objc private static var instance:RNPushdy? = nil;
+    @objc public static var instance:RNPushdy? = nil;
+    
+    @objc private static var clientKey:String? = nil
+    @objc private static var delegate:UIApplicationDelegate? = nil
+    @objc private static var launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     
     override init() {
         super.init()
+        
+        // React native will create new instance after we create singleton instance in AppDelegate.m
+        // So i react do reinit, we need to grant new instance to RNPushdy.instance
+        // This ensure that RCTBridge will work properly
         RNPushdy.instance = self
     }
     
@@ -32,6 +40,7 @@ public class RNPushdy: RCTEventEmitter {
     @objc public static func getInstance() -> RNPushdy {
         if RNPushdy.instance == nil {
             RNPushdy.instance = RNPushdy();
+            print("[ERROR] This case should not happen: Manually init RNPushdy() instance")
         }
 
         return instance!;
@@ -89,10 +98,28 @@ public class RNPushdy: RCTEventEmitter {
      */
     @objc
     public static func initWith(clientKey:String, delegate:UIApplicationDelegate, launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
-        Pushdy.initWith(clientKey: clientKey
-            , delegate: delegate
-            , delegaleHandler: RNPushdyDelegate()
-            , launchOptions: launchOptions)
+        self.clientKey = clientKey
+        self.delegate = delegate
+        self.launchOptions = launchOptions
+    }
+    
+    @objc
+    public func initPushdy(_
+        options: NSDictionary,
+        resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
+    ) {
+        if options["clientKey"] != nil {
+            RNPushdy.clientKey = options["clientKey"] as? String
+        }
+
+        if options["deviceId"] != nil {
+            Pushdy.setDeviceID(options["deviceId"] as! String);
+        }
+
+        Pushdy.initWith(clientKey: RNPushdy.clientKey!
+        , delegate: RNPushdy.delegate!
+        , delegaleHandler: RNPushdyDelegate()
+        , launchOptions: RNPushdy.launchOptions)
 
         /**
         * If user allowed, you still need to call this to register UNUserNotificationCenter delegation
@@ -100,6 +127,8 @@ public class RNPushdy: RCTEventEmitter {
         * Android was registered by default so you don't need to register for android
         */
         Pushdy.registerForPushNotifications()
+        
+        resolve(true)
     }
 
     @objc

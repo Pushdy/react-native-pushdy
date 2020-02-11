@@ -721,6 +721,7 @@ react-native@0.61.x and above
 | RNPushdy      | android-pushdy-sdk | ios-pushdy-sdk | Note                                                |
 |---------------|--------------------|----------------|-----------------------------------------------------|
 | latest        | latest             | latest         | develoment stage                                    |
+| 0.0.9         | 0.0.7              | 0.0.9          | Change initialization flow and both android and ios |
 | 0.0.6         | 0.0.6              | 0.0.9          | ios SDK change delegation structure                 |
 | @0.0.4        | 0.0.6              | 0.0.6          | develoment stage                                    |
 | @0.0.4-rn0_60 | 0.0.6              | 0.0.6          | develoment stage: android sdk change data structure |

@@ -34,6 +34,13 @@ RCT_EXTERN_METHOD(
                   rejecter: (RCTPromiseRejectBlock)reject
                   )
 
+
+RCT_EXTERN_METHOD(
+                  initPushdy: (NSDictionary *)options
+                  resolve: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
+
 RCT_EXTERN_METHOD(
                   getDeviceToken: (RCTPromiseResolveBlock)resolve
                   rejecter: (RCTPromiseRejectBlock)reject

@@ -8,6 +8,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.WritableNativeArray;
 
@@ -57,10 +58,11 @@ public class PushdyModule extends ReactContextBaseJavaModule {
     /**
      * ======= Reimplement all ios / android native api =======
      */
-//    @ReactMethod
-//    public void init(String clientKey, Callback callback) {
-//        pushdySdk.initWith(clientKey);
-//    }
+    @ReactMethod
+    public void initPushdy(ReadableMap options, Promise promise) {
+        pushdySdk.initPushdy(options);
+        promise.resolve(true);
+    }
 
     @ReactMethod
     public void isRemoteNotificationRegistered(Promise promise) {

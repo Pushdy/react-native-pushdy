@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.common.LifecycleState;
 import com.pushdy.Pushdy;
@@ -30,6 +31,10 @@ import com.facebook.react.bridge.Arguments;
 public class PushdySdk implements Pushdy.PushdyDelegate {
   private static PushdySdk instance = null;
   private ReactApplicationContext reactContext = null;
+
+  private String clientKey = null;
+  private android.content.Context mainAppContext = null;
+  private Integer smallIcon = null;
 
   /**
    * onRemoteNotificationRegistered fired when react context was not ready
@@ -65,16 +70,10 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
   /**
    * Call initWithContext from MainApplication.java to init sdk
    */
-  public void initWithContext(String clientKey, android.content.Context mainAppContext) {
-    Pushdy.initWith(mainAppContext, clientKey, this);
-    Pushdy.registerForRemoteNotification();
-    Pushdy.setBadgeOnForeground(true);
-  }
-
   public void initWithContext(String clientKey, android.content.Context mainAppContext, Integer smallIcon) {
-    Pushdy.initWith(mainAppContext, clientKey, this, smallIcon);
-    Pushdy.registerForRemoteNotification();
-    Pushdy.setBadgeOnForeground(true);
+    this.clientKey = clientKey;
+    this.mainAppContext = mainAppContext;
+    this.smallIcon = smallIcon;
   }
 
   private void sendEvent(String eventName) {
@@ -202,6 +201,24 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
   /**
    * ===================  Pushdy hook =============================
    */
+  public void initPushdy(ReadableMap options) {
+    if (options.hasKey("clientKey")) {
+      this.clientKey = options.getString("clientKey");
+    }
+
+    if (options.hasKey("deviceId")) {
+      this.setDeviceId(options.getString("deviceId"));
+    }
+
+    if (this.smallIcon != null) {
+      Pushdy.initWith(this.mainAppContext, this.clientKey, this, this.smallIcon);
+    } else {
+      Pushdy.initWith(this.mainAppContext, this.clientKey, this);
+    }
+    Pushdy.registerForRemoteNotification();
+    Pushdy.setBadgeOnForeground(true);
+  }
+
   @Nullable
   @Override
   public Notification customNotification(@NotNull String s, @NotNull String s1, @NotNull String s2, @NotNull Map<String, ?> map) {
