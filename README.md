@@ -23,6 +23,7 @@ React Native SDK for [Pushdy](https://guide.pushdy.com/i/) services
 - [API References](#api-references)
   - [setTimeout(ttl)](#settimeoutttl)
   - [sampleMethod(str, num)](#samplemethodstr-num)
+  - [initPushdy(options)](#initpushdyoptions)
   - [isRemoteNotificationRegistered()](#isremotenotificationregistered)
   - [isNotificationEnabled()](#isnotificationenabled)
   - [enablePushdyInAppBanner(enable)](#enablepushdyinappbannerenable)
@@ -216,7 +217,10 @@ Initialization flow:
 
 ```
   async register() {
-    // Remember to subscribe first
+    // [Required] read the API reference for more detail.
+    Pushdy.initPushdy();
+
+    // Remember to subscribe asap
     // On android: You must call this fn, at least with no params: Pushdy.startSubscribers();
     const _this = this;
     Pushdy.startSubscribers({
@@ -339,6 +343,33 @@ Usage:
 const [msg, x2num] = await Pushdy.sampleMethod('Hello from JS with', 500);
 ```
 
+
+##### initPushdy(options)
+Signature:
+```
+async initPushdy(options)
+```
+
+Desc:
+> Init RNPushdy SDK whenever you want
+>
+> Then your app can receive and handle push from APNs / FCM
+>
+> Params:
+> - options: An json object contain key-value configuration pair, all pair are optional.
+>
+> Available optional key:
+> - clientKey: You can declare Pushdy clientKey in JS or in native
+> - deviceId: Custom user id, read [setDeviceId()](#setdeviceidid-string) for more detail.
+
+Usage:
+```
+await Pushdy.initPushdy();
+await Pushdy.initPushdy({
+    clientKey: 'Pushdy client key here',
+    deviceId: 'set custom user device ID, read docs for more detail',
+});
+```
 
 ##### isRemoteNotificationRegistered()
 Signature: 
@@ -485,7 +516,9 @@ async getDeviceId()
 ```
 
 Desc:
-methodFoo...
+> https://guide.pushdy.com/i/tham-chieu-sdk-api/android-native-sdk#setdeviceid
+>
+> https://guide.pushdy.com/i/tham-chieu-sdk-api/ios-native-sdk#setdeviceid
 
 Usage:
 ```
