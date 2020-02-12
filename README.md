@@ -137,14 +137,7 @@ AppDelegate.m
   ...
 
   // ----- Add Pushdy module
-  NSString *clientKey;
-  #if DEBUG
-    clientKey = @"debug_client_key_copied_from_pushdy";
-  #else
-    clientKey = @"prod_client_key_copied_from_pushdy";
-  #endif
-
-  [RNPushdy initWithClientKey:clientKey delegate:self launchOptions:launchOptions];
+  [RNPushdy registerSdk:self launchOptions:launchOptions];
   // ----- End add Pushdy module
 
   ...
@@ -212,7 +205,7 @@ Initialization flow:
 ```
   async register() {
     // [Required] read the API reference for more detail.
-    Pushdy.initPushdy();
+    await Pushdy.initPushdy({clientKey: '**********'});
 
     // Remember to subscribe asap
     // On android: You must call this fn, at least with no params: Pushdy.startSubscribers();
