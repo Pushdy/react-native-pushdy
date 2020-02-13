@@ -60,8 +60,12 @@ public class PushdyModule extends ReactContextBaseJavaModule {
      */
     @ReactMethod
     public void initPushdy(ReadableMap options, Promise promise) {
-        pushdySdk.initPushdy(options);
-        promise.resolve(true);
+        try {
+            pushdySdk.initPushdy(options);
+            promise.resolve(true);
+        } catch (Exception e) {
+            promise.reject("INIT_ERROR", e);
+        }
     }
 
     @ReactMethod
