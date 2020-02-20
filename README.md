@@ -23,6 +23,7 @@ React Native SDK for [Pushdy](https://guide.pushdy.com/i/) services
 - [API References](#api-references)
   - [setTimeout(ttl)](#settimeoutttl)
   - [sampleMethod(str, num)](#samplemethodstr-num)
+  - [initPushdy(options)](#initpushdyoptions)
   - [isRemoteNotificationRegistered()](#isremotenotificationregistered)
   - [isNotificationEnabled()](#isnotificationenabled)
   - [enablePushdyInAppBanner(enable)](#enablepushdyinappbannerenable)
@@ -103,7 +104,8 @@ android/app/src/main/java/**/MainApplication.java
     public void onCreate() {
       ...
       // ----- Add Pushdy module
-      PushdySdk.getInstance().registerSdk(this, R.mipmap.ic_notification);
+      String clientKey = "**********";
+      PushdySdk.getInstance().registerSdk(clientKey, this, R.mipmap.ic_notification);
       // ----- End add Pushdy module
       ...
     }
@@ -204,8 +206,8 @@ Initialization flow:
 ```
   async register() {
     // [Required] read the API reference for more detail.
-    // This is required line, do forget to setDeviceId: Use T19 device ID as pushdy device id
-    await Pushdy.setDeviceId("YOUR_USER_DEVICE_UID");
+    // This is required line, do forget to set Device Id: Use T19 device ID as pushdy device id
+    await Pushdy.initPushdy({ deviceId: 'YOUR_USER_DEVICE_UID' });
 
     // Remember to subscribe asap
     // On android: You must call this fn, at least with no params: Pushdy.startSubscribers();
@@ -331,6 +333,29 @@ const [msg, x2num] = await Pushdy.sampleMethod('Hello from JS with', 500);
 ```
 
 
+##### initPushdy(options)
+Signature:
+```
+async initPushdy(options)
+```
+
+Desc:
+> Init RNPushdy SDK whenever you want
+>
+> Then your app can receive and handle push from APNs / FCM
+>
+> Params:
+> - options: An json object contain key-value configuration pair, all pair are optional except `deviceId`
+>
+> Available optional key:
+> - deviceId: [REQUIRED] Custom user id, read [setDeviceId()](#setdeviceidid-string) for more detail.
+
+Usage:
+```
+await Pushdy.initPushdy({
+    deviceId: 'read docs above',      // <----- required key
+});
+```
 
 ##### isRemoteNotificationRegistered()
 Signature: 
@@ -468,11 +493,10 @@ await Pushdy.setCustomMediaKey('_nms_image')
 ```
 
 
-##### setDeviceId(id: String)
+##### ~setDeviceId(id: String)~
 ##### getDeviceId()
 Signature:
 ```
-async setDeviceId(id: String)
 async getDeviceId()
 ```
 
@@ -480,10 +504,11 @@ Desc:
 > https://guide.pushdy.com/i/tham-chieu-sdk-api/android-native-sdk#setdeviceid
 >
 > https://guide.pushdy.com/i/tham-chieu-sdk-api/ios-native-sdk#setdeviceid
+>
+> NOTE: setDeviceId() was not supported on react-native SDK, use initPushdy() instead
 
 Usage:
 ```
-const result = await Pushdy.setDeviceId('1234567890')
 const deviceId = await Pushdy.getDeviceId()
 ```
 

@@ -69,7 +69,7 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
   /**
    * Call initWithContext from MainApplication.java to init sdk
    */
-  public void initWithContext(String clientKey, android.content.Context mainAppContext, Integer smallIcon) {
+  public void registerSdk(String clientKey, android.content.Context mainAppContext, Integer smallIcon) {
     Pushdy.setNullDeviceID();
     if (smallIcon != null) {
       Pushdy.initWith(mainAppContext, clientKey, this, smallIcon);
@@ -78,6 +78,21 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
     }
     Pushdy.registerForRemoteNotification();
     Pushdy.setBadgeOnForeground(true);
+  }
+
+  public void initPushdy(ReadableMap options) throws Exception {
+    String deviceId = "";
+    if (!options.hasKey("deviceId")) {
+      throw new Exception("RNPushdy.initPushdy: Invalid param: options.deviceId is required");
+    } else {
+      deviceId = options.getString("deviceId");
+
+      if (deviceId == null || deviceId == "") {
+        throw new Exception("RNPushdy.initPushdy: Invalid param: options.deviceId cannot be empty");
+      }
+    }
+
+    this.setDeviceId(deviceId);
   }
 
   private void sendEvent(String eventName) {
@@ -217,7 +232,7 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
   3. From now on, PushdySDK is ready to work.
 
 
-  public void registerSdk(android.content.Context mainAppContext, Integer smallIcon) {
+  public void old_registerSdk(android.content.Context mainAppContext, Integer smallIcon) {
     this.mainAppContext = mainAppContext;
     this.smallIcon = smallIcon;
 
@@ -225,7 +240,7 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
     Pushdy.registerActivityLifecycle(mainAppContext);
   }
 
-  public void initPushdy(ReadableMap options) throws Exception {
+  public void old_initPushdy(ReadableMap options) throws Exception {
     String clientKey = "";
     if (!options.hasKey("clientKey")) {
       throw new Exception("RNPushdy.initPushdy: Invalid param: options.clientKey is required");
