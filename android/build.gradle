@@ -79,7 +79,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
 
     // api 'com.github.Pushdy:android-pushdy-sdk:-SNAPSHOT'
-    api 'com.github.Pushdy:android-pushdy-sdk:0.0.9'
+    api 'com.github.Pushdy:android-pushdy-sdk:0.0.14'
 }
 
 def configureReactNativePom(def pom) {

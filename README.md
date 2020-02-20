@@ -23,7 +23,6 @@ React Native SDK for [Pushdy](https://guide.pushdy.com/i/) services
 - [API References](#api-references)
   - [setTimeout(ttl)](#settimeoutttl)
   - [sampleMethod(str, num)](#samplemethodstr-num)
-  - [initPushdy(options)](#initpushdyoptions)
   - [isRemoteNotificationRegistered()](#isremotenotificationregistered)
   - [isNotificationEnabled()](#isnotificationenabled)
   - [enablePushdyInAppBanner(enable)](#enablepushdyinappbannerenable)
@@ -205,7 +204,8 @@ Initialization flow:
 ```
   async register() {
     // [Required] read the API reference for more detail.
-    await Pushdy.initPushdy({clientKey: '**********'});
+    // This is required line, do forget to setDeviceId: Use T19 device ID as pushdy device id
+    await Pushdy.setDeviceId("YOUR_USER_DEVICE_UID");
 
     // Remember to subscribe asap
     // On android: You must call this fn, at least with no params: Pushdy.startSubscribers();
@@ -218,7 +218,7 @@ Initialization flow:
       onTokenUpdated: _this.onTokenUpdated.bind(_this),
     });
 
-    // After setting up subscribers, you can continue to work with Pushdy, Please see PushdyMessaging.js for more detail
+    // Ensure that push was allowed by user, Please see PushdyMessaging.js for more detail
     this.ensurePermission().then(enabled => {});
 
     // Check for non-executed push on app opening, Please see PushdyMessaging.js for more detail
@@ -331,31 +331,6 @@ const [msg, x2num] = await Pushdy.sampleMethod('Hello from JS with', 500);
 ```
 
 
-##### initPushdy(options)
-Signature:
-```
-async initPushdy(options)
-```
-
-Desc:
-> Init RNPushdy SDK whenever you want
->
-> Then your app can receive and handle push from APNs / FCM
->
-> Params:
-> - options: An json object contain key-value configuration pair, all pair are optional.
->
-> Available optional key:
-> - clientKey: [REQUIRED] You can declare Pushdy clientKey in JS or in native
-> - deviceId: [OPTIONAL] Custom user id, read [setDeviceId()](#setdeviceidid-string) for more detail.
-
-Usage:
-```
-await Pushdy.initPushdy({
-    clientKey: 'Pushdy client key',   // <----- required key
-    deviceId: 'read docs above',      // <----- optional key
-});
-```
 
 ##### isRemoteNotificationRegistered()
 Signature: 
@@ -623,6 +598,32 @@ Usage:
 const playerId = await Pushdy.getPlayerID()
 ```
 
+
+
+##### startSubscribers()
+Signature:
+```
+startSubscribers()
+```
+
+Desc:
+> You must always call this once when you init Pushdy.
+> Pushdy SDK will send some event from native to JS,
+> if you need to listen to Pushdy Events, you need to subscribe to
+> event names in register() function (see common use case section)
+
+Usage:
+```
+const _this = this;
+Pushdy.startSubscribers({
+  onNotificationOpened: _this.onNotificationOpened.bind(_this),
+  onNotificationReceived: _this.onNotificationReceived.bind(_this),
+  onRemoteNotificationFailedToRegister: _this.onRemoteNotificationFailedToRegister.bind(_this),
+  onRemoteNotificationRegistered: _this.onRemoteNotificationRegistered.bind(_this),
+  onTokenUpdated: _this.onTokenUpdated.bind(_this),
+});
+```
+
 ##### methodFoo(...args)
 Signature:
 ```
@@ -638,17 +639,8 @@ const result = await Pushdy.methodFoo();
 ```
 
 ## Events References
-Pushdy SDK will send some event from native to JS, if you need to listen to Pushdy Events, you need to subscribe to event names in register() function (see common use case section):
-```
-const _this = this;
-Pushdy.startSubscribers({
-  onNotificationOpened: _this.onNotificationOpened.bind(_this),
-  onNotificationReceived: _this.onNotificationReceived.bind(_this),
-  onRemoteNotificationFailedToRegister: _this.onRemoteNotificationFailedToRegister.bind(_this),
-  onRemoteNotificationRegistered: _this.onRemoteNotificationRegistered.bind(_this),
-  onTokenUpdated: _this.onTokenUpdated.bind(_this),
-});
-```
+
+Please see [startSubscribers()](#startSubscribers) first.
 
 ##### onTokenUpdated
 Signature:
@@ -730,9 +722,8 @@ onRemoteNotificationRegistered(event) {
 ```
 
 
-## Version compatible
+## Version compatibility
 
-We've maintained compatible version here.
 Versioning use `semver` since RNPushdy version 1.x (0.x is development stage)
 
 react-native@0.61.x and above
@@ -740,6 +731,7 @@ react-native@0.61.x and above
 | RNPushdy      | android-pushdy-sdk | ios-pushdy-sdk | Note                                                |
 |---------------|--------------------|----------------|-----------------------------------------------------|
 | latest        | latest             | latest         | develoment stage                                    |
+| 0.0.10        | 0.0.14             | 0.0.9          | Android SDK support setDeviceID from JS             |
 | 0.0.9         | 0.0.9              | 0.0.9          | Change initialization flow and both android and ios |
 | 0.0.6         | 0.0.6              | 0.0.9          | ios SDK change delegation structure                 |
 | @0.0.4        | 0.0.6              | 0.0.6          | develoment stage                                    |

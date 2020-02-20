@@ -211,9 +211,12 @@ class RNPushdyWrapper {
     return this.callNative(RNPushdy.sampleMethod, str, num);
   }
 
-  async initPushdy(options) {
-    return this.callNative(RNPushdy.initPushdy, options);
-  }
+  // /**
+  //  * @deprecated
+  //  */
+  // async initPushdy(options) {
+  //   return this.callNative(RNPushdy.initPushdy, options);
+  // }
 
   /**
    * Android only:
@@ -289,7 +292,14 @@ class RNPushdyWrapper {
     return this.callNative(RNPushdy.setCustomMediaKey, mediaKey);
   }
 
+  /**
+   * You need to call this fn first
+   */
   async setDeviceId(id: String) {
+    if (!id) {
+      throw Error("setDeviceId: id cannot be empty");
+    }
+
     return this.callNative(RNPushdy.setDeviceId, id);
   }
 

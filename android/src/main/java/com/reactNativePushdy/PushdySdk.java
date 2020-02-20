@@ -69,12 +69,15 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
   /**
    * Call initWithContext from MainApplication.java to init sdk
    */
-  public void registerSdk(android.content.Context mainAppContext, Integer smallIcon) {
-    this.mainAppContext = mainAppContext;
-    this.smallIcon = smallIcon;
-
-    // Listen to activity change
-    Pushdy.registerActivityLifecycle(mainAppContext);
+  public void initWithContext(String clientKey, android.content.Context mainAppContext, Integer smallIcon) {
+    Pushdy.setNullDeviceID();
+    if (smallIcon != null) {
+      Pushdy.initWith(mainAppContext, clientKey, this, smallIcon);
+    } else {
+      Pushdy.initWith(mainAppContext, clientKey, this);
+    }
+    Pushdy.registerForRemoteNotification();
+    Pushdy.setBadgeOnForeground(true);
   }
 
   private void sendEvent(String eventName) {
@@ -202,6 +205,26 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
   /**
    * ===================  Pushdy hook =============================
    */
+
+  /*========================
+  Tried to support initPushdy SDK from JS whenever we want, without success.
+  I stored the draft version here, to remind anyone who wanna init the SDK from JS,
+  It's not possible at the moment, depend on PushdySDK and its working flow.
+
+  Currently, the flow is:
+  1. Init PushdySDK to do some required work (see the SDK)
+  2. Whenever you wanna start Pushdy (often on JS App mounting), call setDeviceId, Pushdy SDK will create a `Player` on the dashboard
+  3. From now on, PushdySDK is ready to work.
+
+
+  public void registerSdk(android.content.Context mainAppContext, Integer smallIcon) {
+    this.mainAppContext = mainAppContext;
+    this.smallIcon = smallIcon;
+
+    // Listen to activity change
+    Pushdy.registerActivityLifecycle(mainAppContext);
+  }
+
   public void initPushdy(ReadableMap options) throws Exception {
     String clientKey = "";
     if (!options.hasKey("clientKey")) {
@@ -226,6 +249,7 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
     Pushdy.registerForRemoteNotification();
     Pushdy.setBadgeOnForeground(true);
   }
+  ======================== */
 
   @Nullable
   @Override
