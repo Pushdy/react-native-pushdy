@@ -211,12 +211,9 @@ class RNPushdyWrapper {
     return this.callNative(RNPushdy.sampleMethod, str, num);
   }
 
-  // /**
-  //  * @deprecated
-  //  */
-  // async initPushdy(options) {
-  //   return this.callNative(RNPushdy.initPushdy, options);
-  // }
+  async initPushdy(options) {
+    return this.callNative(RNPushdy.initPushdy, options);
+  }
 
   /**
    * Android only:
