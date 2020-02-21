@@ -104,7 +104,9 @@ android/app/src/main/java/**/MainApplication.java
     public void onCreate() {
       ...
       // ----- Add Pushdy module
-      String clientKey = "**********";
+      String pushdyClientKey = BuildConfig.DEBUG
+              ? "eyJhbGciOiJIUz****"
+              : "eyJhbGciOiJIUz****";
       PushdySdk.getInstance().registerSdk(clientKey, this, R.mipmap.ic_notification);
       // ----- End add Pushdy module
       ...
@@ -138,7 +140,14 @@ AppDelegate.m
   ...
 
   // ----- Add Pushdy module
-  [RNPushdy registerSdk:self launchOptions:launchOptions];
+  NSString *clientKey;
+  #if DEBUG
+    clientKey = @"eyJhbGciOiJIUzI1*****";
+  #else
+    clientKey = @"eyJhbGciOiJIUzI1*****";
+  #endif
+
+  [RNPushdy registerSdk:clientKey delegate:self launchOptions:launchOptions];
   // ----- End add Pushdy module
 
   ...
@@ -343,6 +352,7 @@ Desc:
 > Init RNPushdy SDK whenever you want
 >
 > Then your app can receive and handle push from APNs / FCM
+> You must call this method once & only once in your app life cycle.
 >
 > Params:
 > - options: An json object contain key-value configuration pair, all pair are optional except `deviceId`
