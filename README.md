@@ -57,6 +57,14 @@ TOC was generated [here](https://magnetikonline.github.io/markdown-toc-generate/
 
 ## Getting started
 
+#### Prerequisite
+
+Prerequisite:
+- react-native@0.61.x and above. The reasons:
+    - 0.5x was not tested yet, and too old to support
+    - 0.60.x does not support `use_frameworks!`, and WritableMap, ReadableMap have breaking changes from 0.60 to 0.61
+- Cocoapod@1.7 and above, tested on v1.8.4, to support swift_versions range
+
 #### Installing
 using yarn or npm:
 ```
@@ -87,11 +95,6 @@ ios: run `pod install`
 Push notification require very deep integration, additional setup is required to support handy feature:
 
 NOTE: You need to complete [Pushdy configuration](#Pushdy-configuration) to receive push notification
-
-Prerequisite:
-- react-native@0.61.x and above. The reasons:
-    - 0.5x was not tested yet, and too old to support
-    - 0.60.x does not support `use_frameworks!`, and WritableMap, ReadableMap have breaking changes from 0.60 to 0.61
 
 #### Android
 
