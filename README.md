@@ -135,6 +135,24 @@ Override your MainActivity (ussually MainActivity.java)
 Prerequisites:
 - Swift enabled, support `use_frameworks!` in your Podfile
 
+You Podfile would look like:
+```
+platform :ios, '9.0'
+require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+
+target 'youProject' do
+  use_frameworks!     # <--- This line must be present
+
+  # Pods for react-native
+  pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
+  pod 'FBReactNativeSpec', :path => "../node_modules/react-native/Libraries/FBReactNativeSpec"
+  pod 'RCTRequired', :path => "../node_modules/react-native/Libraries/RCTRequired"
+  pod 'RCTTypeSafety', :path => "../node_modules/react-native/Libraries/TypeSafety"
+  # more pods here
+
+  use_native_modules!
+end
+```
 
 
 AppDelegate.m
@@ -215,7 +233,7 @@ Bellow is common use cases, for api references, please see [API References](#API
 
 Initialization flow:
 - PushdySDK (native ios/android sdk) connect to FCM / APNS and get the push token
-- RNPushdy (react-native-pushdy) register some needed event listeners to handle events sent by PushdySDK to JS
+- RNPushdy (react-native-pushdy) register some needed event listeners, so that Pushdy can handles the events sented by PushdySDK to JS
 
 
 ```
