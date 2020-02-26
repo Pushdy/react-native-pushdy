@@ -432,8 +432,8 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
     Pushdy.setAttribute(attr, value);
   }
 
-  public void pushAttribute(String attr, Object value, boolean commitImmediately) {
-    Pushdy.pushAttribute(attr, value, commitImmediately);
+  public void pushAttribute(String attr, Object[] value) {
+    Pushdy.pushAttribute(attr, value);
   }
 
   public String getPlayerID() {

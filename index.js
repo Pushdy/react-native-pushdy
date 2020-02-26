@@ -340,8 +340,17 @@ class RNPushdyWrapper {
     return this.callNative(RNPushdy.setAttribute, attr, value);
   }
 
-  async pushAttribute(attr: String, value, commitImmediately: boolean) {
-    return this.callNative(RNPushdy.pushAttribute, attr, value, commitImmediately);
+  /**
+   * @param {String} attr
+   * @param {Number|String|Array} value
+   * @returns {Promise<Boolean>}
+   */
+  async pushAttribute(attr: String, value) {
+    if (!Array.isArray(value)) {
+      value = [value];
+    }
+
+    return this.callNative(RNPushdy.pushAttribute, attr, value);
   }
 
   async getPlayerID() {

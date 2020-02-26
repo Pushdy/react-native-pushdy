@@ -168,8 +168,8 @@ public class PushdyModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void pushAttribute(String attr, Object value, boolean commitImmediately, Promise promise) {
-        pushdySdk.pushAttribute(attr, value, commitImmediately);
+    public void pushAttributeArray(String attr, Object[] value, Promise promise) {
+        pushdySdk.pushAttribute(attr, value);
         promise.resolve(true);
     }
 

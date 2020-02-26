@@ -642,10 +642,10 @@ await Pushdy.setAttribute('phone', '1234567890')
 ```
 
 
-##### pushAttribute(attr: String, value, commitImmediately: boolean)
+##### pushAttribute(attr: String, value:Any)
 Signature:
 ```
-async pushAttribute(attr: String, value, commitImmediately: boolean)
+async pushAttribute(attr: String, value:Any)
 ```
 
 Desc:
@@ -653,7 +653,8 @@ Desc:
 
 Usage:
 ```
-await Pushdy.pushAttribute(attr: String, value, commitImmediately: boolean)
+await Pushdy.pushAttribute("user_facebook_uid", "uaGWAawgAGgawegAWG")
+await Pushdy.pushAttribute("user_articles_id", [1, 6, 100, 222])
 ```
 
 ##### getPlayerID()
