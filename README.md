@@ -242,13 +242,12 @@ Initialization flow:
 
     // Remember to subscribe asap
     // On android: You must call this fn, at least with no params: Pushdy.startSubscribers();
-    const _this = this;
     Pushdy.startSubscribers({
-      onNotificationOpened: _this.onNotificationOpened.bind(_this),
-      onNotificationReceived: _this.onNotificationReceived.bind(_this),
-      onRemoteNotificationFailedToRegister: _this.onRemoteNotificationFailedToRegister.bind(_this),
-      onRemoteNotificationRegistered: _this.onRemoteNotificationRegistered.bind(_this),
-      onTokenUpdated: _this.onTokenUpdated.bind(_this),
+      onNotificationOpened: ({notification, fromState}) => {},
+      onNotificationReceived: ({notification, fromState}) => {},
+      onRemoteNotificationFailedToRegister: (event) => {},
+      onRemoteNotificationRegistered: (event) => {},
+      onTokenUpdated: ({ deviceToken }) => {},
     });
 
     // Ensure that push was allowed by user, Please see PushdyMessaging.js for more detail
@@ -275,11 +274,11 @@ You may take a look at [Common issues](#Common-issues) section in the future.
 #### 3. And Subscribe to new notification
 ```
 Pushdy.startSubscribers({
-  onNotificationOpened: _this.onNotificationOpened.bind(_this),
-  onNotificationReceived: _this.onNotificationReceived.bind(_this),
-  onRemoteNotificationFailedToRegister: _this.onRemoteNotificationFailedToRegister.bind(_this),
-  onRemoteNotificationRegistered: _this.onRemoteNotificationRegistered.bind(_this),
-  onTokenUpdated: _this.onTokenUpdated.bind(_this),
+  onNotificationOpened: ({notification, fromState}) => {},
+  onNotificationReceived: ({notification, fromState}) => {},
+  onRemoteNotificationFailedToRegister: (event) => {},
+  onRemoteNotificationRegistered: (event) => {},
+  onTokenUpdated: ({ deviceToken }) => {},
 });
 ```
 
@@ -687,13 +686,12 @@ Desc:
 
 Usage:
 ```
-const _this = this;
 Pushdy.startSubscribers({
-  onNotificationOpened: _this.onNotificationOpened.bind(_this),
-  onNotificationReceived: _this.onNotificationReceived.bind(_this),
-  onRemoteNotificationFailedToRegister: _this.onRemoteNotificationFailedToRegister.bind(_this),
-  onRemoteNotificationRegistered: _this.onRemoteNotificationRegistered.bind(_this),
-  onTokenUpdated: _this.onTokenUpdated.bind(_this),
+  onNotificationOpened: ({notification, fromState}) => {},
+  onNotificationReceived: ({notification, fromState}) => {},
+  onRemoteNotificationFailedToRegister: (event) => {},
+  onRemoteNotificationRegistered: (event) => {},
+  onTokenUpdated: ({ deviceToken }) => {},
 });
 ```
 
