@@ -88,6 +88,7 @@ yarn upgrade react-native-pushdy
 Then update Pushdy's native library:
 
 **Android** Studio: File > Sync project with graddle files (don't need this if you using react-native run-android)
+
 **Ios**, run:
 ```
 pod install --project-directory=ios
