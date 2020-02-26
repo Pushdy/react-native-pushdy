@@ -110,7 +110,7 @@ android/app/src/main/java/**/MainApplication.java
     public void onCreate() {
       ...
       // ----- Add Pushdy module
-      String pushdyClientKey = BuildConfig.DEBUG
+      String clientKey = BuildConfig.DEBUG
               ? "eyJhbGciOiJIUz****"
               : "eyJhbGciOiJIUz****";
       PushdySdk.getInstance().registerSdk(clientKey, this, R.mipmap.ic_notification);
