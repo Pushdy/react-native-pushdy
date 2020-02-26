@@ -544,6 +544,22 @@ Usage:
 const deviceId = await Pushdy.getDeviceId()
 ```
 
+##### getDeviceToken()
+Signature:
+```
+async getDeviceToken()
+```
+
+Desc:
+> https://guide.pushdy.com/i/tham-chieu-sdk-api/android-native-sdk#getdevicetoken
+>
+> https://guide.pushdy.com/i/tham-chieu-sdk-api/ios-native-sdk#getdevicetoken
+>
+
+Usage:
+```
+const deviceToken:String = await Pushdy.getDeviceToken()
+```
 
 ##### setReadyForHandlingNotification(enable)
 ##### getReadyForHandlingNotification()
