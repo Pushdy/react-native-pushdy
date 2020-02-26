@@ -591,7 +591,9 @@ Desc:
 > startHandleIncommingNotification: This is default behavior. Pushdy will handle new incomming noti, display, send `onNotificationReceived` event to JS.
 >
 > Alias of setReadyForHandlingNotification(enable):
+>
 > setReadyForHandlingNotification(true) <=> startHandleIncommingNotification()
+>
 > setReadyForHandlingNotification(false) <=> stopHandleIncommingNotification()
 
 Usage:
