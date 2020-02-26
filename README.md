@@ -87,7 +87,7 @@ yarn upgrade react-native-pushdy
 
 Then update Pushdy's native library:
 
-**Android** Studio: File > Sync project with graddle files (don't need this if you using react-native run-android)
+**Android Studio**: File > Sync project with graddle files (if you start project by android studio)
 
 **Ios**, run:
 ```
@@ -95,7 +95,7 @@ pod install --project-directory=ios
 ```
 
 ## Additional setup:
-Push notification require very deep integration, additional setup is required to support handy feature:
+PushNotification requires very deep integration, additional setup is required to support its handy features:
 
 NOTE: You need to complete [Pushdy configuration](#Pushdy-configuration) to receive push notification
 
@@ -132,7 +132,7 @@ Override your MainActivity (ussually MainActivity.java)
 ```
 
 #### iOS
-Prerequisite:
+Prerequisites:
 - Swift enabled, support `use_frameworks!` in your Podfile
 
 
