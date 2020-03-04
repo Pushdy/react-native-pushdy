@@ -19,8 +19,7 @@ Pod::Spec.new do |s|
   # Force support Swift version
   s.swift_versions = ['4.2', '5.0']
 
-  # TODO: Update this source
-  s.source       = { :git => "https://github.com/Pushdy/react-native-pushdy.git", :tag => "#{s.version}" }
+  s.source       = { :git => "https://github.com/Pushdy/react-native-pushdy.git"}
   # Temperary install from local
   # s.source       = { :http => 'file:' + __dir__ + '/Archive.zip'}
 

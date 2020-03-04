@@ -8,8 +8,8 @@
 
 import Foundation
 import PushdySDK
-import React
-import React.RCTEventEmitter
+// import React
+// import React.RCTEventEmitter
 
 /**
  This class was intend to send event from RNPushdy to JS thread on PushdySDK events triggered
