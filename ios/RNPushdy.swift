@@ -279,6 +279,26 @@ public class RNPushdy: RCTEventEmitter {
     }
     
     @objc
+    func getInitialNotification(_
+        resolve: RCTPromiseResolveBlock, rejecter reject:RCTPromiseRejectBlock
+        ) -> Void {
+        let initialNotification:[String: Any]? = RNPushdy.getLocalData(key: "initialNotification");
+        if initialNotification != nil {
+            let universalNotification = RNPushdy.toRNPushdyStructure(initialNotification ?? [:]);
+            resolve(universalNotification)
+        } else {
+            resolve(nil);
+        }
+    }
+    
+    @objc
+    func removeInitialNotification(_
+        resolve: RCTPromiseResolveBlock, rejecter reject:RCTPromiseRejectBlock
+        ) -> Void {
+        RNPushdy.removeLocalData(key: "initialNotification");
+    }
+    
+    @objc
     func setAttribute(_
         attr: String, value: String,
                       resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock

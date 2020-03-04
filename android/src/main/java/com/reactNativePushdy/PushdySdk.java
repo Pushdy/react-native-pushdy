@@ -225,12 +225,14 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
   Tried to support initPushdy SDK from JS whenever we want, without success.
   I stored the draft version here, to remind anyone who wanna init the SDK from JS,
   It's not possible at the moment, depend on PushdySDK and its working flow.
-
+  // the OLD flow is:
+  // 1. Init PushdySDK to do some required work (see the SDK)
+  // 2. Whenever you wanna start Pushdy (often on JS App mounting), call setDeviceId, Pushdy SDK will create a `Player` on the dashboard
+  // 3. From now on, PushdySDK is ready to work.
   Currently, the flow is:
-  1. Init PushdySDK to do some required work (see the SDK)
-  2. Whenever you wanna start Pushdy (often on JS App mounting), call setDeviceId, Pushdy SDK will create a `Player` on the dashboard
+  1. registerSdk to init native SDK and prepare
+  2. Whenever you wanna start Pushdy (often on JS App mounting), call initPushdy, Pushdy SDK will create a `Player` on the dashboard
   3. From now on, PushdySDK is ready to work.
-
 
   public void old_registerSdk(android.content.Context mainAppContext, Integer smallIcon) {
     this.mainAppContext = mainAppContext;
@@ -280,6 +282,7 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
     try {
       JSONObject jo = new JSONObject(notification);
       noti = ReactNativeJson.convertJsonToMap(jo);
+      RNPushdyData.setString(reactContext, "initialNotification", notification);
     } catch (JSONException e) {
       e.printStackTrace();
       Log.e("RNPushdy", "onNotificationReceived Exception " + e.getMessage());
@@ -291,6 +294,36 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
 
     sendEvent("onNotificationOpened", params);
   }
+
+  /**
+   * Flow here:
+   * When clicking notification from background or foreground. onNotificationOpened is triggered then
+   * notification is saved.
+   * getInitialNotification is used to re-trigger open notification when app restarts.
+   * If you handled initicalNotification successful, please call removeInitalNotification.
+   * @return JSONObject
+   */
+  public WritableMap getInitialNotification() {
+    WritableMap data = new WritableNativeMap();
+
+    try {
+      String initialNotification = RNPushdyData.getString(reactContext, "initialNotification");
+      if(initialNotification != null){
+        JSONObject jo = new JSONObject(initialNotification);
+        data = ReactNativeJson.convertJsonToMap(jo);
+      }
+    } catch (JSONException e) {
+      e.printStackTrace();
+      Log.e("RNPushdy", "getPendingNotification Exception " + e.getMessage());
+    }
+
+    return data;
+  }
+
+  public void removeInitialNotification() {
+    RNPushdyData.removeString(reactContext, "initialNotification");
+  }
+
 
   @Override
   public void onNotificationReceived(@NotNull String notification, @NotNull String fromState) {

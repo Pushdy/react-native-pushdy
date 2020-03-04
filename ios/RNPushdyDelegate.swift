@@ -8,8 +8,9 @@
 
 import Foundation
 import PushdySDK
-import React
-import React.RCTEventEmitter
+
+// import React
+// import React.RCTEventEmitter
 
 /**
  This class was intend to send event from RNPushdy to JS thread on PushdySDK events triggered
@@ -22,7 +23,7 @@ import React.RCTEventEmitter
     
    public func onNotificationOpened(_ notification: [String : Any], fromState: String) {
        print("{RNPushdy.onNotificationOpened} from state: \(fromState)")
-
+       RNPushdy.setLocalData(key: "initialNotification", value: notification);
        let universalNotification = RNPushdy.toRNPushdyStructure(notification)
        sendEventToJs(eventName: "onNotificationOpened", body:["notification": universalNotification, "fromState": fromState])
    }
