@@ -411,7 +411,7 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
 
   public List<WritableMap> getPendingNotifications() {
     List<String> notifications = Pushdy.getPendingNotifications();
-    List<WritableMap> items = new ArrayList();
+    List<WritableMap> items = new ArrayList<>();
     for (String notification : notifications) {
       WritableMap data = new WritableNativeMap();
       try {
