@@ -302,18 +302,21 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
    * If you handled initicalNotification successful, please call removeInitalNotification.
    * @return JSONObject
    */
-  public JSONObject getInitialNotification() {
-    JSONObject jo = new JSONObject();
+  public WritableMap getInitialNotification() {
+    WritableMap data = new WritableNativeMap();
+
     try {
       String initialNotification = PDYStorage.getString(reactContext, "initialNotification");
-      jo = new JSONObject(initialNotification);
+      JSONObject jo = new JSONObject(initialNotification);
+      data = ReactNativeJson.convertJsonToMap(jo);
     } catch (JSONException e) {
       e.printStackTrace();
-      Log.e("RNPushdy","getInitialNotification Exception" + e.getMessage());
+      Log.e("RNPushdy", "getPendingNotification Exception " + e.getMessage());
     }
-    return  jo;
-  }
 
+    return data;
+  }
+  
   public void removeInitialNotification() {
     PDYStorage.remove(mainAppContext, "initialNotification");
   }
