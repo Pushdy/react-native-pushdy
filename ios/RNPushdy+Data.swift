@@ -31,7 +31,7 @@ public extension RNPushdy {
      
      - Parameters:
          - notification: The notification from PushdySDK
-     - Returns: Universal data structure/Users/mobiletech/rn3-24hmoney/node_modules/react-native-pushdy/RNPushdyStorage.swift
+     - Returns: Universal data structure
      */
     internal static func toRNPushdyStructure(_ notification:[String : Any]) -> [String : Any] {
         var universalNotification:[String : Any] = [:]
