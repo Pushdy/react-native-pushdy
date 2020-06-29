@@ -307,8 +307,10 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
 
     try {
       String initialNotification = PDYStorage.getString(reactContext, "initialNotification");
-      JSONObject jo = new JSONObject(initialNotification);
-      data = ReactNativeJson.convertJsonToMap(jo);
+      if(initialNotification != null){
+        JSONObject jo = new JSONObject(initialNotification);
+        data = ReactNativeJson.convertJsonToMap(jo);
+      }
     } catch (JSONException e) {
       e.printStackTrace();
       Log.e("RNPushdy", "getPendingNotification Exception " + e.getMessage());
