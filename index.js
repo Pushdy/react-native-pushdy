@@ -478,4 +478,6 @@ export class PushdyNotification {
   }
 }
 
-export default new RNPushdyWrapper();
+const RNPushdyWrapperInst = new RNPushdyWrapper();
+window.tmp_Pushdy = RNPushdyWrapperInst;
+export default RNPushdyWrapperInst;
