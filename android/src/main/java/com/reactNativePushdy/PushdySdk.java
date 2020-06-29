@@ -281,16 +281,12 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
     try {
       JSONObject jo = new JSONObject(notification);
       noti = ReactNativeJson.convertJsonToMap(jo);
+      PDYStorage.setString(reactContext,"initialNotification", notification);
     } catch (JSONException e) {
       e.printStackTrace();
       Log.e("RNPushdy", "onNotificationReceived Exception " + e.getMessage());
     }
 
-    /**
-     *
-     */
-
-    PDYStorage.setString(mainAppContext,"initialNotification", notification);
     WritableMap params = Arguments.createMap();
     params.putString("fromState", fromState);
     params.putMap("notification", RNPushdyData.toRNPushdyStructure(noti));
@@ -309,7 +305,7 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
   public JSONObject getInitialNotification() {
     JSONObject jo = new JSONObject();
     try {
-      String initialNotification = PDYStorage.getString(mainAppContext, "initialNotification");
+      String initialNotification = PDYStorage.getString(reactContext, "initialNotification");
       jo = new JSONObject(initialNotification);
     } catch (JSONException e) {
       e.printStackTrace();
