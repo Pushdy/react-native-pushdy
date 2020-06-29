@@ -26,6 +26,7 @@ import java.util.Timer;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.Arguments;
+import com.pushdy.core.ultilities.PDYStorage;
 
 
 public class PushdySdk implements Pushdy.PushdyDelegate {
@@ -285,12 +286,42 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
       Log.e("RNPushdy", "onNotificationReceived Exception " + e.getMessage());
     }
 
+    /**
+     *
+     */
+
+    PDYStorage.setString(mainAppContext,"initialNotification", notification);
     WritableMap params = Arguments.createMap();
     params.putString("fromState", fromState);
     params.putMap("notification", RNPushdyData.toRNPushdyStructure(noti));
 
     sendEvent("onNotificationOpened", params);
   }
+
+  /**
+   * Flow here:
+   * When clicking notification from background or foreground. onNotificationOpened is triggered then
+   * notification is saved.
+   * getInitialNotification is used to re-trigger open notification when app restarts.
+   * If you handled initicalNotification successful, please call removeInitalNotification.
+   * @return JSONObject
+   */
+  public JSONObject getInitialNotification() {
+    JSONObject jo = new JSONObject();
+    try {
+      String initialNotification = PDYStorage.getString(mainAppContext, "initialNotification");
+      jo = new JSONObject(initialNotification);
+    } catch (JSONException e) {
+      e.printStackTrace();
+      Log.e("RNPushdy","getInitialNotification Exception" + e.getMessage());
+    }
+    return  jo;
+  }
+
+  public void removeInitialNotification() {
+    PDYStorage.remove(mainAppContext, "initialNotification");
+  }
+
 
   @Override
   public void onNotificationReceived(@NotNull String notification, @NotNull String fromState) {
