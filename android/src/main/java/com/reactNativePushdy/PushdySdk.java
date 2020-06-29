@@ -225,12 +225,14 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
   Tried to support initPushdy SDK from JS whenever we want, without success.
   I stored the draft version here, to remind anyone who wanna init the SDK from JS,
   It's not possible at the moment, depend on PushdySDK and its working flow.
-
+  // the OLD flow is:
+  // 1. Init PushdySDK to do some required work (see the SDK)
+  // 2. Whenever you wanna start Pushdy (often on JS App mounting), call setDeviceId, Pushdy SDK will create a `Player` on the dashboard
+  // 3. From now on, PushdySDK is ready to work.
   Currently, the flow is:
-  1. Init PushdySDK to do some required work (see the SDK)
-  2. Whenever you wanna start Pushdy (often on JS App mounting), call setDeviceId, Pushdy SDK will create a `Player` on the dashboard
+  1. registerSdk to init native SDK and prepare
+  2. Whenever you wanna start Pushdy (often on JS App mounting), call initPushdy, Pushdy SDK will create a `Player` on the dashboard
   3. From now on, PushdySDK is ready to work.
-
 
   public void old_registerSdk(android.content.Context mainAppContext, Integer smallIcon) {
     this.mainAppContext = mainAppContext;
