@@ -39,6 +39,7 @@ React Native SDK for [Pushdy](https://guide.pushdy.com/i/) services
   - [stopHandleIncommingNotification()](#stophandleincommingnotification)
   - [getPendingNotification()](#getpendingnotification)
   - [getPendingNotifications()](#getpendingnotifications)
+  - [getInitialNotification()](#getinitialnotification)
   - [setAttribute(attr: String, value)](#setattributeattr-string-value)
   - [pushAttribute(attr: String, value, commitImmediately: boolean)](#pushattributeattr-string-value-commitimmediately-boolean)
   - [getPlayerID()](#getplayerid)
@@ -628,6 +629,33 @@ const pendingNotification:PushdyNotification = await Pushdy.getPendingNotificati
 const pendingNotifications:PushdyNotification[] = await Pushdy.getPendingNotifications();
 ```
 
+##### getInitialNotification()
+Description: 
+> To retrigger lastest opened notification that has not handled yet. Call this function to re-trigger lastest opened notification.
+> Some case you might need this function:
+> * Your app need restart after some long delay in background. 
+> * User open from push but OS killed when app start.
+
+Usage:
+```
+const initialNotification = await Pushdy.getInitialNotification();
+//
+// handled notification action
+//
+// When you handled notification action call removeIntialNotification() to remove old notification to make sure that doesn't re-trigger handled notification in next-time app restarts.
+Pushdy.removeInitialNotification();
+```
+
+##### removeInitialNotification()
+Description: 
+- Remove handled notification inside openNotificationOpened
+- If you dont use getIntialNotification, don't bother this function.
+
+Usage:
+
+```
+Pushdy.removeInitialNotification();
+```
 
 ##### setAttribute(attr: String, value)
 Signature:
