@@ -316,9 +316,9 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
 
     return data;
   }
-  
+
   public void removeInitialNotification() {
-    PDYStorage.remove(mainAppContext, "initialNotification");
+    PDYStorage.remove(reactContext, "initialNotification");
   }
 
 
