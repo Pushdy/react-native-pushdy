@@ -342,6 +342,7 @@ class RNPushdyWrapper {
    * notification is saved.
    * getInitialNotification is used to re-trigger open notification when app restarts.
    * If you handled initicalNotification successful, please call removeInitalNotification.
+   * Resolved issue: https://github.com/Pushdy/react-native-pushdy/issues/3
    * @return JSONObject
    */
   async getInitialNotification() {
