@@ -1,5 +1,7 @@
 package com.reactNativePushdy;
 
+import android.content.Context;
+
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
@@ -197,5 +199,18 @@ public class RNPushdyData {
     }
 
     return out;
+  }
+
+  static void setString(Context context, String key, String value) {
+    context.getSharedPreferences("PushdyStorageRef", Context.MODE_PRIVATE).edit().putString(key, value).commit();
+  }
+
+  static String getString(Context context, String key) {
+
+    return context.getSharedPreferences("PushdyStorageRef", Context.MODE_PRIVATE).getString(key, null);
+  }
+
+  static  void removeString(Context context, String key) {
+    context.getSharedPreferences("PushdyStorageRef", Context.MODE_PRIVATE).edit().remove(key).commit();
   }
 }

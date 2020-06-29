@@ -25,9 +25,9 @@ if (forceDevEnv != null ? forceDevEnv : dev) {
       console.log('%c' + fromTo + ' args, msg:', 'color: ' + color, msg.args, msg)
     }
   })
-  console.log('{PushdyMessaging} Spy enabled: ', );
+  console.log('{PushdyMessaging} Spy enabled: ',);
 } else {
-  console.log('{PushdyMessaging} Spy disabled: ', );
+  console.log('{PushdyMessaging} Spy disabled: ',);
 }
 
 const { RNPushdy } = NativeModules;
@@ -338,6 +338,24 @@ class RNPushdyWrapper {
     return items.map(i => new PushdyNotification(i));
   }
 
+  /**
+   * Flow here:
+   * When clicking notification from background or foreground. onNotificationOpened is triggered then
+   * notification is saved.
+   * getInitialNotification is used to re-trigger open notification when app restarts.
+   * If you handled initicalNotification successful, please call removeInitalNotification.
+   * Resolved issue: https://github.com/Pushdy/react-native-pushdy/issues/3
+   * @return JSONObject
+   */
+  async getInitialNotification() {
+    let a = await this.callNative(RNPushdy.getInitialNotification)
+    return a ? new PushdyNotification(a) : null;
+  }
+
+  async removeInitialNotification() {
+    return this.callNative(RNPushdy.removeInitialNotification);
+  }
+
   async setAttribute(attr: String, value) {
     return this.callNative(RNPushdy.setAttribute, attr, value);
   }
@@ -404,7 +422,7 @@ class RNPushdyWrapper {
      */
     if (isAndroid) {
       // Read more about "enableFlag" at com.reactNativePushdy.PushdySdk#subscribedEventNames
-      this.subscribers["enableFlag"] = eventEmitter.addListener("enableFlag", (event) => {});
+      this.subscribers["enableFlag"] = eventEmitter.addListener("enableFlag", (event) => { });
       this.callNative(RNPushdy.setSubscribedEvents, keys);
     }
   }

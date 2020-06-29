@@ -162,6 +162,17 @@ public class PushdyModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public  void getInitialNotification(Promise promise) {
+        promise.resolve(pushdySdk.getInitialNotification());
+    }
+
+    @ReactMethod
+    public  void removeInitialNotification(Promise promise) {
+        pushdySdk.removeInitialNotification();
+        promise.resolve(true);
+    }
+
+    @ReactMethod
     public void setAttribute(String attr, Object value, Promise promise) {
         pushdySdk.setAttribute(attr, value);
         promise.resolve(true);

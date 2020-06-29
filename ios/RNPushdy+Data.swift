@@ -65,4 +65,22 @@ public extension RNPushdy {
         
         return universalNotification
     }
-}
+    
+    internal static func getLocalData(key: String) -> [String: Any]? {
+        if let value = UserDefaults.standard.object(forKey: key) {
+            return value as! [String : Any];
+        }
+        return nil;
+    }
+    
+    internal static func setLocalData(key: String, value: [String: Any]) {
+        UserDefaults.standard.set(value, forKey: key);
+        UserDefaults.standard.synchronize()
+    }
+    
+    internal static func removeLocalData(key: String) {
+        if let _ = UserDefaults.standard.object(forKey: key) {
+            UserDefaults.standard.removeObject(forKey: key)
+        }
+    }
+ }
