@@ -345,8 +345,8 @@ class RNPushdyWrapper {
    * @return JSONObject
    */
   async getInitialNotification() {
-    let initialNotification = await this.callNative(RNPushdy.getInitialNotification)
-    return initialNotification;
+    let a = await this.callNative(RNPushdy.getInitialNotification)
+    return a ? new PushdyNotification(a) : null;
   }
 
   async removeInitialNotification() {
