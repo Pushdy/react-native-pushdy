@@ -26,7 +26,6 @@ import java.util.Timer;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.Arguments;
-import com.pushdy.core.ultilities.PDYStorage;
 
 
 public class PushdySdk implements Pushdy.PushdyDelegate {
@@ -281,7 +280,7 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
     try {
       JSONObject jo = new JSONObject(notification);
       noti = ReactNativeJson.convertJsonToMap(jo);
-      PDYStorage.setString(reactContext,"initialNotification", notification);
+      RNPushdyData.setString(reactContext, "initialNotification", notification);
     } catch (JSONException e) {
       e.printStackTrace();
       Log.e("RNPushdy", "onNotificationReceived Exception " + e.getMessage());
@@ -306,7 +305,7 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
     WritableMap data = new WritableNativeMap();
 
     try {
-      String initialNotification = PDYStorage.getString(reactContext, "initialNotification");
+      String initialNotification = RNPushdyData.getString(reactContext, "initialNotification");
       if(initialNotification != null){
         JSONObject jo = new JSONObject(initialNotification);
         data = ReactNativeJson.convertJsonToMap(jo);
@@ -320,7 +319,7 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
   }
 
   public void removeInitialNotification() {
-    PDYStorage.remove(reactContext, "initialNotification");
+    RNPushdyData.removeString(reactContext, "initialNotification");
   }
 
 

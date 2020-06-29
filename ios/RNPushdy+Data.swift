@@ -68,7 +68,7 @@ public extension RNPushdy {
     
     internal static func getLocalData(key: String) -> [String: Any]? {
         if let value = UserDefaults.standard.object(forKey: key) {
-            return value;
+            return value as! [String : Any];
         }
         return nil;
     }
