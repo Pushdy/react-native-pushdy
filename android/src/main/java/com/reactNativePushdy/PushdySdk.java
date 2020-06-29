@@ -301,7 +301,8 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
    * notification is saved.
    * getInitialNotification is used to re-trigger open notification when app restarts.
    * If you handled initicalNotification successful, please call removeInitalNotification.
-   * @return JSONObject
+   * For more info: https://github.com/Pushdy/react-native-pushdy/issues/3
+   * @return WritableMap
    */
   public WritableMap getInitialNotification() {
     WritableMap data = new WritableNativeMap();
