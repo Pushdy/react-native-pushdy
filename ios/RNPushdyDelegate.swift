@@ -23,7 +23,7 @@ import PushdySDK
     
    public func onNotificationOpened(_ notification: [String : Any], fromState: String) {
        print("{RNPushdy.onNotificationOpened} from state: \(fromState)")
-       RNPushdy.setLocalData(key: "initialNotification", value: notification.description);
+       RNPushdy.setLocalData(key: "initialNotification", value: notification);
        let universalNotification = RNPushdy.toRNPushdyStructure(notification)
        sendEventToJs(eventName: "onNotificationOpened", body:["notification": universalNotification, "fromState": fromState])
    }
