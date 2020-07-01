@@ -282,7 +282,9 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
     try {
       JSONObject jo = new JSONObject(notification);
       noti = ReactNativeJson.convertJsonToMap(jo);
-      RNPushdyData.setString(reactContext, "initialNotification", notification);
+      if (reactContext != null) {
+        RNPushdyData.setString(reactContext, "initialNotification", notification);
+      }
     } catch (JSONException e) {
       e.printStackTrace();
       Log.e("RNPushdy", "onNotificationReceived Exception " + e.getMessage());
@@ -307,9 +309,15 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
   public WritableMap getInitialNotification() {
     WritableMap data = new WritableNativeMap();
 
+    // fix wrong behavior when getInitialNotification always return {} when intialNotification is null
+    // expected value when got no data: null
+    data = null;
     try {
-      String initialNotification = RNPushdyData.getString(reactContext, "initialNotification");
-      if(initialNotification != null){
+      String initialNotification = null;
+      if (reactContext != null) {
+        initialNotification = RNPushdyData.getString(reactContext, "initialNotification");
+      }
+      if (initialNotification != null) {
         JSONObject jo = new JSONObject(initialNotification);
         data = ReactNativeJson.convertJsonToMap(jo);
       }
@@ -445,7 +453,7 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
 
   public List<WritableMap> getPendingNotifications() {
     List<String> notifications = Pushdy.getPendingNotifications();
-    List<WritableMap> items = new ArrayList();
+    List<WritableMap> items = new ArrayList<>();
     for (String notification : notifications) {
       WritableMap data = new WritableNativeMap();
       try {
