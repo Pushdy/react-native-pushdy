@@ -1,7 +1,9 @@
 import { NativeModules, NativeEventEmitter, Platform } from 'react-native';
 import MessageQueue from 'react-native/Libraries/BatchedBridge/MessageQueue';
 
-if (__DEV__) {
+const forceDevEnv = false; // null mean env will not be force, false is force prod, true is force dev
+const dev = __DEV__;
+if (forceDevEnv != null ? forceDevEnv : dev) {
   MessageQueue.spy((msg) => {
     if (
       msg.module === "RNPushdy" ||
@@ -494,4 +496,6 @@ export class PushdyNotification {
   }
 }
 
-export default new RNPushdyWrapper();
+const RNPushdyWrapperInst = new RNPushdyWrapper();
+window.tmp_Pushdy = RNPushdyWrapperInst;
+export default RNPushdyWrapperInst;
