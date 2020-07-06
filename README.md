@@ -619,7 +619,7 @@ Desc:
 > In comming notification was not be handled and send to pending queue in case of:
 > * app is in FG and stopHandleIncommingNotification():
 > * app is in BG and no notification's background service of the app is running
-> * app is not open
+> * app is not open (iOS only, in Android will trigger event [onNotificationOpened](#onNotificationOpened)) 
 >
 > See `stopHandleIncommingNotification()` method above
 
@@ -638,12 +638,50 @@ Description:
 
 Usage:
 ```
-const initialNotification = await Pushdy.getInitialNotification();
 //
 // handled notification action
 //
 // When you handled notification action call removeIntialNotification() to remove old notification to make sure that doesn't re-trigger handled notification in next-time app restarts.
 Pushdy.removeInitialNotification();
+```
+CAUTION:
+// Ensure flow work correctly when using mix between getPendingNotification() and getInitialNotification();
+```
+// Get the clicked push notification while app is closed
+    let pendingNotification: PushdyNotification = await Pushdy.getPendingNotification();
+
+    this.debug && this.log.info('{handleInitialNotification} pendingNotification: ', pendingNotification);
+
+    if (pendingNotification) {
+
+      // // TODO: This feature is conflict with the new logic: "App can restart then execute open push"
+      // /**
+      //  * Handle the bug if notification was re-handle if Codepush.restart()
+      //  */
+      const lastInitialId = await AppData.getInstance().getLastInitialNotificationId();
+      const initialId = pendingNotification.id;
+      if (lastInitialId && lastInitialId === initialId) {
+        // Ignore if this notification have been handled
+        this.debug && this.log.info('{FirebaseMessaging.handleInitialNotification} Notification was already handled in last session, skip:  notificationId: ', lastInitialId);
+        return
+      }
+      AppData.getInstance().setLastInitialNotificationId(initialId);
+
+      this.handleMyAppPushAction(pendingNotification, 'background')
+    }
+    /**
+     * getPendingNotification will remove pending notification from queue on native side
+     * So we call getPendingNotification at the second time will get null value
+     *
+     * We will face the case: pendingNotification ok > Restart app right after that > pendingNotification get null
+     * To avoid this: We fallback to  getInitialNotification + removeInitialNotification mechanism
+     */
+    if (!pendingNotification) {
+      this.debug && this.log.info('{handleInitialNotification} getPendingNotification is null, fallback to getInitialNotification');
+      pendingNotification = await Pushdy.getInitialNotification();
+      if (pendingNotification) this.handleMyAppPushAction(pendingNotification, 'background');
+    }
+const initialNotification = await Pushdy.getInitialNotification();
 ```
 
 ##### removeInitialNotification()
