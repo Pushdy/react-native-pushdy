@@ -309,9 +309,6 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
   public WritableMap getInitialNotification() {
     WritableMap data = new WritableNativeMap();
 
-    // fix wrong behavior when getInitialNotification always return {} when intialNotification is null
-    // expected value when got no data: null
-    data = null;
     try {
       String initialNotification = null;
       if (reactContext != null) {
@@ -320,6 +317,10 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
       if (initialNotification != null) {
         JSONObject jo = new JSONObject(initialNotification);
         data = ReactNativeJson.convertJsonToMap(jo);
+      } else {
+        // fix wrong behavior when getInitialNotification always return {} when intialNotification is null
+        // expected value when got no data: null
+        return null;
       }
     } catch (JSONException e) {
       e.printStackTrace();
