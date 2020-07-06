@@ -471,6 +471,7 @@ class RNPushdyWrapper {
 }
 
 export class PushdyNotification {
+  id = null
   title = null
   subtitle = null
   body = null
@@ -478,6 +479,10 @@ export class PushdyNotification {
   data = {}
   android = {}
   ios = {}
+
+  KeyAlias = {
+    _notification_id: 'id',
+  }
 
   /**
    * a = new PushdyNotification({title: 1, body: "test"})
@@ -488,7 +493,9 @@ export class PushdyNotification {
       for (let i = 0, c = keys.length; i < c; i++) {
         const k = keys[i];
         const v = data[k];
-        this[k] = v;
+
+        const mappedKey = this.KeyAlias[k] ? this.KeyAlias[k] : k;
+        this[mappedKey] = v;
       }
     } else {
       console.error("[PushdyNotification] data is null");
