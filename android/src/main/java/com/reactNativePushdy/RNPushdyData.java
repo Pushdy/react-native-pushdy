@@ -2,6 +2,7 @@ package com.reactNativePushdy;
 
 import android.content.Context;
 
+import com.facebook.react.bridge.Dynamic;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
@@ -170,6 +171,33 @@ public class RNPushdyData {
         break;
     }
   }
+
+  static Object convertDynamicFieldToJavaType(Dynamic field) {
+    Object value = null;
+    switch (field.getType()) {
+      case Null:
+        value = null;
+        break;
+      case Boolean:
+        value = field.asBoolean();
+        break;
+      case Number:
+        value = field.asDouble();
+        break;
+      case String:
+        value = field.asString();
+        break;
+      case Map:
+        value = field.asMap().toHashMap();
+        break;
+      case Array:
+        value = field.asArray().toArrayList().toArray();
+        break;
+    }
+
+    return value;
+  }
+
 
   /**
    * [WIP] Create a copy of map with only specified keys

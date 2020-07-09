@@ -356,21 +356,29 @@ class RNPushdyWrapper {
     return this.callNative(RNPushdy.removeInitialNotification);
   }
 
-  async setAttribute(attr: String, value) {
-    return this.callNative(RNPushdy.setAttribute, attr, value);
+  async setAttribute(attr: String, value, immediately = false) {
+    if (value === null || value === undefined) {
+      console.warn("[Pushdy] ERROR: Invalid value argument, must not null/undefined instead of: ", value);
+      return false;
+    }
+
+    // For android
+    // TODO: How to call it in ios
+    return this.callNative(RNPushdy.setAttributeFromValueContainer, attr, {data: value}, immediately);
   }
 
   /**
    * @param {String} attr
    * @param {Number|String|Array} value
+   * @param {Boolean} value Persist data to Pushdy immediately or let Pushdy persist it by SDK schedule
    * @returns {Promise<Boolean>}
    */
-  async pushAttribute(attr: String, value) {
+  async pushAttribute(attr: String, value, immediately = false) {
     if (!Array.isArray(value)) {
       value = [value];
     }
 
-    return this.callNative(RNPushdy.pushAttribute, attr, value);
+    return this.callNative(RNPushdy.pushAttributeArray, attr, value, immediately);
   }
 
   async getPlayerID() {

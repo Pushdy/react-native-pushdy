@@ -3,6 +3,7 @@ package com.reactNativePushdy;
 import android.util.Log;
 import android.view.View;
 
+import com.facebook.react.bridge.Dynamic;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
@@ -172,15 +173,22 @@ public class PushdyModule extends ReactContextBaseJavaModule {
         promise.resolve(true);
     }
 
+    /**
+     * Because react-native-bridge do not support to send Any type, we need to wrap Any type into a dict:
+     * {data: "value here can be any type of obj, array, num, string, etc"}
+     * This is only way we can send any type via bridge
+     */
     @ReactMethod
-    public void setAttribute(String attr, Object value, Promise promise) {
-        pushdySdk.setAttribute(attr, value);
+    public void setAttributeFromValueContainer(String attr, ReadableMap valueContainer, Boolean commitImmediately, Promise promise) {
+        Dynamic data = valueContainer.getDynamic("data");
+        Object value = RNPushdyData.convertDynamicFieldToJavaType(data);
+        pushdySdk.setAttribute(attr, value, commitImmediately);
         promise.resolve(true);
     }
 
     @ReactMethod
-    public void pushAttributeArray(String attr, Object[] value, Promise promise) {
-        pushdySdk.pushAttribute(attr, value);
+    public void pushAttributeArray(String attr, ReadableArray value, Boolean commitImmediately, Promise promise) {
+        pushdySdk.pushAttribute(attr, value.toArrayList().toArray(), commitImmediately);
         promise.resolve(true);
     }
 

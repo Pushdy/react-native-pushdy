@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.common.LifecycleState;
@@ -471,12 +472,21 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
     return items;
   }
 
-  public void setAttribute(String attr, Object value) {
-    Pushdy.setAttribute(attr, value);
+  public void setAttribute(String attr, Object value, Boolean commitImmediately) {
+    Pushdy.setAttribute(attr, value, commitImmediately);
   }
 
-  public void pushAttribute(String attr, Object[] value) {
-    Pushdy.pushAttribute(attr, value);
+  /**
+   * @deprecated Due to unstable SDK api, do not use this function until SDK was fixed
+   *
+   * @param attr
+   * @param value
+   * @param commitImmediately
+   */
+  public void pushAttribute(String attr, Object[] value, Boolean commitImmediately) {
+    // NOTE: Pushdy.pushAttribute used for pushing every array element, it does not support to push array of elements
+    // This might be bug of android SDK, so please do not use this function until SDK confirmed
+    Pushdy.pushAttribute(attr, value, commitImmediately);
   }
 
   public String getPlayerID() {
