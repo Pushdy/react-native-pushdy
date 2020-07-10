@@ -362,9 +362,12 @@ class RNPushdyWrapper {
       return false;
     }
 
-    // For android
-    // TODO: How to call it in ios
-    return this.callNative(RNPushdy.setAttributeFromValueContainer, attr, {data: value}, immediately);
+    // return true;
+
+    // TODO: Reimplement setAttributeFromValueContainer for ios
+    return isAndroid
+      ? this.callNative(RNPushdy.setAttributeFromValueContainer, attr, {data: value}, immediately)
+      : this.callNative(RNPushdy.setAttributeFromOption, {attr, data: value, immediately});
   }
 
   /**

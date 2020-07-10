@@ -298,19 +298,62 @@ public class RNPushdy: RCTEventEmitter {
         RNPushdy.removeLocalData(key: "initialNotification");
     }
     
+    
+    // I don't know why this was not work so I use setAttributeFromOption instead
+    @objc
+    func setAttributeFromValueContainer(_
+        attr: String, valueContainer: NSDictionary, commitImmediately:Bool,
+        resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
+    ) -> Void {
+        do {
+            let data:Any = valueContainer["data"] as Any
+            try Pushdy.setAttribute(attr, value: data, commitImmediately:commitImmediately)
+            resolve(true)
+        } catch {
+            reject("PushdySDK_ERR", "[Pushdy] setAttribute: oh got exception!", error)
+        }
+    }
+
+    @objc
+    public func setAttributeFromOption(_
+        options: NSDictionary,
+        resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
+    ) {
+        var attr:String = ""
+        if options["attr"] != nil {
+            attr = options["attr"] as! String
+        } else {
+            reject("InvalidArgument", "RNPushdy.initPushdy: Invalid param: options.deviceId is required", NSError(domain: "", code: 200, userInfo: nil))
+            return
+        }
+        
+        do {
+            let data = options["data"] as Any
+            let immediately = options["immediately"] as! Bool
+            try Pushdy.setAttribute(attr, value: data, commitImmediately:immediately)
+            resolve(true)
+            return
+        } catch {
+            reject("PushdySDK_ERR", "[Pushdy] setAttribute: oh got exception!", error)
+            return
+        }
+    }
+    
     @objc
     func setAttribute(_
-        attr: String, value: String,
+        attr: String, value: String, commitImmediately:Bool,
                       resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
         ) -> Void {
         do {
-            try Pushdy.setAttribute(attr, value: value)
+            try Pushdy.setAttribute(attr, value: value, commitImmediately:commitImmediately)
             resolve(true)
         } catch {
             reject("PushdySDK_ERR", "[Pushdy] setAttribute: oh got exception!", error)
         }
     }
     
+    // Do not use this function because SDK is unstable for this fn, let check it later if we have time
+    // @deprecated
     @objc
     func pushAttribute(_
         attr: String, values: [String],

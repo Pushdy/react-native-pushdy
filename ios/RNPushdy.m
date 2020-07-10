@@ -107,8 +107,23 @@ RCT_EXTERN_METHOD(
                   )
 
 RCT_EXTERN_METHOD(
+                  setAttributeFromValueContainer: (NSString *)attr
+                  valueContainer:(NSDictionary *)valueContainer
+                  imme:(BOOL)imme
+                  resolve: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
+
+RCT_EXTERN_METHOD(
+                  setAttributeFromOption: (NSDictionary *)options
+                  resolve: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
+
+RCT_EXTERN_METHOD(
                   setAttribute: (NSString *)attr
                   value:(NSString *)value
+                  imme:(BOOL)imme
                   resolve: (RCTPromiseResolveBlock)resolve
                   rejecter: (RCTPromiseRejectBlock)reject
                   )
