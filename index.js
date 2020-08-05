@@ -31,7 +31,7 @@ if (forceDevEnv != null ? forceDevEnv : dev) {
 }
 
 const { RNPushdy } = NativeModules;
-console.log('{react-native-pushdy/index} RNPushdy: ', RNPushdy);
+// console.log('{react-native-pushdy/index} RNPushdy: ', RNPushdy);
 
 const isIos = Platform.OS === 'ios';
 const isAndroid = Platform.OS === 'android';
@@ -191,7 +191,7 @@ const ios_notification_from_PushdySDK = {
   "title": "Bão số 6 hướng đi khó lường",
   "body": "Ít nhất 7 tỉnh thành sẽ bị ảnh hưởng, cần sẵn sàng tinh thần ứng phó",
   "image": "https://vortex.accuweather.com/adc2010/images/icons-numbered/01-l.png",
-  "push_action": "nav_to_article_detail",
+  "push_action": "navigate_to_article_detail",
   "push_data": {
     "article_id": 179269
   },
@@ -515,5 +515,5 @@ export class PushdyNotification {
 }
 
 const RNPushdyWrapperInst = new RNPushdyWrapper();
-window.tmp_Pushdy = RNPushdyWrapperInst;
+dev && (window.tmp_Pushdy = RNPushdyWrapperInst);
 export default RNPushdyWrapperInst;

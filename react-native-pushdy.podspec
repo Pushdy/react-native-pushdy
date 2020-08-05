@@ -29,7 +29,7 @@ Pod::Spec.new do |s|
   s.dependency "React"
   # ...
   # s.dependency "..."
-  s.dependency 'PushdySDK', '0.0.9'
+  s.dependency 'PushdySDK', '0.0.10'
 end
 
 # post_install do |installer|
