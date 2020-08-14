@@ -56,6 +56,12 @@ public class PushdyModule extends ReactContextBaseJavaModule {
         promise.resolve(a);
     }
 
+
+    @ReactMethod
+    public void makeCrash(Promise promise) throws Exception {
+        throw new Exception("makeCrash from react-native-pushdy");
+    }
+
     /**
      * ======= Reimplement all ios / android native api =======
      */
