@@ -356,6 +356,10 @@ class RNPushdyWrapper {
     return this.callNative(RNPushdy.removeInitialNotification);
   }
 
+  async isAppOpenedFromPush() {
+    return this.callNative(RNPushdy.isAppOpenedFromPush);
+  }
+
   async setAttribute(attr: String, value, immediately = false) {
     if (value === null || value === undefined) {
       console.warn("[Pushdy] ERROR: Invalid value argument, must not null/undefined instead of: ", value);
@@ -386,10 +390,6 @@ class RNPushdyWrapper {
 
   async getPlayerID() {
     return this.callNative(RNPushdy.getPlayerID);
-  }
-
-  async makeCrash() {
-    return this.callNative(RNPushdy.makeCrash);
   }
 
   /**
