@@ -81,6 +81,11 @@ public class PushdyModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public  void isAppOpenedFromPush(Promise promise) {
+        promise.resolve(pushdySdk.isAppOpenedFromPush());
+    }
+
+    @ReactMethod
     public void isNotificationEnabled(Promise promise) {
         promise.resolve(pushdySdk.isNotificationEnabled());
     }

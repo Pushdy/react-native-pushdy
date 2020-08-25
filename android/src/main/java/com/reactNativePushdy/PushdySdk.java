@@ -1,8 +1,16 @@
 package com.reactNativePushdy;
 
+import android.app.Activity;
+import android.app.Application;
 import android.app.Notification;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReadableArray;
@@ -29,7 +37,7 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.Arguments;
 
 
-public class PushdySdk implements Pushdy.PushdyDelegate {
+public class PushdySdk implements Pushdy.PushdyDelegate, Application.ActivityLifecycleCallbacks {
   private static PushdySdk instance = null;
   private ReactApplicationContext reactContext = null;
 
@@ -55,6 +63,11 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
    */
   private Set<String> subscribedEventNames = new HashSet<>();
 
+  /**
+   * This should return true when app open from push when in background or when app was killed
+   */
+  private  boolean mIsAppOpenedFromPush = false;
+
   public static PushdySdk getInstance() {
     if (instance == null) instance = new PushdySdk();
 
@@ -79,6 +92,8 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
     }
     Pushdy.registerForRemoteNotification();
     Pushdy.setBadgeOnForeground(true);
+    Application mMainAppContext = (Application) mainAppContext;
+    mMainAppContext.registerActivityLifecycleCallbacks(instance);
   }
 
   public void initPushdy(ReadableMap options) throws Exception {
@@ -278,7 +293,6 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
   @Override
   public void onNotificationOpened(@NotNull String notification, @NotNull String fromState) {
     Log.d("RNPushdy", "onNotificationOpened: notification: " + notification);
-
     WritableMap noti = new WritableNativeMap();
     try {
       JSONObject jo = new JSONObject(notification);
@@ -296,6 +310,7 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
     params.putMap("notification", RNPushdyData.toRNPushdyStructure(noti));
 
     sendEvent("onNotificationOpened", params);
+    this.mIsAppOpenedFromPush = true;
   }
 
   /**
@@ -495,5 +510,51 @@ public class PushdySdk implements Pushdy.PushdyDelegate {
 
   public void setSubscribedEvents(ArrayList<String> subscribedEventNames) {
     this.subscribedEventNames = new HashSet<String>(subscribedEventNames);
+  }
+
+  /**
+   * Return is app open from push or not
+   * @return boolean
+   */
+  public boolean isAppOpenedFromPush() {
+    return this.mIsAppOpenedFromPush;
+  }
+
+  @Override
+  public void onActivityCreated(@NonNull Activity activity, @androidx.annotation.Nullable Bundle savedInstanceState) {
+
+  }
+
+  @Override
+  public void onActivityStarted(@NonNull Activity activity) {
+    Log.d("RNPushdy","onActivityStarted");
+  }
+
+  @Override
+  public void onActivityResumed(@NonNull Activity activity) {
+
+  }
+
+  @Override
+  public void onActivityPaused(@NonNull Activity activity) {
+    Log.d("RNPushdy","onActivityPaused");
+    if (this.mIsAppOpenedFromPush) {
+      this.mIsAppOpenedFromPush = false;
+    }
+  }
+
+  @Override
+  public void onActivityStopped(@NonNull Activity activity) {
+
+  }
+
+  @Override
+  public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle outState) {
+
+  }
+
+  @Override
+  public void onActivityDestroyed(@NonNull Activity activity) {
+
   }
 }

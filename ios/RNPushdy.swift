@@ -18,6 +18,7 @@ public class RNPushdy: RCTEventEmitter {
     @objc private static var clientKey:String? = nil
     @objc private static var delegate:UIApplicationDelegate? = nil
     @objc private static var launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+    @objc private static var mIsAppOpenedFromPush: Bool = false
     
     override init() {
         super.init()
@@ -97,6 +98,27 @@ public class RNPushdy: RCTEventEmitter {
         self.clientKey = clientKey
         self.delegate = delegate
         self.launchOptions = launchOptions
+        self.mIsAppOpenedFromPush = self.checkIsAppOpenedFromPush(_launchOptions: launchOptions);
+        
+        if #available(iOS 13.0, *){
+            NotificationCenter.default.addObserver(self, selector: #selector(self.appEntersBackground), name: UIScene.willDeactivateNotification, object: nil);
+        } else {
+            NotificationCenter.default.addObserver(self, selector: #selector(self.appEntersBackground), name: UIApplication.willResignActiveNotification, object: nil);
+        }
+    }
+    
+    @objc
+    public static func checkIsAppOpenedFromPush(_launchOptions:[UIApplication.LaunchOptionsKey: Any]?) ->Bool {
+        if let launchOptions = _launchOptions, let notification = launchOptions[UIApplication.LaunchOptionsKey.remoteNotification] as? [String : Any] {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    @objc
+    public static func appEntersBackground() {
+        RNPushdy.self.mIsAppOpenedFromPush = false;
     }
     
     @objc
@@ -296,6 +318,13 @@ public class RNPushdy: RCTEventEmitter {
         resolve: RCTPromiseResolveBlock, rejecter reject:RCTPromiseRejectBlock
         ) -> Void {
         RNPushdy.removeLocalData(key: "initialNotification");
+    }
+    
+    @objc
+    func isAppOpenedFromPush(_
+        resolve: RCTPromiseResolveBlock, rejecter
+        reject:RCTPromiseRejectBlock) -> Void {
+        resolve(RNPushdy.self.mIsAppOpenedFromPush);
     }
     
     

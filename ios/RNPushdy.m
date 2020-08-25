@@ -149,6 +149,10 @@ RCT_EXTERN_METHOD(
                   getPlayerID: (RCTPromiseResolveBlock)resolve
                   rejecter: (RCTPromiseRejectBlock)reject
                   )
+RCT_EXTERN_METHOD(
+                  isAppOpenedFromPush: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
 
 /**
  Swift: Calling Swift functions from Objective-C

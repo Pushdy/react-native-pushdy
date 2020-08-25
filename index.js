@@ -356,6 +356,17 @@ class RNPushdyWrapper {
     return this.callNative(RNPushdy.removeInitialNotification);
   }
 
+  /**
+   * This method will return isAppOpenedFromPush = true if app opened from push (when app was killed). 
+   * 
+   * When app enters background (when opened from push) isAppOpenedFromPush will reset it's value (isAppOpenedFromPush = false).
+   * 
+   * When app in background, then open push behavior will be different between each Platform (This method works in Android, currently not available in iOS)
+   */
+  async isAppOpenedFromPush() {
+    return this.callNative(RNPushdy.isAppOpenedFromPush);
+  }
+
   async setAttribute(attr: String, value, immediately = false) {
     if (value === null || value === undefined) {
       console.warn("[Pushdy] ERROR: Invalid value argument, must not null/undefined instead of: ", value);
