@@ -139,9 +139,8 @@ public class PushdySdk implements Pushdy.PushdyDelegate, Application.ActivityLif
       // Log.d("RNPushdy", "this.subscribedEventNames.size() = " + this.subscribedEventNames.size());
 //       Log.d("RNPushdy", "jsThreadState = " + jsThreadState);
 //       Log.d("RNPushdy", "reactActivated = " + Boolean.toString(reactActivated));
-       Log.d("RNPushdy", "jsHandlerReady = " + Integer.toString(this.subscribedEventNames.size()));
+       Log.d("RNPushdy", "aaabbb = " + Integer.toString(this.subscribedEventNames.size()));
        Log.d("RNPushdy", "subscribedEventNames = " + this.subscribedEventNames.toString());
-
       if (reactActivated && jsThreadState == LifecycleState.RESUMED) {
         if (jsHandlerReady) {
           // Delay for some second to ensure react context work
@@ -293,7 +292,6 @@ public class PushdySdk implements Pushdy.PushdyDelegate, Application.ActivityLif
   @Override
   public void onNotificationOpened(@NotNull String notification, @NotNull String fromState) {
     Log.d("RNPushdy", "onNotificationOpened: notification: " + notification);
-
     WritableMap noti = new WritableNativeMap();
     try {
       JSONObject jo = new JSONObject(notification);
@@ -528,7 +526,7 @@ public class PushdySdk implements Pushdy.PushdyDelegate, Application.ActivityLif
 
   @Override
   public void onActivityStarted(@NonNull Activity activity) {
-    // Log.d("RNPushdy","onActivityStarted");
+    Log.d("RNPushdy","onActivityStarted");
   }
 
   @Override
@@ -538,7 +536,7 @@ public class PushdySdk implements Pushdy.PushdyDelegate, Application.ActivityLif
 
   @Override
   public void onActivityPaused(@NonNull Activity activity) {
-    // Log.d("RNPushdy","onActivityPaused");
+    Log.d("RNPushdy","onActivityPaused");
     if (this.mIsAppOpenedFromPush) {
       this.mIsAppOpenedFromPush = false;
     }

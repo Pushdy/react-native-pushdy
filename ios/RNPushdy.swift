@@ -99,6 +99,12 @@ public class RNPushdy: RCTEventEmitter {
         self.delegate = delegate
         self.launchOptions = launchOptions
         self.mIsAppOpenedFromPush = self.checkIsAppOpenedFromPush(_launchOptions: launchOptions);
+        
+        if #available(iOS 13.0, *){
+            NotificationCenter.default.addObserver(self, selector: #selector(self.appEntersBackground), name: UIScene.willDeactivateNotification, object: nil);
+        } else {
+            NotificationCenter.default.addObserver(self, selector: #selector(self.appEntersBackground), name: UIApplication.willResignActiveNotification, object: nil);
+        }
     }
     
     @objc
@@ -108,6 +114,11 @@ public class RNPushdy: RCTEventEmitter {
         } else {
             return false;
         }
+    }
+    
+    @objc
+    public static func appEntersBackground() {
+        RNPushdy.self.mIsAppOpenedFromPush = false;
     }
     
     @objc
