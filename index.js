@@ -399,6 +399,10 @@ class RNPushdyWrapper {
     return this.callNative(RNPushdy.getPlayerID);
   }
 
+  async makeCrash() {
+    return this.callNative(RNPushdy.makeCrash);
+  }
+
   /**
    * ========= Hooks ============
    */
