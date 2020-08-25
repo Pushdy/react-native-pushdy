@@ -139,8 +139,9 @@ public class PushdySdk implements Pushdy.PushdyDelegate, Application.ActivityLif
       // Log.d("RNPushdy", "this.subscribedEventNames.size() = " + this.subscribedEventNames.size());
 //       Log.d("RNPushdy", "jsThreadState = " + jsThreadState);
 //       Log.d("RNPushdy", "reactActivated = " + Boolean.toString(reactActivated));
-       Log.d("RNPushdy", "aaabbb = " + Integer.toString(this.subscribedEventNames.size()));
+       Log.d("RNPushdy", "jsHandlerReady = " + Integer.toString(this.subscribedEventNames.size()));
        Log.d("RNPushdy", "subscribedEventNames = " + this.subscribedEventNames.toString());
+
       if (reactActivated && jsThreadState == LifecycleState.RESUMED) {
         if (jsHandlerReady) {
           // Delay for some second to ensure react context work
