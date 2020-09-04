@@ -154,6 +154,17 @@ RCT_EXTERN_METHOD(
                   rejecter: (RCTPromiseRejectBlock)reject
                   )
 
+RCT_EXTERN_METHOD(
+                  setApplicationIconBadgeNumber: (nonnull NSNumber *)count
+                  resolve: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
+
+RCT_EXTERN_METHOD(
+                  getApplicationIconBadgeNumber: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
+
 /**
  Swift: Calling Swift functions from Objective-C
  https://ericasadun.com/2014/08/21/swift-calling-swift-functions-from-objective-c/

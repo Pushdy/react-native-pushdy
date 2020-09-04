@@ -403,6 +403,19 @@ public class RNPushdy: RCTEventEmitter {
         resolve(Pushdy.getPlayerID())
     }
     
+    @objc func setApplicationIconBadgeNumber(_
+        count: Int,
+        resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
+    ) -> Void {
+        Pushdy.setApplicationIconBadgeNumber(count)
+        resolve(true)
+    }
+
+    @objc func getApplicationIconBadgeNumber(_
+        resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
+    ) -> Void {
+        resolve(Pushdy.getApplicationIconBadgeNumber())
+    }
 
     // MARK: Hooks
     /*

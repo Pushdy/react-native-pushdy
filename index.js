@@ -403,6 +403,23 @@ class RNPushdyWrapper {
     return this.callNative(RNPushdy.makeCrash);
   }
 
+  async setApplicationIconBadgeNumber(count: Number) {
+    if (isIos) {
+      return this.callNative(RNPushdy.setApplicationIconBadgeNumber, count);
+    } else {
+      return undefined;
+    }
+  }
+
+  async getApplicationIconBadgeNumber() {
+    if (isIos) {
+      return this.callNative(RNPushdy.getApplicationIconBadgeNumber);
+    } else {
+      return undefined;
+    }
+  }
+
+
   /**
    * ========= Hooks ============
    */
