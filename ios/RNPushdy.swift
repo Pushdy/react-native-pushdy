@@ -117,6 +117,11 @@ public class RNPushdy: RCTEventEmitter {
     }
     
     @objc
+    public static func setIsAppOpenedFromPush(isPushOpening: Bool)->Void {
+        self.mIsAppOpenedFromPush = isPushOpening;
+    }
+    
+    @objc
     public static func appEntersBackground() {
         RNPushdy.self.mIsAppOpenedFromPush = false;
     }
