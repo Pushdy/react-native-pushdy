@@ -768,19 +768,17 @@ Pushdy.startSubscribers({
 Desc:
 > This method will return isAppOpenedFromPush = true if app opened from push (when app was killed). 
 > When app enters background (when opened from push) isAppOpenedFromPush will reset it's value (isAppOpenedFromPush = false).
-> When app in background, then open push behavior will be different between each Platform (This method works in Android, currently not available in iOS)
+> Currenly, support both Android and iOS. 
 
 Usage:
 ```
-// When app starts:
+// When app starts or app opened from backgrounds:
 let isAppOpenedFromPush = await Pushdy.isAppOpenedFromPush();
 if (isAppOpenedFromPush) {
   // app opened from push
 } else {
   // app opened by touch logo.
 }
-
-// When app opened from backgrounds : NOT WORKS IN IOS
 ```
 
 ##### methodFoo(...args)
