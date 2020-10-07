@@ -151,6 +151,16 @@ public class RNPushdy: RCTEventEmitter {
         * If user allowed, you still need to call this to register UNUserNotificationCenter delegation
         * Otherwise, you still receive push in bg but not fg, you cannot handle push click action
         * Android was registered by default so you don't need to register for android
+
+         === ios token flow: ===
+         JS ready
+         RNPushdy.initWith(deviceToken passed from JS)
+         Pushdy.registerForPushNotifications()
+         notificationCenter.requestAuthorization()
+         application.registerForRemoteNotifications()
+         ---> register xong --->
+         OS > application:didRegisterForRemoteNotificationsWithDeviceToken:
+
         */
         Pushdy.registerForPushNotifications()
         
