@@ -229,10 +229,10 @@ public class RNPushdy: RCTEventEmitter {
     
     @objc
     func setPushBannerDismissDuration(_
-        seconds: Double,
-                                      resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
+        seconds: NSNumber,
+        resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
         ) -> Void {
-        Pushdy.setPushBannerDismissDuration(seconds)
+        Pushdy.setPushBannerDismissDuration(Double(truncating: seconds))
         resolve(true)
     }
     
