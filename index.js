@@ -203,6 +203,13 @@ class RNPushdyWrapper {
   subscribers = {};
 
   /**
+   * @deprecated: Use _CustomInAppBannerComponent != null instead
+   * @private
+   */
+  // _useSDKInAppBannerHandler = true
+  _CustomInAppBannerComponent = null
+
+  /**
    * @param {Number} ttl Time to live in miliseconds. Default to 10,000 ms
    */
   setTimeout(ttl) {
@@ -420,6 +427,27 @@ class RNPushdyWrapper {
   }
 
 
+  handleCustomInAppBannerPressed(notificationId) {
+    // notice SDK that this notification was opened
+    // TODO: Android
+    // console.log('{RNPushdyWrapper.handleCustomInAppBannerPressed} notificationId: ', notificationId);
+    return this.callNative(RNPushdy.handleCustomInAppBannerPressed, notificationId);
+  }
+
+  setCustomInAppBannerComponent(component) {
+    this._CustomInAppBannerComponent = component;
+    return this.callNative(RNPushdy.useSDKHandler, component === null);
+  }
+
+  removeCustomInAppBannerComponent() {
+    return this.setCustomInAppBannerComponent(null)
+  }
+
+  getCustomInAppBannerComponent() {
+    return this._CustomInAppBannerComponent;
+  }
+
+
   /**
    * ========= Hooks ============
    */
@@ -519,12 +547,20 @@ export class PushdyNotification {
   subtitle = null
   body = null
   image = null
-  data = {}
-  android = {}
-  ios = {}
 
-  KeyAlias = {
+  // The custom data
+  data = {}
+
+  android = {}  //
+  ios = {}      // aps: {"alert":{"title":"***","body":"***"},"mutable-content":1,"sound":{"volume":10,"name":"default","critical":1}}
+
+  _KeyAlias = {
     _notification_id: 'id',
+    _nms_image: 'image',
+    aps: 'ios',
+
+    // TODO: support Android
+    xxx: 'android',
   }
 
   /**
@@ -537,8 +573,18 @@ export class PushdyNotification {
         const k = keys[i];
         const v = data[k];
 
-        const mappedKey = this.KeyAlias[k] ? this.KeyAlias[k] : k;
+        const mappedKey = this._KeyAlias[k] ? this._KeyAlias[k] : k;
         this[mappedKey] = v;
+      }
+
+      if (isIos) {
+        // restore for ios
+        const aps = data.aps ? data.aps : {}
+        const aps_alert = aps.alert ? aps.alert : {}
+        this.title = aps_alert.title
+        this.body = aps_alert.body
+      } else if (isAndroid) {
+        // restore for android
       }
     } else {
       console.error("[PushdyNotification] data is null");

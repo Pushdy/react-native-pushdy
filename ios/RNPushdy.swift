@@ -231,7 +231,7 @@ public class RNPushdy: RCTEventEmitter {
     func setPushBannerDismissDuration(_
         seconds: NSNumber,
         resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
-        ) -> Void {
+    ) -> Void {
         Pushdy.setPushBannerDismissDuration(Double(truncating: seconds))
         resolve(true)
     }
@@ -430,6 +430,22 @@ public class RNPushdy: RCTEventEmitter {
         resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
     ) -> Void {
         resolve(Pushdy.getApplicationIconBadgeNumber())
+    }
+    
+    @objc func useSDKHandler(
+        _ enabled: Bool,
+        resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
+    ) -> Void {
+        Pushdy.useSDKHandler(enabled)
+        resolve(true)
+    }
+    
+    @objc func handleCustomInAppBannerPressed(
+        _ notificationId: String,
+        resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
+    ) -> Void {
+        Pushdy.handleCustomInAppBannerPressed(notificationId)
+        resolve(true)
     }
 
     // MARK: Hooks
