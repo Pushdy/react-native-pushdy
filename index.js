@@ -466,6 +466,13 @@ class RNPushdyWrapper {
       const eventName = keys[i];
       const listener = listeners[eventName];
 
+      // ignore to subscribe if event already exist
+      // const existingListeners = eventEmitter.listeners(eventName)
+      // if (existingListeners.length) {
+      //   console.warn('{RNPushdyWrapper.startSubscribers} already subscribed: eventName: ', eventName);
+      //   continue
+      // }
+
       if (eventName === 'onNotificationReceived' || eventName === 'onNotificationOpened') {
         // Convert notification to PushdyNotification
         this.subscribers[eventName] = eventEmitter.addListener(eventName, (event) => {
