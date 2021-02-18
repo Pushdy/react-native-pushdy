@@ -265,6 +265,7 @@ class RNPushdyWrapper {
    *
    * Default to `true` on both android and ios
    *
+   * @deprecated Please use `setCustomInAppBannerComponent` instead
    */
   async enablePushdyInAppBanner(enable) {
     if (isAndroid) {
@@ -429,11 +430,26 @@ class RNPushdyWrapper {
 
   handleCustomInAppBannerPressed(notificationId) {
     // notice SDK that this notification was opened
-    // TODO: Android
     // console.log('{RNPushdyWrapper.handleCustomInAppBannerPressed} notificationId: ', notificationId);
     return this.callNative(RNPushdy.handleCustomInAppBannerPressed, notificationId);
   }
 
+  /**
+   * Show in app banner on foreground by using `Pushdy built-in InAppBanner` or `using custom JS banner`
+   *
+   * When you receive a notification in foreground:
+   * - If component is null: Pushdy SDK will show a notification in a built-in InAppBanner UI, by native view, defined inside SDK
+   * - If component is instance: Pushdy SDK will show a notification in a custom view
+   *
+   * Usage:
+   * Please see the:
+   * If component is instance => You take 100% control how the UI look / visible via component state,
+   *
+   * @param {CustomInAppBannerBaseView} component React component instance (not class definition), should inherit from  `react-native-pushdy/CustomInAppBannerBaseView`
+   *                                              Because CustomInAppBannerBaseView already do some SDK communication, you don't need to care about logic, care your UI only
+   *
+   * @returns {Promise<boolean>}
+   */
   setCustomInAppBannerComponent(component) {
     this._CustomInAppBannerComponent = component;
     return this.callNative(RNPushdy.useSDKHandler, component === null);
@@ -565,15 +581,14 @@ export class PushdyNotification {
     _notification_id: 'id',
     _nms_image: 'image',
     aps: 'ios',
-
-    // TODO: support Android
-    xxx: 'android',
+    // android: 'android',
   }
 
   /**
    * a = new PushdyNotification({title: 1, body: "test"})
    */
   constructor(data) {
+    console.log('{PushdyNotification.constructor} data: ', data);
     if (data) {
       const keys = Object.keys(data);
       for (let i = 0, c = keys.length; i < c; i++) {
@@ -584,6 +599,7 @@ export class PushdyNotification {
         this[mappedKey] = v;
       }
 
+      // Map some special case
       if (isIos) {
         // restore for ios
         const aps = data.aps ? data.aps : {}
@@ -592,6 +608,12 @@ export class PushdyNotification {
         this.body = aps_alert.body
       } else if (isAndroid) {
         // restore for android
+        // Android is special
+        const d = data.data
+        if (d) {
+          this.id = d._notification_id
+          this.image = d._nms_image
+        }
       }
     } else {
       console.error("[PushdyNotification] data is null");

@@ -140,6 +140,19 @@ public class PushdyModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void useSDKHandler(Boolean enabled, Promise promise) {
+        pushdySdk.useSDKHandler(enabled);
+        promise.resolve(true);
+    }
+
+    @ReactMethod
+    public void handleCustomInAppBannerPressed(String notificationId, Promise promise) {
+        pushdySdk.handleCustomInAppBannerPressed(notificationId);
+        promise.resolve(true);
+    }
+
+
+    @ReactMethod
     public void setCustomMediaKey(String mediaKey, Promise promise) {
         pushdySdk.setCustomMediaKey(mediaKey);
         promise.resolve(true);

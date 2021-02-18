@@ -429,6 +429,14 @@ public class PushdySdk implements Pushdy.PushdyDelegate, Application.ActivityLif
      Pushdy.setCustomPushBanner(view);
   }
 
+  public void useSDKHandler(Boolean enabled) {
+    Pushdy.useSDKHandler(enabled);
+  }
+
+  public void handleCustomInAppBannerPressed(String notificationId) {
+    Pushdy.handleCustomInAppBannerPressed(notificationId);
+  }
+
   public void setCustomMediaKey(String mediaKey) {
      // Pushdy.setCustomMediaKey(mediaKey);
   }

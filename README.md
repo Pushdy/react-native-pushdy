@@ -452,11 +452,14 @@ Desc:
 > 	- If NOT enable: Default to OS behavior
 > 
 > Default to `true` on both android and ios
+> @deprecated Please use `setCustomInAppBannerComponent` instead
 
 Usage:
 ```
 await Pushdy.enablePushdyInAppBanner(false);
 ```
+
+enablePushdyInAppBanner has been marked as deprecated since v0.3.0, please use `setCustomInAppBannerComponent` instead
 
 
 ##### setPushBannerAutoDismiss(autoDismiss: boolean)
@@ -780,6 +783,94 @@ if (isAppOpenedFromPush) {
   // app opened by touch logo.
 }
 ```
+
+##### setCustomInAppBannerComponent(component: CustomInAppBannerBaseView)
+Signature:
+```
+async setCustomInAppBannerComponent(component: CustomInAppBannerBaseView)
+```
+
+Desc:
+> Show in app banner on foreground by using `Pushdy built-in InAppBanner` or `using custom JS banner`
+>
+> When you receive a notification in foreground:
+> - If component is null: Pushdy SDK will show a notification in a built-in InAppBanner UI, by native view, defined inside SDK
+> - If component is instance: Pushdy SDK will show a notification in a custom view
+>
+> Usage:
+> Please see the:
+> If component is instance => You take 100% control how the UI look / visible via component state,
+>
+> @param {CustomInAppBannerBaseView} component React component instance (not class definition), should inherit from  `react-native-pushdy/CustomInAppBannerBaseView`
+>                                              Because CustomInAppBannerBaseView already do some SDK communication, you don't need to care about logic, care your UI only
+
+Usage:
+```js
+class CustomInAppBannerNotificationView extends CustomInAppBannerBaseView {
+  render() {
+      const {visible, title, message, media_url} = this.state;
+
+      return !visible ? null : (
+        <TouchableOpacity onPress={this.onTapNotification}>
+          <View>
+
+            <Image source={{ uri: media_url }} />
+            <Text>{title}</Text>
+            <Text>{message}</Text>
+            <TouchableOpacity onPress={this.onClose}>
+              <View><Text>Close</Text></View>
+            </TouchableOpacity>
+
+          </View>
+        </TouchableOpacity>
+      );
+    }
+}
+var _customInAppBannerRef = null;
+await Pushdy.setCustomInAppBannerComponent(<CustomInAppBannerNotificationView ref={c => _customInAppBannerRef = c}/>)
+
+// On notification received
+_customInAppBannerRef && _customInAppBannerRef.show({
+    id: "bac-awf-awef-awf",
+    title: "hello",
+    message: "world",
+    media_url: "https://test-cdn.local/image.png",
+})
+```
+
+
+##### removeCustomInAppBannerComponent()
+Signature:
+```
+async removeCustomInAppBannerComponent()
+```
+
+Desc:
+alias of setCustomInAppBannerComponent(null)
+
+
+
+##### getCustomInAppBannerComponent()
+Signature:
+```
+getCustomInAppBannerComponent()
+```
+
+Desc:
+
+get CustomInAppBannerComponent instance to mount to your app.
+
+After this was mounted, you can call `_customInAppBannerRef.show(notification)` to show notification, see setCustomInAppBannerComponent for more detail.
+
+Usage:
+```
+<View style={styles.overlay}>
+  {/* Mount this component only after CustomInAppBannerComponent has been registered to PushdyMessaging */}
+  {!!isPushdyMessagingReady && Pushdy.getCustomInAppBannerComponent()}
+</View>
+```
+
+
 
 ##### methodFoo(...args)
 Signature:
