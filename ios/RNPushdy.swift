@@ -9,6 +9,11 @@ import Foundation
 import os
 import PushdySDK
 
+/**
+ *  RNPushdy should open register once and only one.
+ *  If registerSDK call twice, it will miss the next incoming background notification.
+ */
+var didInitialize: Bool = false;
 
 @objc(RNPushdy)
 public class RNPushdy: RCTEventEmitter {
@@ -95,6 +100,11 @@ public class RNPushdy: RCTEventEmitter {
 
     @objc
     public static func registerSdk(_ clientKey:String, delegate:UIApplicationDelegate, launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
+        if (didInitialize) {
+            return;
+        }
+
+        didInitialize = true;
         self.clientKey = clientKey
         self.delegate = delegate
         self.launchOptions = launchOptions
@@ -109,7 +119,7 @@ public class RNPushdy: RCTEventEmitter {
     
     @objc
     public static func checkIsAppOpenedFromPush(_launchOptions:[UIApplication.LaunchOptionsKey: Any]?) ->Bool {
-        if let launchOptions = _launchOptions, let notification = launchOptions[UIApplication.LaunchOptionsKey.remoteNotification] as? [String : Any] {
+        if let launchOptions = _launchOptions, let _ = launchOptions[UIApplication.LaunchOptionsKey.remoteNotification] as? [String : Any] {
             return true;
         } else {
             return false;
