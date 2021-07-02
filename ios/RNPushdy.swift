@@ -480,10 +480,14 @@ public class RNPushdy: RCTEventEmitter {
     }
     
     @objc func setApplicationIconBadgeNumber(_
-        count: Int,
+        count: NSNumber,
         resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
     ) -> Void {
-        Pushdy.setApplicationIconBadgeNumber(count)
+        // Pushdy.setApplicationIconBadgeNumber using count Int;
+        // And setApplicationIconBadgeNumber call from ReactNative is NSNumber type.
+        // So that need to convert NSNumber to Int.
+        let countInt = count.intValue;
+        Pushdy.setApplicationIconBadgeNumber(countInt)
         resolve(true)
     }
 
