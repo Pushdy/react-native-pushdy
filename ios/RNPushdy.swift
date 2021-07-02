@@ -197,7 +197,7 @@ public class RNPushdy: RCTEventEmitter {
             /**
              Try to set handler for RNPushdy that intialized by registerSdk.
              */
-            Pushdy.setDelegateHandler(delegaleHandler: RNPushdyDelegate());
+            Pushdy.setDelegateHandler(delegateHandler: RNPushdyDelegate());
         }
         
         //old
