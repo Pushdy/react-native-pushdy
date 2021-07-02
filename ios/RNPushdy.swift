@@ -10,10 +10,14 @@ import os
 import PushdySDK
 
 /**
- *  RNPushdy should open register once and only one.
- *  If registerSDK call twice, it will miss the next incoming background notification.
+ Prevent this module re-intialized due some error;
  */
-var didInitialize: Bool = false;
+var didIntialized:Bool = false;
+/**
+ Check RNPushdy has been connect to PushdySDK success:
+ that means PushdySDK has: deviceId was set, delegate, delegateHandler, launchOptions.
+ */
+var initlizedWithPushdy:Bool = false;
 
 @objc(RNPushdy)
 public class RNPushdy: RCTEventEmitter {
@@ -100,14 +104,30 @@ public class RNPushdy: RCTEventEmitter {
 
     @objc
     public static func registerSdk(_ clientKey:String, delegate:UIApplicationDelegate, launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
-        if (didInitialize) {
+        // if have intialized, prevent intializing again;
+        if (didIntialized){
             return;
         }
 
-        didInitialize = true;
+        didIntialized = true;
         self.clientKey = clientKey
         self.delegate = delegate
         self.launchOptions = launchOptions
+        
+        let deviceData:[String:Any]? = self.getLocalData(key: "deviceId");
+        let deviceId = deviceData?["id"] as? String;
+        /**
+         If having deviceId in localStorage, try to get it and initialized right now without delegateHandler.
+         if not, do not intialize. Wait for initPushdy from react-native to initialize
+         */
+        if (deviceId != nil) {
+            Pushdy.setDeviceID(deviceId!);
+            Pushdy.initWith(clientKey: self.clientKey!
+            , delegate: self.delegate!
+            , launchOptions: self.launchOptions)
+            initlizedWithPushdy = true;
+        }
+        
         self.mIsAppOpenedFromPush = self.checkIsAppOpenedFromPush(_launchOptions: launchOptions);
         
         if #available(iOS 13.0, *){
@@ -150,12 +170,43 @@ public class RNPushdy: RCTEventEmitter {
         if deviceId.isEmpty {
             reject("InvalidArgument", "RNPushdy.initPushdy: Invalid param: options.deviceId cannot be empty", NSError(domain: "", code: 200, userInfo: nil))
         }
-        Pushdy.setDeviceID(deviceId);
+        let dict: [String:Any] = [
+            "id": deviceId,
+        ];
+        RNPushdy.setLocalData(key: "deviceId", value: dict);
+        /**
+         If RNPushdy doesn't intialized with Pushdy from registerSdk due to not having deviceId
+         in localStorage, try to initialize it here
+         */
+        /**
+         -------- NEW FLOW --------
+         If HAVE deviceId,
+         1. try to initialize with PushdySDK without handler called by registerSdk (invoked by applicationDidFinishLauchingWithOptions.
+         2. try to add delegateHandler to PushdySDK later called by initPushdy(invoked by initPushdy when ReactNative App start and ready to handle message.
+         If not,
+         1. registerSdk normally. (without initialize with Pushdy)
+         2. initPushdy when ReactNative App start and ready to handle message.
+         */
+        if(!initlizedWithPushdy){
+            Pushdy.setDeviceID(deviceId);
+            Pushdy.initWith(clientKey: RNPushdy.clientKey!
+            , delegate: RNPushdy.delegate!
+            , delegaleHandler: RNPushdyDelegate()
+            , launchOptions: RNPushdy.launchOptions)
+        } else {
+            /**
+             Try to set handler for RNPushdy that intialized by registerSdk.
+             */
+            Pushdy.setDelegateHandler(delegaleHandler: RNPushdyDelegate());
+        }
+        
+        //old
+//        Pushdy.setDeviceID(deviceId);
+//        Pushdy.initWith(clientKey: RNPushdy.clientKey!
+//        , delegate: RNPushdy.delegate!
+//        , delegaleHandler: RNPushdyDelegate()
+//        , launchOptions: RNPushdy.launchOptions)
 
-        Pushdy.initWith(clientKey: RNPushdy.clientKey!
-        , delegate: RNPushdy.delegate!
-        , delegaleHandler: RNPushdyDelegate()
-        , launchOptions: RNPushdy.launchOptions)
 
         /**
         * If user allowed, you still need to call this to register UNUserNotificationCenter delegation
