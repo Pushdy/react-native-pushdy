@@ -35,6 +35,14 @@ import PushdySDK
        let universalNotification = RNPushdy.toRNPushdyStructure(notification)
        sendEventToJs(eventName: "onNotificationReceived", body:["notification": universalNotification, "fromState": fromState])
    }
+    
+    /**
+     This function should be declare for RNPushdyDelegate. By default, consider that
+     adding RNPushdyDelegate success means open push notification can be handle by React Native App.
+     */
+    public func readyForHandlingNotification() -> Bool {
+        return true;
+    }
    
    public func onRemoteNotificationRegistered(_ deviceToken: String) {
        print("{RNPushdy.onRemoteNotificationRegistered} deviceToken: \(deviceToken)")
