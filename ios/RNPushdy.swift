@@ -126,6 +126,10 @@ public class RNPushdy: RCTEventEmitter {
             , delegate: self.delegate!
             , launchOptions: self.launchOptions)
             initlizedWithPushdy = true;
+            /**
+             Need to call this to observe the incoming push notification.
+            */
+            Pushdy.registerForPushNotifications();
         }
         
         self.mIsAppOpenedFromPush = self.checkIsAppOpenedFromPush(_launchOptions: launchOptions);
