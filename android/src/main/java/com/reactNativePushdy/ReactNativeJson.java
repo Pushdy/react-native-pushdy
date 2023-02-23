@@ -3,6 +3,7 @@ package com.reactNativePushdy;
 import android.util.ArrayMap;
 import android.util.Log;
 
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
@@ -26,7 +27,8 @@ import java.util.Map;
 public class ReactNativeJson {
 
   public static WritableMap convertMapToWritableMap(Map<String, ?> map) {
-    WritableMap writableMap = new WritableNativeMap();
+    WritableMap writableMap = Arguments.createMap();
+
     for (Map.Entry<String, ?> i : map.entrySet()) {
       String k = i.getKey();
       Object v = i.getValue();
@@ -48,6 +50,9 @@ public class ReactNativeJson {
             break;
           case "Boolean":
             writableMap.putBoolean(k, (Boolean) v);
+            break;
+            case "LinkedTreeMap":
+            writableMap.putMap(k, convertMapToWritableMap((Map<String, ?>) v));
             break;
           default:
             String msg = "[ERROR] [Pushdy] ReactNativeJson.convertMapToWritableMap: Unhandled varType: " + varType + " | Please notice Pushdy's developer to fix this problem";

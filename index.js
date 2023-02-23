@@ -427,6 +427,67 @@ class RNPushdyWrapper {
     }
   }
 
+  /**
+   * Get pending events that haven't been sent to server yet from Pushdy SDK
+   * @param {Number} count 
+   */
+  async getPendingEvents(count = 50) {
+    return this.callNative(RNPushdy.getPendingEvents, count);
+  }
+
+  /**
+   * Set pending events that will be sent to server later
+   * @param {{
+   *  events: Record<string, any>[]
+   * }[]} count 
+   */
+  setPendingEvents(events) {
+    return this.callNative(RNPushdy.setPendingEvents, events);
+  }
+
+  /**
+   * Remove pending events that haven't been sent to server yet from Pushdy SDK.
+   *  @param {number} count 
+   */
+  async removePendingEvents(count) {
+    return this.callNative(RNPushdy.removePendingEvents, count);
+  }
+
+  /**
+   * set application id to Pushdy SDK for tracking purpose
+   * @param {string} applicationId 
+   * @returns 
+   */
+  setApplicationId(applicationId) {
+    return this.callNative(RNPushdy.setApplicationId, applicationId);
+  }
+
+  /**
+   * Track event to Pushdy SDK. This event will be sent to server later or immediately
+   * base on `immediate` argument 
+   * @param {string} event 
+   * @param {Record<string, any>} params 
+   * @param {boolean} immediate 
+   */
+  async trackEvent(event, params, immediate = false) {
+    return this.callNative(RNPushdy.trackEvent, event, params, immediate);
+  }
+
+  /**
+   * Push pending events to server immediately.
+   * @param {(response) => void} successCallback 
+   * @param {(code, message) => void} failureCallback 
+   */
+  pushPendingEvents() {
+    return this.callNative(RNPushdy.pushPendingEvents);
+  }
+
+
+  /**
+   * 
+   * @param {*} notificationId 
+   * @returns 
+   */
 
   handleCustomInAppBannerPressed(notificationId) {
     // notice SDK that this notification was opened

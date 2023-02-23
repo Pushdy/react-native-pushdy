@@ -8,15 +8,13 @@ import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.OnLifecycleEvent;
 
+import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.common.LifecycleState;
+import com.google.gson.JsonElement;
 import com.pushdy.Pushdy;
 
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +24,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +34,10 @@ import java.util.Timer;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.Arguments;
+
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
+import kotlin.jvm.functions.Function2;
 
 
 public class PushdySdk implements Pushdy.PushdyDelegate, Application.ActivityLifecycleCallbacks {
@@ -514,6 +517,30 @@ public class PushdySdk implements Pushdy.PushdyDelegate, Application.ActivityLif
 
   public String getPlayerID() {
     return Pushdy.getPlayerID();
+  }
+
+  public List<HashMap<String, Object>> getPendingEvents(Number count) {
+    return Pushdy.getPendingEvents((Integer) count);
+  }
+
+  public void setPendingEvents(List<HashMap<String, Object>> events) {
+    Pushdy.setPendingEvents(events);
+  }
+
+  public void setApplicationId(String applicationId) {
+    Pushdy.setApplicationId(applicationId);
+  }
+
+  public void removePendingEvents(Number count) {
+    Pushdy.removePendingEvents((Integer) count);
+  }
+
+  public void trackEvent(String eventName, HashMap<String, Object> attributes, Boolean immediate) {
+    Pushdy.trackEvent(eventName, attributes, immediate, null, null);
+  }
+
+  public void pushPendingEvents() {
+    Pushdy.pushPendingEvents(null, null);
   }
 
   public void setSubscribedEvents(ArrayList<String> subscribedEventNames) {

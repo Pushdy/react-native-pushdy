@@ -3,6 +3,8 @@ package com.reactNativePushdy;
 import android.util.Log;
 import android.view.View;
 
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.Dynamic;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -11,9 +13,14 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableType;
+import com.facebook.react.bridge.WritableArray;
+import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeArray;
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -240,6 +247,54 @@ public class PushdyModule extends ReactContextBaseJavaModule {
         }
         pushdySdk.setSubscribedEvents(eventNames);
 
+        promise.resolve(true);
+    }
+
+    @ReactMethod
+    public void getPendingEvents(Integer count , Promise promise) {
+        WritableArray events = Arguments.createArray();
+        List<HashMap<String, Object>> list = pushdySdk.getPendingEvents(count);
+        for (int i = 0; i < list.size(); i++) {
+            WritableMap map = ReactNativeJson.convertMapToWritableMap(list.get(i));
+            events.pushMap(map);
+        }
+        promise.resolve(events);
+    }
+
+    @ReactMethod
+    public void setPendingEvents(ReadableArray events, Promise promise) {
+        List<HashMap<String, Object>> list = new ArrayList<>();
+        List eventsList = events.toArrayList();
+        for (int i = 0; i < eventsList.size(); i++) {
+            HashMap<String, Object> map = (HashMap<String, Object>) eventsList.get(i);
+            list.add(map);
+        }
+        pushdySdk.setPendingEvents(list);
+        promise.resolve(true);
+    }
+
+    @ReactMethod
+    public void setApplicationId(String applicationId, Promise promise) {
+        pushdySdk.setApplicationId(applicationId);
+        promise.resolve(true);
+    }
+
+    @ReactMethod
+    public void removePendingEvents(Integer count, Promise promise) {
+        pushdySdk.removePendingEvents(count);
+        promise.resolve(true);
+    }
+
+    @ReactMethod
+    public void trackEvent(String eventName, ReadableMap eventProperties, Boolean immediate, Promise promise) {
+        pushdySdk.trackEvent(eventName, eventProperties.toHashMap(), immediate);
+        promise.resolve(true);
+    }
+
+    @ReactMethod
+    public void
+    pushPendingEvents( Promise promise) {
+        pushdySdk.pushPendingEvents();
         promise.resolve(true);
     }
 }
