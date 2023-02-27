@@ -517,6 +517,63 @@ public class RNPushdy: RCTEventEmitter {
         resolve(true)
     }
 
+    @objc func getPendingEvents(_ count: NSNumber,
+        resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
+    ) -> Void {
+        let countInt = count.intValue;
+        let pendingEvents = Pushdy.getPendingTrackEvents(count: countInt)
+        // NSLog("RNPushdy.getPendingEvents")
+        resolve(pendingEvents)
+    }
+
+    @objc func removePendingEvents(_ count: NSNumber,
+        resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
+    ) -> Void {
+        let countInt = count.intValue;
+        Pushdy.removePendingTrackingEvents(countInt)
+        resolve(true)
+    }
+    
+    @objc func setPendingEvents(_ events: NSArray,
+        resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
+    ) -> Void {
+        Pushdy.setPendingTrackEvents(events as! [NSObject])
+        resolve(true)
+    }
+    
+    @objc func setApplicationId(_ appId: String,
+        resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
+    ) -> Void {
+        // NSLog("RNPushdy.setApplicationId: \(appId)")
+        Pushdy.setApplicationId(appId)
+        resolve(true)
+    }
+    
+    @objc func trackEvent(_ eventName: String,
+        params: NSDictionary,
+        immediate: Bool,
+        resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
+    ) -> Void {
+        NSLog("RNPushdy.trackEvent: \(eventName)")
+        do {
+            try Pushdy.trackEvent(eventName: eventName, params: params, immediate: immediate) { _ in
+                
+            } failure: {_,_ in
+            }
+        } catch {
+            
+        }
+        resolve(true);
+    }
+
+    @objc func pushPendingEvents(_
+        resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
+    ) -> Void {
+        // NSLog("RNPushdy.pushPendingEvents:")
+        Pushdy.pushPendingEvents()
+        resolve(true)
+    }
+
     // MARK: Hooks
     /*
     ======== HOOKS ==========

@@ -177,6 +177,44 @@ RCT_EXTERN_METHOD(
                   rejecter: (RCTPromiseRejectBlock)reject
                   )
 
+RCT_EXTERN_METHOD(
+                  getPendingEvents: (nonnull NSNumber *)count
+                  resolve: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
+
+RCT_EXTERN_METHOD(
+                  setPendingEvents: (NSArray *)events
+                  resolve: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                )
+
+RCT_EXTERN_METHOD(
+                  removePendingEvents: (NSNumber *)count
+                  resolve: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
+
+RCT_EXTERN_METHOD(
+                  setApplicationId: (NSString *) appId
+                  resolve: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
+
+RCT_EXTERN_METHOD(
+                  trackEvent: (NSString *)eventName
+                  params:(NSDictionary *)params
+                  immediate:(BOOL)immediate
+                  resolve: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
+
+RCT_EXTERN_METHOD(
+                  pushPendingEvents: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
+
+
 /**
  Swift: Calling Swift functions from Objective-C
  https://ericasadun.com/2014/08/21/swift-calling-swift-functions-from-objective-c/
