@@ -570,7 +570,7 @@ public class RNPushdy: RCTEventEmitter {
         resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
     ) -> Void {
         // NSLog("RNPushdy.pushPendingEvents:")
-        Pushdy.pushPendingEvents()
+        try? Pushdy.pushPendingEvents();
         resolve(true)
     }
 
