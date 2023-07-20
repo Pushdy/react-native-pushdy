@@ -80,7 +80,7 @@ dependencies {
 
     // api project(':android-pushdy-sdk')      // Install this lib from local folder, require to uncomment the setting in settings.gradle
     // api 'com.github.Pushdy:android-pushdy-sdk:master-SNAPSHOT'
-    api 'com.github.Pushdy:android-pushdy-sdk:1.1.0'
+    api 'com.github.Pushdy:android-pushdy-sdk:1.2.0'
 }
 
 def configureReactNativePom(def pom) {
