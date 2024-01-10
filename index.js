@@ -1,33 +1,41 @@
+import React from 'react';
 import { NativeModules, NativeEventEmitter, Platform } from 'react-native';
 import MessageQueue from 'react-native/Libraries/BatchedBridge/MessageQueue';
+import EventBus, { EventName } from './src/EventBus';
+import { PushdyBanner } from './src/PushdyBanner';
 
 const forceDevEnv = false; // null mean env will not be force, false is force prod, true is force dev
 const dev = __DEV__;
 if (forceDevEnv != null ? forceDevEnv : dev) {
   MessageQueue.spy((msg) => {
     if (
-      msg.module === "RNPushdy" ||
+      msg.module === 'RNPushdy' ||
       (msg.module === null && msg.method.toString().indexOf('RNPushdy') >= 0)
     ) {
       const fromTo = msg.type === 0 ? '[To JS]' : '[To Native]';
       const color = msg.type === 0 ? '#693' : '#639';
-      console.log('%c' + fromTo + ' msg:', 'color: ' + color, msg)
-    } else if (msg.module === "RCTDeviceEventEmitter") {
+      console.log('%c' + fromTo + ' msg:', 'color: ' + color, msg);
+    } else if (msg.module === 'RCTDeviceEventEmitter') {
       return;
 
       // Ignore websocketMessage
-      if (msg.args && msg.args[0] === "websocketMessage") {
+      if (msg.args && msg.args[0] === 'websocketMessage') {
         return;
       }
 
       const fromTo = msg.type === 0 ? '[To JS]' : '[To Native]';
       const color = msg.type === 0 ? '#693' : '#639';
-      console.log('%c' + fromTo + ' args, msg:', 'color: ' + color, msg.args, msg)
+      console.log(
+        '%c' + fromTo + ' args, msg:',
+        'color: ' + color,
+        msg.args,
+        msg
+      );
     }
-  })
-  console.log('{PushdyMessaging} Spy enabled: ',);
+  });
+  console.log('{PushdyMessaging} Spy enabled: ');
 } else {
-  console.log('{PushdyMessaging} Spy disabled: ',);
+  console.log('{PushdyMessaging} Spy disabled: ');
 }
 
 const { RNPushdy } = NativeModules;
@@ -38,7 +46,207 @@ const isAndroid = Platform.OS === 'android';
 const logStyle = {
   warning: 'background: orange',
   error: 'background: red',
-}
+};
+
+const Test_Banner_HTML = `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+    <title></title>
+</head>
+<style>
+    @import url('https://fonts.cdnfonts.com/css/futura-lt');
+    html,
+    body,
+    div,
+    span,
+    applet,
+    object,
+    iframe,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    blockquote,
+    pre,
+    a,
+    abbr,
+    acronym,
+    address,
+    big,
+    cite,
+    code,
+    del,
+    dfn,
+    em,
+    img,
+    ins,
+    kbd,
+    q,
+    s,
+    samp,
+    small,
+    strike,
+    strong,
+    sub,
+    sup,
+    tt,
+    var,
+    b,
+    u,
+    i,
+    center,
+    dl,
+    dt,
+    dd,
+    ol,
+    ul,
+    li,
+    fieldset,
+    form,
+    label,
+    legend,
+    table,
+    caption,
+    tbody,
+    tfoot,
+    thead,
+    tr,
+    th,
+    td,
+    article,
+    aside,
+    canvas,
+    details,
+    embed,
+    figure,
+    figcaption,
+    footer,
+    header,
+    hgroup,
+    menu,
+    nav,
+    output,
+    ruby,
+    section,
+    summary,
+    time,
+    mark,
+    audio,
+    video {
+        margin: 0;
+        padding: 0;
+        border: 0;
+    }
+
+    body {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+    .banner-pushdy {
+        height: 594px;
+        width: 324px;
+        margin: 10px auto;
+        border-radius: 10px;
+        background-image: url('https://cdn.24hmoney.vn/upload/img/2023-4/news-body-img/2023-12-20/a4ef1fa4-a94b-4518-92fa-46f4dab81edb-1703065684828-width648height1130.jpg');
+        background-repeat: no-repeat;
+        background-size: 324px 594px;
+    }
+    .free-space {
+        height: 63%;
+    }
+    .content {
+        height: 37%;
+        position: relative;
+        padding: 0 20px;
+    }
+    .content>.user_name {
+        text-align: center;
+    }
+    .avatar {
+        width: 90px;
+        height: 100%;
+        position: absolute;
+        top: -22px;
+    }
+    .avatar>img {
+        width: 100%;
+        border-radius: 8px;
+    }
+    .avatar>.block-name {
+        text-align: center;
+    }
+    .wish {
+        width: calc(100% - 110px);
+        margin-top: 6px;
+        position: absolute;
+        top: revert;
+        right: 0;
+        font-family: sans-serif;
+        font-size: 14px;
+        line-height: 18px;
+        margin-right: 7px;
+    }
+    .wish>.content_ {
+        padding: 0 10px 0 20px;
+        font-family: "Futura LT", sans-serif;
+    }
+    .signer {
+        padding-left: 16px;
+        padding-top: 8px;
+    }
+</style>
+<body>
+    <div class="banner-pushdy">
+        <div class="free-space"></div>
+        <div class="content">
+            <div class="avatar">
+                <img id="avatar_" src="" alt="">
+                <p class="block-name"><b id="user_name"></b></p>
+            </div>
+            <div class="wish">
+                <div class="content_" id="content_wish"></div>
+                <div class="signer">
+                    <canvas id="myCanvas" width="115" height="60"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    </body>
+<script>
+    // set avatrar
+    let userName = "Trương Gia Bình"
+    let dom_avatar = document.getElementById("avatar_")
+    dom_avatar.setAttribute("src", 'https://cdn.24hmoney.vn/upload/img/2023-3/user-avatar/2023-09-25/bdaa3a5e-1b51-4e4e-a0d0-7d8fff55e15d-1695624764685-width200height200.jpg')
+    // set usser
+    let dom_userName = document.getElementById("user_name")
+    dom_userName.innerText = userName
+    // set content wish
+    let dom_wish = document.getElementById("content_wish")
+    let data = "<i styl=''>Cảm ơn quý khách <b style='font-style: normal;font-family: sans-serif;'>Trương Gia Bình</b> vì đã lựa chọn 24HMoney. Nhân dịp năm mới 2024, công ty kính chúc quý khách an khang, thịnh vượng, vạn sự như ý!</i>"
+    dom_wish.insertAdjacentHTML('beforeend', data)
+    let url_signer = 'https://cdn.24hmoney.vn/upload/img/signed/sign-bangpd.svg'
+    let dom_signer = document.getElementById("signer_img")
+    drawImage()
+    function drawImage() {
+        let ctx = document.getElementById("myCanvas").getContext("2d");
+        let img = new Image();
+        img.onload = function () {
+            ctx.drawImage(img, 0, 0); // Or at whatever offset you like
+        };
+        img.src = url_signer;
+        // ctx.drawImage(img,0,0);  
+    }
+</script>
+</html>`;
 
 /**
  * Wrapper to Pushdy native module
@@ -207,7 +415,7 @@ class RNPushdyWrapper {
    * @private
    */
   // _useSDKInAppBannerHandler = true
-  _CustomInAppBannerComponent = null
+  _CustomInAppBannerComponent = null;
 
   /**
    * @param {Number} ttl Time to live in miliseconds. Default to 10,000 ms
@@ -247,7 +455,10 @@ class RNPushdyWrapper {
     if (isIos) {
       return this.callNative(RNPushdy.registerForPushNotifications);
     } else {
-      console.log('%c{RnPushdy.ios_registerForPushNotification} support iOS only: ', logStyle.warning);
+      console.log(
+        '%c{RnPushdy.ios_registerForPushNotification} support iOS only: ',
+        logStyle.warning
+      );
       return false;
     }
   }
@@ -270,41 +481,58 @@ class RNPushdyWrapper {
   async enablePushdyInAppBanner(enable) {
     if (isAndroid) {
       return this.callNative(RNPushdy.setBadgeOnForeground, enable);
-    }
-    else {
-      console.error("[WIP] TODO: Check if this function is supported on iOS. For now, You should use this function on Android only");
+    } else {
+      console.error(
+        '[WIP] TODO: Check if this function is supported on iOS. For now, You should use this function on Android only'
+      );
       return false;
     }
   }
 
-  async setPushBannerAutoDismiss(autoDismiss: boolean) {
+  /**
+   *
+   * @param {boolean} autoDismiss
+   * @returns
+   */
+  async setPushBannerAutoDismiss(autoDismiss) {
     return this.callNative(RNPushdy.setPushBannerAutoDismiss, autoDismiss);
-  }
-
-  async setPushBannerDismissDuration(sec: number) {
-    return this.callNative(RNPushdy.setPushBannerDismissDuration, sec);
-  }
-
-  async setCustomPushBanner(viewType: String) {
-    return this.callNative(RNPushdy.setCustomPushBanner, viewType);
   }
 
   /**
    *
+   * @param {number} sec
+   * @returns
+   */
+  async setPushBannerDismissDuration(sec) {
+    return this.callNative(RNPushdy.setPushBannerDismissDuration, sec);
+  }
+
+  /**
+   *
+   * @param {string} viewType
+   * @returns
+   */
+  async setCustomPushBanner(viewType) {
+    return this.callNative(RNPushdy.setCustomPushBanner, viewType);
+  }
+
+  /**
+   * @param {string} mediaKey
    * @deprecated
    */
-  async setCustomMediaKey(mediaKey: String) {
-    console.error("Do not supported");
+  async setCustomMediaKey(mediaKey) {
+    console.error('Do not supported');
     return false;
     return this.callNative(RNPushdy.setCustomMediaKey, mediaKey);
   }
 
   /**
    * You need to call this fn first
+   * @param {string} id
    */
-  async setDeviceId(id: String) {
+  async setDeviceId(id) {
     if (!id) {
-      throw Error("setDeviceId: id cannot be empty");
+      throw Error('setDeviceId: id cannot be empty');
     }
 
     return this.callNative(RNPushdy.setDeviceId, id);
@@ -343,7 +571,7 @@ class RNPushdyWrapper {
 
   async getPendingNotifications() {
     const items = await this.callNative(RNPushdy.getPendingNotifications);
-    return items.map(i => new PushdyNotification(i));
+    return items.map((i) => new PushdyNotification(i));
   }
 
   /**
@@ -356,7 +584,7 @@ class RNPushdyWrapper {
    * @return JSONObject
    */
   async getInitialNotification() {
-    let a = await this.callNative(RNPushdy.getInitialNotification)
+    let a = await this.callNative(RNPushdy.getInitialNotification);
     return a ? new PushdyNotification(a) : null;
   }
 
@@ -365,19 +593,29 @@ class RNPushdyWrapper {
   }
 
   /**
-   * This method will return isAppOpenedFromPush = true if app opened from push (when app was killed). 
-   * 
+   * This method will return isAppOpenedFromPush = true if app opened from push (when app was killed).
+   *
    * When app enters background (when opened from push) isAppOpenedFromPush will reset it's value (isAppOpenedFromPush = false).
-   * 
+   *
    * When app in background, then open push behavior will be different between each Platform (This method works in Android, currently not available in iOS)
    */
   async isAppOpenedFromPush() {
     return this.callNative(RNPushdy.isAppOpenedFromPush);
   }
 
-  async setAttribute(attr: String, value, immediately = false) {
+  /**
+   *
+   * @param {string} attr
+   * @param {any} value
+   * @param {boolean} immediately
+   * @returns
+   */
+  async setAttribute(attr, value, immediately = false) {
     if (value === null || value === undefined) {
-      console.warn("[Pushdy] ERROR: Invalid value argument, must not null/undefined instead of: ", value);
+      console.warn(
+        '[Pushdy] ERROR: Invalid value argument, must not null/undefined instead of: ',
+        value
+      );
       return false;
     }
 
@@ -385,8 +623,17 @@ class RNPushdyWrapper {
 
     // TODO: Reimplement setAttributeFromValueContainer for ios
     return isAndroid
-      ? this.callNative(RNPushdy.setAttributeFromValueContainer, attr, {data: value}, immediately)
-      : this.callNative(RNPushdy.setAttributeFromOption, {attr, data: value, immediately});
+      ? this.callNative(
+          RNPushdy.setAttributeFromValueContainer,
+          attr,
+          { data: value },
+          immediately
+        )
+      : this.callNative(RNPushdy.setAttributeFromOption, {
+          attr,
+          data: value,
+          immediately,
+        });
   }
 
   /**
@@ -395,12 +642,17 @@ class RNPushdyWrapper {
    * @param {Boolean} value Persist data to Pushdy immediately or let Pushdy persist it by SDK schedule
    * @returns {Promise<Boolean>}
    */
-  async pushAttribute(attr: String, value, immediately = false) {
+  async pushAttribute(attr, value, immediately = false) {
     if (!Array.isArray(value)) {
       value = [value];
     }
 
-    return this.callNative(RNPushdy.pushAttributeArray, attr, value, immediately);
+    return this.callNative(
+      RNPushdy.pushAttributeArray,
+      attr,
+      value,
+      immediately
+    );
   }
 
   async getPlayerID() {
@@ -411,7 +663,12 @@ class RNPushdyWrapper {
     return this.callNative(RNPushdy.makeCrash);
   }
 
-  async setApplicationIconBadgeNumber(count: Number) {
+  /**
+   *
+   * @param {number} count
+   * @returns
+   */
+  async setApplicationIconBadgeNumber(count) {
     if (isIos) {
       return this.callNative(RNPushdy.setApplicationIconBadgeNumber, count);
     } else {
@@ -429,7 +686,7 @@ class RNPushdyWrapper {
 
   /**
    * Get pending events that haven't been sent to server yet from Pushdy SDK
-   * @param {Number} count 
+   * @param {Number} count
    */
   async getPendingEvents(count = 50) {
     return this.callNative(RNPushdy.getPendingEvents, count);
@@ -439,7 +696,7 @@ class RNPushdyWrapper {
    * Set pending events that will be sent to server later
    * @param {{
    *  events: Record<string, any>[]
-   * }[]} count 
+   * }[]} count
    */
   setPendingEvents(events) {
     return this.callNative(RNPushdy.setPendingEvents, events);
@@ -447,7 +704,7 @@ class RNPushdyWrapper {
 
   /**
    * Remove pending events that haven't been sent to server yet from Pushdy SDK.
-   *  @param {number} count 
+   *  @param {number} count
    */
   async removePendingEvents(count) {
     return this.callNative(RNPushdy.removePendingEvents, count);
@@ -455,8 +712,8 @@ class RNPushdyWrapper {
 
   /**
    * set application id to Pushdy SDK for tracking purpose
-   * @param {string} applicationId 
-   * @returns 
+   * @param {string} applicationId
+   * @returns
    */
   setApplicationId(applicationId) {
     return this.callNative(RNPushdy.setApplicationId, applicationId);
@@ -464,10 +721,10 @@ class RNPushdyWrapper {
 
   /**
    * Track event to Pushdy SDK. This event will be sent to server later or immediately
-   * base on `immediate` argument 
-   * @param {string} event 
-   * @param {Record<string, any>} params 
-   * @param {boolean} immediate 
+   * base on `immediate` argument
+   * @param {string} event
+   * @param {Record<string, any>} params
+   * @param {boolean} immediate
    */
   async trackEvent(event, params, immediate = false) {
     return this.callNative(RNPushdy.trackEvent, event, params, immediate);
@@ -475,24 +732,26 @@ class RNPushdyWrapper {
 
   /**
    * Push pending events to server immediately.
-   * @param {(response) => void} successCallback 
-   * @param {(code, message) => void} failureCallback 
+   * @param {(response) => void} successCallback
+   * @param {(code, message) => void} failureCallback
    */
   pushPendingEvents() {
     return this.callNative(RNPushdy.pushPendingEvents);
   }
 
-
   /**
-   * 
-   * @param {*} notificationId 
-   * @returns 
+   *
+   * @param {*} notificationId
+   * @returns
    */
 
   handleCustomInAppBannerPressed(notificationId) {
     // notice SDK that this notification was opened
     // console.log('{RNPushdyWrapper.handleCustomInAppBannerPressed} notificationId: ', notificationId);
-    return this.callNative(RNPushdy.handleCustomInAppBannerPressed, notificationId);
+    return this.callNative(
+      RNPushdy.handleCustomInAppBannerPressed,
+      notificationId
+    );
   }
 
   /**
@@ -517,13 +776,70 @@ class RNPushdyWrapper {
   }
 
   removeCustomInAppBannerComponent() {
-    return this.setCustomInAppBannerComponent(null)
+    return this.setCustomInAppBannerComponent(null);
   }
 
   getCustomInAppBannerComponent() {
     return this._CustomInAppBannerComponent;
   }
 
+  onShowPushdyBanner = (bannerId) => {};
+
+  onHidePushdyBanner = (bannerId) => {};
+
+  onActionPushdyBanner = (bannerId, action_type, extra_data) => { };
+  
+  onErrorPushdyBanner = (bannerId, error, action_type) => { };
+
+  /**
+   * To show a banner on foreground.
+   *
+   * @param {{
+   *    onShow: (bannerId: string) => void,
+   *    onHide: (bannerId: string) => void,
+   *    onAction: (bannerId: string, action_type: "save" | "share", extra_data: any) => void,
+   *    onError: (bannerId: string, error: string, action_type: string) => void,
+   * }} props
+   */
+  initialPushdyBanner = (props) => {
+    this.onShowPushdyBanner = props.onShow || (() => {});
+    this.onHidePushdyBanner = props.onHide || (() => {});
+    this.onActionPushdyBanner = props.onAction || (() => { });
+    this.onErrorPushdyBanner = props.onError || (() => { });
+    // register for event of PushdyBanner.
+    EventBus.on(EventName.ON_SHOW_PUSHDY_BANNER, this.onShowPushdyBanner);
+    EventBus.on(EventName.ON_HIDE_PUSHDY_BANNER, this.onHidePushdyBanner);
+    EventBus.on(EventName.ON_ACTION_PUSHDY_BANNER, this.onActionPushdyBanner);
+    EventBus.on(EventName.ON_ERROR_PUSHDY_BANNER, this.onErrorPushdyBanner);
+    // send a event that ensure it's ready to show banner if needed
+    EventBus.emit(EventName.READY_TO_SHOW_PUSHDY_BANNER);
+  };
+
+  disposePushdyBanner = () => {
+    // unregister for event of PushdyBanner.
+    EventBus.off(EventName.ON_SHOW_PUSHDY_BANNER, this.onShowPushdyBanner);
+    EventBus.off(EventName.ON_HIDE_PUSHDY_BANNER, this.onHidePushdyBanner);
+    EventBus.off(EventName.ON_ACTION_PUSHDY_BANNER, this.onActionPushdyBanner);
+    EventBus.off(EventName.ON_ERROR_PUSHDY_BANNER, this.onErrorPushdyBanner);
+  };
+
+  getAllBanners = () => {};
+
+  __testPushdyBanner = () => {
+    __DEV__ &&
+      console.log(
+        '{RNPushdyWrapper.__testPushdyBanner} Test_Banner_HTML: ',
+        Test_Banner_HTML
+      );
+    EventBus.emit(EventName.SHOW_PUSHDY_BANNER, {
+      html: Test_Banner_HTML,
+      bannerId: 'test_banner_id',
+    });
+  };
+
+  PushdyBanner = () => {
+    return <PushdyBanner />;
+  };
 
   /**
    * ========= Hooks ============
@@ -550,16 +866,25 @@ class RNPushdyWrapper {
       //   continue
       // }
 
-      if (eventName === 'onNotificationReceived' || eventName === 'onNotificationOpened') {
+      if (
+        eventName === 'onNotificationReceived' ||
+        eventName === 'onNotificationOpened'
+      ) {
         // Convert notification to PushdyNotification
-        this.subscribers[eventName] = eventEmitter.addListener(eventName, (event) => {
-          event.notification = new PushdyNotification(event.notification);
-          listener(event)
-        });
+        this.subscribers[eventName] = eventEmitter.addListener(
+          eventName,
+          (event) => {
+            event.notification = new PushdyNotification(event.notification);
+            listener(event);
+          }
+        );
       } else {
-        this.subscribers[eventName] = eventEmitter.addListener(eventName, (event) => {
-          listener(event)
-        });
+        this.subscribers[eventName] = eventEmitter.addListener(
+          eventName,
+          (event) => {
+            listener(event);
+          }
+        );
       }
     }
 
@@ -577,7 +902,10 @@ class RNPushdyWrapper {
      */
     if (isAndroid) {
       // Read more about "enableFlag" at com.reactNativePushdy.PushdySdk#subscribedEventNames
-      this.subscribers["enableFlag"] = eventEmitter.addListener("enableFlag", (event) => { });
+      this.subscribers['enableFlag'] = eventEmitter.addListener(
+        'enableFlag',
+        (event) => {}
+      );
       this.callNative(RNPushdy.setSubscribedEvents, keys);
     }
   }
@@ -601,9 +929,10 @@ class RNPushdyWrapper {
      */
     if (!fn) {
       try {
-        throw Error("Native function was not defined. Ensure that RNPushdy.XXX is exposed to JS. Please investigate the Browser Console stack trace to know the missing function");
-      }
-      catch (e) {
+        throw Error(
+          'Native function was not defined. Ensure that RNPushdy.XXX is exposed to JS. Please investigate the Browser Console stack trace to know the missing function'
+        );
+      } catch (e) {
         console.error(e);
       }
 
@@ -621,29 +950,29 @@ class RNPushdyWrapper {
       // resolve(result);
 
       resolve(fn(...args));
-    })
+    });
   }
 }
 
 export class PushdyNotification {
-  id = null
-  title = null
-  subtitle = null
-  body = null
-  image = null
+  id = null;
+  title = null;
+  subtitle = null;
+  body = null;
+  image = null;
 
   // The custom data
-  data = {}
+  data = {};
 
-  android = {}  //
-  ios = {}      // aps: {"alert":{"title":"***","body":"***"},"mutable-content":1,"sound":{"volume":10,"name":"default","critical":1}}
+  android = {}; //
+  ios = {}; // aps: {"alert":{"title":"***","body":"***"},"mutable-content":1,"sound":{"volume":10,"name":"default","critical":1}}
 
   _KeyAlias = {
     _notification_id: 'id',
     _nms_image: 'image',
     aps: 'ios',
     // android: 'android',
-  }
+  };
 
   /**
    * a = new PushdyNotification({title: 1, body: "test"})
@@ -663,21 +992,21 @@ export class PushdyNotification {
       // Map some special case
       if (isIos) {
         // restore for ios
-        const aps = data.aps ? data.aps : {}
-        const aps_alert = aps.alert ? aps.alert : {}
-        this.title = aps_alert.title
-        this.body = aps_alert.body
+        const aps = data.aps ? data.aps : {};
+        const aps_alert = aps.alert ? aps.alert : {};
+        this.title = aps_alert.title;
+        this.body = aps_alert.body;
       } else if (isAndroid) {
         // restore for android
         // Android is special
-        const d = data.data
+        const d = data.data;
         if (d) {
-          this.id = d._notification_id
-          this.image = d._nms_image
+          this.id = d._notification_id;
+          this.image = d._nms_image;
         }
       }
     } else {
-      console.error("[PushdyNotification] data is null");
+      console.error('[PushdyNotification] data is null');
     }
   }
 }
