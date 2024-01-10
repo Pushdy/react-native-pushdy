@@ -788,6 +788,7 @@ class RNPushdyWrapper {
     onHide: () => { },
     onAction: () => { },
     onError: () => { },
+    tmp,
   }
 
   onShowPushdyBanner = (bannerId) => {
@@ -832,10 +833,10 @@ class RNPushdyWrapper {
     // send a event that ensure it's ready to show banner if needed
     EventBus.emit(EventName.READY_TO_SHOW_PUSHDY_BANNER);
 
-    this.checkAndShowPushdyBanner();
+    this.checkAndShowPushdyBannerIfHave();
   };
 
-  checkAndShowPushdyBanner = async () => {
+  checkAndShowPushdyBannerIfHave = async () => {
     const banners = await this.getAllBanners();
     console.log('{RNPushdyWrapper.checkAndShowPushdyBanner} banners: ', banners);
 
@@ -845,15 +846,19 @@ class RNPushdyWrapper {
         let trackingBannerData = await this.getBannerTrackingData(banner.id);
         console.log('{RNPushdyWrapper.checkAndShowPushdyBanner} -> trackingBannerData:', trackingBannerData);
 
+          let options = banner?.schedule_options || {};
         // if banner is already shown, then skip it
-        if (trackingBannerData && trackingBannerData.imp > 0) {
+        if (trackingBannerData && trackingBannerData.imp >= options.display_mode_max) {
           continue;
         } else {
           this.trackBanner(banner.id, 'loaded');
-          EventBus.emit(EventName.SHOW_PUSHDY_BANNER, {
-            html: banner.html,
-            bannerId: banner.id,
-          });
+
+          this.bannerListeners.tmp = setTimeout(() => {
+            EventBus.emit(EventName.SHOW_PUSHDY_BANNER, {
+              html: banner.html,
+              bannerId: banner.id,
+            });
+          }, options.delay_time || 0); 
           break;
         }
 
@@ -867,6 +872,9 @@ class RNPushdyWrapper {
     EventBus.off(EventName.ON_HIDE_PUSHDY_BANNER, this.onHidePushdyBanner);
     EventBus.off(EventName.ON_ACTION_PUSHDY_BANNER, this.onActionPushdyBanner);
     EventBus.off(EventName.ON_ERROR_PUSHDY_BANNER, this.onErrorPushdyBanner);
+
+    // clear timeout
+    clearTimeout(this.bannerListeners.tmp);
   };
 
   subscribe = () => {
