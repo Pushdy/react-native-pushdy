@@ -14,11 +14,14 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.common.LifecycleState;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.pushdy.Pushdy;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -547,6 +550,22 @@ public class PushdySdk implements Pushdy.PushdyDelegate, Application.ActivityLif
     this.subscribedEventNames = new HashSet<String>(subscribedEventNames);
   }
 
+  public void subscribe() {
+    Pushdy.subscribe();
+  }
+
+  public JsonArray getAllBanners() {
+    return Pushdy.getAllBanners();
+  }
+
+  public void trackBanner(String bannerId, String type) {
+    Pushdy.trackBanner(bannerId, type);
+  }
+
+  public JsonObject getBannerData(String bannerId) {
+    return Pushdy.getBannerData(bannerId);
+  }
+
   /**
    * Return is app open from push or not
    * @return boolean
@@ -592,4 +611,5 @@ public class PushdySdk implements Pushdy.PushdyDelegate, Application.ActivityLif
   public void onActivityDestroyed(@NonNull Activity activity) {
 
   }
+
 }

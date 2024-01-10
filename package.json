@@ -27,7 +27,18 @@
   "readmeFilename": "README.md",
   "peerDependencies": {
     "react": "^16.8.1",
-    "react-native": ">=0.59.0-rc.0 <1.0.x"
+    "react-native": ">=0.59.0-rc.0 <1.0.x",
+    "react-native-webview": "*",
+    "@react-native-community/cameraroll": ">=4.0.0",
+    "react-native-safe-area-context": ">=4.0.0",
+    "react-native-share": ">=9.0.0",
+    "react-native-view-shot": ">=3.0.0",
+    "react-native-permissions": ">=3.0.0",
+    "react-native-status-bar-height": "*",
+    "react-native-gesture-handler": "*",
+    "eventemitter3": "*",
+    "rn-device-info": "*",
+    "semver": "*"
   },
   "devDependencies": {
     "react": "^16.8.3",
