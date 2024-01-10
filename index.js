@@ -783,13 +783,31 @@ class RNPushdyWrapper {
     return this._CustomInAppBannerComponent;
   }
 
-  onShowPushdyBanner = (bannerId) => {};
+  bannerListeners = {
+    onShow: () => { },
+    onHide: () => { },
+    onAction: () => { },
+    onError: () => { },
+  }
 
-  onHidePushdyBanner = (bannerId) => {};
+  onShowPushdyBanner = (bannerId) => {
+    this.bannerListeners.onShow(bannerId);
+    this.trackBanner(bannerId, 'impression');
+  };
 
-  onActionPushdyBanner = (bannerId, action_type, extra_data) => { };
+  onHidePushdyBanner = (bannerId) => {
+    this.bannerListeners.onHide(bannerId);
+    this.trackBanner(bannerId, 'close');
+  };
+
+  onActionPushdyBanner = (bannerId, action_type, extra_data) => {
+    this.bannerListeners.onAction(bannerId, action_type, extra_data);
+    this.trackBanner(bannerId, 'click');
+  };
   
-  onErrorPushdyBanner = (bannerId, error, action_type) => { };
+  onErrorPushdyBanner = (bannerId, error, action_type) => {
+    this.bannerListeners.onError(bannerId, error, action_type);
+  };
 
   /**
    * To show a banner on foreground.
@@ -802,10 +820,10 @@ class RNPushdyWrapper {
    * }} props
    */
   initialPushdyBanner = (props) => {
-    this.onShowPushdyBanner = props.onShow || (() => {});
-    this.onHidePushdyBanner = props.onHide || (() => {});
-    this.onActionPushdyBanner = props.onAction || (() => { });
-    this.onErrorPushdyBanner = props.onError || (() => { });
+    this.bannerListeners.onHide = props.onHide || (() => { });
+    this.bannerListeners.onShow = props.onShow || (() => { });
+    this.bannerListeners.onAction = props.onAction || (() => { });
+    this.bannerListeners.onError = props.onError || (() => { });
     // register for event of PushdyBanner.
     EventBus.on(EventName.ON_SHOW_PUSHDY_BANNER, this.onShowPushdyBanner);
     EventBus.on(EventName.ON_HIDE_PUSHDY_BANNER, this.onHidePushdyBanner);
@@ -813,6 +831,34 @@ class RNPushdyWrapper {
     EventBus.on(EventName.ON_ERROR_PUSHDY_BANNER, this.onErrorPushdyBanner);
     // send a event that ensure it's ready to show banner if needed
     EventBus.emit(EventName.READY_TO_SHOW_PUSHDY_BANNER);
+
+    this.checkAndShowPushdyBanner();
+  };
+
+  checkAndShowPushdyBanner = async () => {
+    const banners = await this.getAllBanners();
+    console.log('{RNPushdyWrapper.checkAndShowPushdyBanner} banners: ', banners);
+
+    if (Array.isArray(banners)) {
+      for (let i = 0; i <banners.length; i++) {
+        let banner = banners[i];
+        let trackingBannerData = await this.getBannerTrackingData(banner.id);
+        console.log('{RNPushdyWrapper.checkAndShowPushdyBanner} -> trackingBannerData:', trackingBannerData);
+
+        // if banner is already shown, then skip it
+        if (trackingBannerData && trackingBannerData.imp > 0) {
+          continue;
+        } else {
+          this.trackBanner(banner.id, 'loaded');
+          EventBus.emit(EventName.SHOW_PUSHDY_BANNER, {
+            html: banner.html,
+            bannerId: banner.id,
+          });
+          break;
+        }
+
+      }
+    }
   };
 
   disposePushdyBanner = () => {
@@ -823,7 +869,28 @@ class RNPushdyWrapper {
     EventBus.off(EventName.ON_ERROR_PUSHDY_BANNER, this.onErrorPushdyBanner);
   };
 
-  getAllBanners = () => {};
+  subscribe = () => {
+    this.callNative(RNPushdy.subscribe);
+  }
+
+  getAllBanners = async() => {
+    return this.callNative(RNPushdy.getAllBanners);
+  };
+
+  /**
+   * @param {string} bannerId
+   * @param {'impression' | 'loaded' | 'close' | 'click'} type
+   */
+  trackBanner =async(bannerId, type) => {
+    return this.callNative(RNPushdy.trackBanner, bannerId, type);
+  }
+
+  /**
+   * @param {string} bannerId
+   */
+  getBannerTrackingData = (bannerId) => {
+    return this.callNative(RNPushdy.getBannerData, bannerId);
+  }
 
   __testPushdyBanner = () => {
     __DEV__ &&

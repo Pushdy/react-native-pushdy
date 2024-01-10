@@ -16,12 +16,16 @@ import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeArray;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -296,5 +300,41 @@ public class PushdyModule extends ReactContextBaseJavaModule {
     pushPendingEvents( Promise promise) {
         pushdySdk.pushPendingEvents();
         promise.resolve(true);
+    }
+
+    @ReactMethod
+    public void subscribe(Promise promise) {
+        pushdySdk.subscribe();
+        promise.resolve(true);
+    }
+
+    @ReactMethod
+    public void getAllBanners(Promise promise) {
+        JsonArray list = pushdySdk.getAllBanners();
+        WritableArray banners = Arguments.createArray();
+        for (int i = 0; i < list.size(); i++) {
+            HashMap map = new Gson().fromJson(list.get(i), HashMap.class);
+
+            WritableMap map1 = ReactNativeJson.convertMapToWritableMap(map);
+            banners.pushMap(map1);
+        }
+        promise.resolve(banners);
+    }
+
+    @ReactMethod
+    public void trackBanner(String bannerId, String type, Promise promise) {
+        pushdySdk.trackBanner(bannerId, type);
+        promise.resolve(true);
+    }
+
+    @ReactMethod
+    public void getBannerData(String bannerId, Promise promise) {
+        JsonObject data = pushdySdk.getBannerData(bannerId);
+        // convert JsonObject to HashMap
+        HashMap map = new Gson().fromJson(data, HashMap.class);
+
+        WritableMap writableMap = ReactNativeJson.convertMapToWritableMap(map);
+
+        promise.resolve(writableMap);
     }
 }

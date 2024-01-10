@@ -50,3 +50,14 @@ export const getStatusBarHeight = () => {
 
   return StatusBarHeight.height;
 };
+
+
+/**
+ * @deprecated
+ * No longer needed. Server will build banner
+ * and send to client.
+ * @param {} data 
+ */
+export const buildBanner = (data) => {
+  
+}
