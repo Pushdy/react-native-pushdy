@@ -213,7 +213,27 @@ RCT_EXTERN_METHOD(
                   pushPendingEvents: (RCTPromiseResolveBlock)resolve
                   rejecter: (RCTPromiseRejectBlock)reject
                   )
+RCT_EXTERN_METHOD(
+                  subscribe: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
 
+RCT_EXTERN_METHOD(
+                  getAllBanners: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
+
+RCT_EXTERN_METHOD(
+                  trackBanner: (NSString *)bannerId
+                  type:(NSString *)type
+                  resolve: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
+RCT_EXTERN_METHOD(
+                  getBannerData: (NSString *)bannerId
+                  resolve: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject
+                  )
 
 /**
  Swift: Calling Swift functions from Objective-C
