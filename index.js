@@ -784,12 +784,12 @@ class RNPushdyWrapper {
   }
 
   bannerListeners = {
-    onShow: () => { },
-    onHide: () => { },
-    onAction: () => { },
-    onError: () => { },
-    tmp,
-  }
+    onShow: () => {},
+    onHide: () => {},
+    onAction: () => {},
+    onError: () => {},
+    tmp: null,
+  };
 
   onShowPushdyBanner = (bannerId) => {
     this.bannerListeners.onShow(bannerId);
@@ -805,7 +805,7 @@ class RNPushdyWrapper {
     this.bannerListeners.onAction(bannerId, action_type, extra_data);
     this.trackBanner(bannerId, 'click');
   };
-  
+
   onErrorPushdyBanner = (bannerId, error, action_type) => {
     this.bannerListeners.onError(bannerId, error, action_type);
   };
@@ -821,10 +821,10 @@ class RNPushdyWrapper {
    * }} props
    */
   initialPushdyBanner = (props) => {
-    this.bannerListeners.onHide = props.onHide || (() => { });
-    this.bannerListeners.onShow = props.onShow || (() => { });
-    this.bannerListeners.onAction = props.onAction || (() => { });
-    this.bannerListeners.onError = props.onError || (() => { });
+    this.bannerListeners.onHide = props.onHide || (() => {});
+    this.bannerListeners.onShow = props.onShow || (() => {});
+    this.bannerListeners.onAction = props.onAction || (() => {});
+    this.bannerListeners.onError = props.onError || (() => {});
     // register for event of PushdyBanner.
     EventBus.on(EventName.ON_SHOW_PUSHDY_BANNER, this.onShowPushdyBanner);
     EventBus.on(EventName.ON_HIDE_PUSHDY_BANNER, this.onHidePushdyBanner);
@@ -838,17 +838,26 @@ class RNPushdyWrapper {
 
   checkAndShowPushdyBannerIfHave = async () => {
     const banners = await this.getAllBanners();
-    console.log('{RNPushdyWrapper.checkAndShowPushdyBanner} banners: ', banners);
+    console.log(
+      '{RNPushdyWrapper.checkAndShowPushdyBanner} banners: ',
+      banners
+    );
 
     if (Array.isArray(banners)) {
-      for (let i = 0; i <banners.length; i++) {
+      for (let i = 0; i < banners.length; i++) {
         let banner = banners[i];
         let trackingBannerData = await this.getBannerTrackingData(banner.id);
-        console.log('{RNPushdyWrapper.checkAndShowPushdyBanner} -> trackingBannerData:', trackingBannerData);
+        console.log(
+          '{RNPushdyWrapper.checkAndShowPushdyBanner} -> trackingBannerData:',
+          trackingBannerData
+        );
 
-          let options = banner?.schedule_options || {};
+        let options = banner?.schedule_options || {};
         // if banner is already shown, then skip it
-        if (trackingBannerData && trackingBannerData.imp >= options.display_mode_max) {
+        if (
+          trackingBannerData &&
+          trackingBannerData.imp >= options.display_mode_max
+        ) {
           continue;
         } else {
           this.trackBanner(banner.id, 'loaded');
@@ -858,10 +867,9 @@ class RNPushdyWrapper {
               html: banner.html,
               bannerId: banner.id,
             });
-          }, options.delay_time || 0); 
+          }, options.delay_time || 0);
           break;
         }
-
       }
     }
   };
@@ -879,9 +887,9 @@ class RNPushdyWrapper {
 
   subscribe = () => {
     this.callNative(RNPushdy.subscribe);
-  }
+  };
 
-  getAllBanners = async() => {
+  getAllBanners = async () => {
     return this.callNative(RNPushdy.getAllBanners);
   };
 
@@ -889,16 +897,16 @@ class RNPushdyWrapper {
    * @param {string} bannerId
    * @param {'impression' | 'loaded' | 'close' | 'click'} type
    */
-  trackBanner =async(bannerId, type) => {
+  trackBanner = async (bannerId, type) => {
     return this.callNative(RNPushdy.trackBanner, bannerId, type);
-  }
+  };
 
   /**
    * @param {string} bannerId
    */
   getBannerTrackingData = (bannerId) => {
     return this.callNative(RNPushdy.getBannerData, bannerId);
-  }
+  };
 
   __testPushdyBanner = () => {
     __DEV__ &&
