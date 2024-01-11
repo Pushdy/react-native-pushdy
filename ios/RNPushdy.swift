@@ -574,6 +574,36 @@ public class RNPushdy: RCTEventEmitter {
         resolve(true)
     }
 
+    @objc func subscribe(_
+        resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
+    ) -> Void {
+        Pushdy.subscribe()
+        resolve(true)
+    }
+
+    @objc func getAllBanners(_
+        resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
+    ) -> Void {
+        let banners = Pushdy.getAllBanners()
+        resolve(banners)
+    }
+
+    @objc func trackBanner(_ bannerId: String,
+        type: String,
+        resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
+    ) -> Void {
+        Pushdy.trackBanner(bannerId: bannerId, type: type)
+        resolve(true)
+    }
+
+    @objc func getBannerData(_ bannerId: String,
+        resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock
+    ) -> Void {
+        let bannerData = Pushdy.getBannerData(bannerId: bannerId)
+        resolve(bannerData)
+    }
+
+
     // MARK: Hooks
     /*
     ======== HOOKS ==========
