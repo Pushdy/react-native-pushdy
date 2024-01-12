@@ -312,6 +312,10 @@ public class PushdyModule extends ReactContextBaseJavaModule {
     public void getAllBanners(Promise promise) {
         JsonArray list = pushdySdk.getAllBanners();
         WritableArray banners = Arguments.createArray();
+        if (list == null) {
+            promise.resolve(banners);
+            return;
+        }
         for (int i = 0; i < list.size(); i++) {
             HashMap map = new Gson().fromJson(list.get(i), HashMap.class);
 
