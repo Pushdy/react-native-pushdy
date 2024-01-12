@@ -856,7 +856,7 @@ class RNPushdyWrapper {
         // if banner is already shown, then skip it
         if (
           trackingBannerData &&
-          trackingBannerData.imp >= options.display_mode_max
+          trackingBannerData.imp >= Number(options.display_mode_max)
         ) {
           continue;
         } else {
@@ -867,7 +867,7 @@ class RNPushdyWrapper {
               html: banner.html,
               bannerId: banner.id,
             });
-          }, options.delay_time || 0);
+          }, Number(options.delay_time) || 0);
           break;
         }
       }
