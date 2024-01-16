@@ -3,11 +3,11 @@ import { PERMISSIONS, RESULTS, request } from 'react-native-permissions';
 import { getStatusBarHeight as _getStatusBarHeight } from 'react-native-status-bar-height';
 import DeviceInfo from 'rn-device-info';
 import coerce from 'semver/functions/coerce';
-import lt from 'semver/functions/lt';
+import lte from 'semver/functions/lte';
 
 export const isAndroidAbove = (version) => {
   const osVersion = DeviceInfo.getSystemVersion();
-  return Platform.OS === 'android' && lt(coerce(osVersion), coerce(version));
+  return Platform.OS === 'android' && lte(coerce(osVersion), coerce(version));
 };
 
 export const requestPermisionMediaAndroid = async (callback = () => {}) => {
