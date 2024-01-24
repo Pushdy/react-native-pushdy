@@ -7,7 +7,6 @@
  */
 import React, { useEffect, useRef } from 'react';
 import { Clipboard, Dimensions, Image, StyleSheet, View } from 'react-native';
-
 import CameraRoll from '@react-native-community/cameraroll';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -27,6 +26,8 @@ const color = {
   grey1: '#1a1a1a',
 };
 
+const SCREEN_WIDTH = Dimensions.get('window').width || Dimensions.get('screen').width;
+
 /**
  * How it works:
  * 1. When the app is launched, we will check if there is any banner to display.
@@ -34,8 +35,13 @@ const color = {
  * 3. If the banner is too large, we will resize it to fit the screen.
  * 4. Change the banner position and show it.
  * 5. If click outside the banner, we will close the banner.
+ * @param {{
+ *  bottomView?: React.Component,
+ * topView?: React.Component,
+ * }} props 
+ * @returns 
  */
-export const PushdyBanner = () => {
+export const PushdyBanner = (props) => {
   const webViewRef = useRef(null);
   const viewShotRef = useRef(null);
   // const translateY = useSharedValue(+Dimensions.get('window').height);
@@ -64,8 +70,12 @@ export const PushdyBanner = () => {
 
   const onLoadEnd = () => {
     // inject javascript to get the size of the banner
+    const widthBanner = Math.min(
+      450,
+      SCREEN_WIDTH - state.margin * 3,
+    )
     let jsCode = `
-      // var body = document.getElementsByTagName('body')[0];
+      var body = document.getElementsByTagName('body')[0];
       // // remove all in body but keep the banner div with class banner-pushdy
       // while (body.firstChild) {
       //   if (body.firstChild.className !== 'banner-pushdy') {
@@ -75,6 +85,10 @@ export const PushdyBanner = () => {
       //   }
       // }
 
+      // add body style margin: 0 padding: 0
+      body.style.margin = '0';
+      body.style.padding = '0';
+
       // add this meta to head <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
       var meta = document.createElement('meta');
       meta.name = 'viewport';
@@ -83,7 +97,13 @@ export const PushdyBanner = () => {
       var banner = document.getElementsByClassName('banner-pushdy')[0];
       var bannerHeight = banner.offsetHeight;
       var bannerWidth = banner.offsetWidth;
-      window.ReactNativeWebView.postMessage(JSON.stringify({bannerHeight: bannerHeight, bannerWidth: bannerWidth}));
+      const newHeight = Math.floor(bannerHeight*${widthBanner}/bannerWidth)
+      var styleContent = document.getElementsByClassName("wrap-card")[0]
+      styleContent.style.width = "${widthBanner}px"
+      styleContent.style.height = newHeight + "px"
+      var heightNew = newHeight + "px"
+      styleContent.style['background-size'] = "${widthBanner}px "+ heightNew;
+      window.ReactNativeWebView.postMessage(JSON.stringify({bannerHeight: newHeight, bannerWidth: ${widthBanner} }));
     `;
 
     webViewRef.current.injectJavaScript(jsCode);
@@ -397,6 +417,7 @@ export const PushdyBanner = () => {
       <View style={styles.hideBackground} />
       <View activeOpacity={1} style={styles.hiddenTouch} onPress={() => {}}>
         <View collapsable={false} style={viewStyle}>
+          {props.topView}
           <View
             collapsable={false}
             pointerEvents='none'
@@ -420,22 +441,29 @@ export const PushdyBanner = () => {
             />
           </View>
           <View style={btnCStyle}>
-            <TouchableOpacity style={styles.btn} onPress={saveBannerToImage}>
+            <TouchableOpacity style={[styles.btn, {
+              backgroundColor: '#E61D42'
+            }]} onPress={saveBannerToImage}>
               <Image source={icSave} style={styles.icon} />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.btn} onPress={onPressShare}>
+            <TouchableOpacity style={[styles.btn, {
+              backgroundColor:'#01BC75'
+            }]} onPress={onPressShare}>
               <Image source={icShare} size={16} style={styles.icon} />
             </TouchableOpacity>
             {/* <TouchableOpacity style={styles.btn} onPress={onPressCopylink}>
               <IconSvg name={'icCopy'} size={16} color={color.grey1} />
             </TouchableOpacity> */}
-            <TouchableOpacity style={styles.btn} onPress={onPressOutside}>
+            <TouchableOpacity style={[styles.btn, {
+              backgroundColor:'#DFDFDF'
+            }]} onPress={onPressOutside}>
               <Image
                 source={icClose}
                 style={styles.iconClose}
               />
             </TouchableOpacity>
           </View>
+          {props.bottomView}
         </View>
       </View>
     </SafeAreaView>
@@ -472,13 +500,13 @@ const styles = StyleSheet.create({
   },
 
   icon: {
-    width: 20,
-    height: 20,
-    tintColor: color.grey1,
+    width: 40,
+    height: 40,
+    tintColor: 'white'
   },
   iconClose: {
-    width: 13,
-    height: 13,
-    tintColor: color.grey1,
+    width: 40,
+    height: 40,
+    tintColor: '#7f7f7f'
   }
 });
