@@ -7,7 +7,7 @@ import lte from 'semver/functions/lte';
 
 export const isAndroidAbove = (version) => {
   const osVersion = DeviceInfo.getSystemVersion();
-  return Platform.OS === 'android' && lte(coerce(osVersion), coerce(version));
+  return Platform.OS === 'android' && lte(coerce(version), coerce(osVersion));
 };
 
 export const requestPermisionMediaAndroid = async (callback = () => {}) => {
@@ -51,13 +51,10 @@ export const getStatusBarHeight = () => {
   return StatusBarHeight.height;
 };
 
-
 /**
  * @deprecated
  * No longer needed. Server will build banner
  * and send to client.
- * @param {} data 
+ * @param {} data
  */
-export const buildBanner = (data) => {
-  
-}
+export const buildBanner = (data) => {};

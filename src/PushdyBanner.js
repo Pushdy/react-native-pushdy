@@ -37,7 +37,9 @@ const SCREEN_WIDTH = Dimensions.get('window').width || Dimensions.get('screen').
  * 5. If click outside the banner, we will close the banner.
  * @param {{
  *  bottomView?: React.Component,
- * topView?: React.Component,
+ *  topView?: React.Component,
+ *  userName?: string,
+ *  userAvatar?: string,
  * }} props 
  * @returns 
  */
@@ -103,6 +105,18 @@ export const PushdyBanner = (props) => {
       styleContent.style.height = newHeight + "px"
       var heightNew = newHeight + "px"
       styleContent.style['background-size'] = "${widthBanner}px "+ heightNew;
+
+      // add user and avatar if have;
+      var user_name = document.getElementsByClassName("userename")[0]
+      var user_avatar = document.getElementById("avatar_")
+      let user_name_text = "${props.userName}"
+      let user_avatar_src = "${props.userAvatar}"
+      if(user_name && user_name_text) {
+        user_name.innerHTML = "${props.userName}"
+      }
+      if(user_avatar && user_avatar_src) {
+        user_avatar.src = "${props.userAvatar}"
+      }
       window.ReactNativeWebView.postMessage(JSON.stringify({bannerHeight: newHeight, bannerWidth: ${widthBanner} }));
     `;
 

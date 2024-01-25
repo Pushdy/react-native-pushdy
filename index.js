@@ -688,6 +688,8 @@ class RNPushdyWrapper {
     this.checkAndShowPushdyBannerIfHave();
   };
 
+  mapIdWithTrackId = {};
+
   checkAndShowPushdyBannerIfHave = async () => {
     const banners = await this.getAllBanners();
     console.log(
@@ -699,10 +701,8 @@ class RNPushdyWrapper {
       for (let i = 0; i < banners.length; i++) {
         let banner = banners[i];
 
-        // if have track_id, replace id by track_id
-        if (banner.track_id) {
-          banner.id = banner.track_id;
-        }
+        // map trackId with bannerId
+        this.mapIdWithTrackId[banner.id] = banner.track_id;
 
         let trackingBannerData = await this.getBannerTrackingData(banner.id);
         console.log(
@@ -756,6 +756,14 @@ class RNPushdyWrapper {
    * @param {'impression' | 'loaded' | 'close' | 'click'} type
    */
   trackBanner = async (bannerId, type) => {
+    // call trackBanner with track_id
+    if (this.mapIdWithTrackId[bannerId]) {
+      this.callNative(
+        RNPushdy.trackBanner,
+        this.mapIdWithTrackId[bannerId],
+        type
+      );
+    }
     return this.callNative(RNPushdy.trackBanner, bannerId, type);
   };
 
@@ -779,12 +787,14 @@ class RNPushdyWrapper {
   };
 
   /**
-   * 
+   *
    * @param {{
    *  bottomView?: React.Component,
-   * topView?: React.Component,
-   * }} props 
-   * @returns 
+   *  topView?: React.Component,
+   *  userName?: string,
+   *  userAvatar?: string,
+   * }} props
+   * @returns
    */
   PushdyBanner = (props) => {
     return <PushdyBanner {...props} />;
