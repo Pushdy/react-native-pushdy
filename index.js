@@ -688,6 +688,10 @@ class RNPushdyWrapper {
     this.checkAndShowPushdyBannerIfHave();
   };
 
+  hidePushdyBanner = () => {
+    EventBus.emit(EventName.HIDE_PUSHDY_BANNER);
+  }
+
   mapIdWithTrackId = {};
 
   checkAndShowPushdyBannerIfHave = async () => {
