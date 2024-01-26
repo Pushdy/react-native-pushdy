@@ -1,7 +1,7 @@
 {
   "name": "react-native-pushdy",
   "title": "React Native Pushdy",
-  "version": "0.7.12",
+  "version": "0.8.4",
   "description": "Pushdy Sdk implement for React Native",
   "main": "index.js",
   "scripts": {

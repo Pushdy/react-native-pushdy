@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { NativeModules, NativeEventEmitter, Platform } from 'react-native';
 import MessageQueue from 'react-native/Libraries/BatchedBridge/MessageQueue';
 import EventBus, { EventName } from './src/EventBus';
@@ -643,23 +643,23 @@ class RNPushdyWrapper {
     tmp: null,
   };
 
-  onShowPushdyBanner = (bannerId) => {
-    this.bannerListeners.onShow(bannerId);
+  onShowPushdyBanner = (bannerId, ...args) => {
+    this.bannerListeners.onShow(bannerId, ...args);
     this.trackBanner(bannerId, 'impression');
   };
 
-  onHidePushdyBanner = (bannerId) => {
-    this.bannerListeners.onHide(bannerId);
+  onHidePushdyBanner = (bannerId, ...args) => {
+    this.bannerListeners.onHide(bannerId, ...args);
     this.trackBanner(bannerId, 'close');
   };
 
-  onActionPushdyBanner = (bannerId, action_type, extra_data) => {
-    this.bannerListeners.onAction(bannerId, action_type, extra_data);
+  onActionPushdyBanner = (bannerId, action_type, extra_data, ...args) => {
+    this.bannerListeners.onAction(bannerId, action_type, extra_data, ...args);
     this.trackBanner(bannerId, 'click');
   };
 
-  onErrorPushdyBanner = (bannerId, error, action_type) => {
-    this.bannerListeners.onError(bannerId, error, action_type);
+  onErrorPushdyBanner = (bannerId, error, action_type, ...args) => {
+    this.bannerListeners.onError(bannerId, error, action_type, ...args);
   };
 
   /**
@@ -690,7 +690,7 @@ class RNPushdyWrapper {
 
   hidePushdyBanner = () => {
     EventBus.emit(EventName.HIDE_PUSHDY_BANNER);
-  }
+  };
 
   mapIdWithTrackId = {};
 
@@ -728,6 +728,7 @@ class RNPushdyWrapper {
             EventBus.emit(EventName.SHOW_PUSHDY_BANNER, {
               html: banner.html,
               bannerId: banner.id,
+              bannerData: banner,
             });
           }, Number(options.delay_time) || 0);
           break;
@@ -797,12 +798,18 @@ class RNPushdyWrapper {
    *  topView?: React.Component,
    *  userName?: string,
    *  userAvatar?: string,
+   *  userGender?: 'male' | 'female',
    * }} props
+   *
+   * Example: You can use some method of PushdyBanner to control banner
+   * - ref.current.showBanner() => show banner
+   * - ref.current.hideBanner() => hide banner
+   * - ref.current.capture() => capture banner
    * @returns
    */
-  PushdyBanner = (props) => {
-    return <PushdyBanner {...props} />;
-  };
+  PushdyBanner = forwardRef((props, ref) => {
+    return <PushdyBanner {...props} ref={ref} />;
+  });
 
   /**
    * ========= Hooks ============

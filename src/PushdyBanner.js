@@ -5,7 +5,12 @@
  * If type is TOP_BANNER or BOTTOM_BANNER, the banner will be displayed as a Popup WebView and will be placed at the top or bottom of the screen.
  * If type is MIDDLE_BANNER, the banner will be displayed as a Popup WebView and will be placed at the center of the screen.
  */
-import React, { useEffect, useRef } from 'react';
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+} from 'react';
 import { Clipboard, Dimensions, Image, StyleSheet, View } from 'react-native';
 import CameraRoll from '@react-native-community/cameraroll';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -26,7 +31,8 @@ const color = {
   grey1: '#1a1a1a',
 };
 
-const SCREEN_WIDTH = Dimensions.get('window').width || Dimensions.get('screen').width;
+const SCREEN_WIDTH =
+  Dimensions.get('window').width || Dimensions.get('screen').width;
 
 /**
  * How it works:
@@ -40,10 +46,14 @@ const SCREEN_WIDTH = Dimensions.get('window').width || Dimensions.get('screen').
  *  topView?: React.Component,
  *  userName?: string,
  *  userAvatar?: string,
- * }} props 
- * @returns 
+ *  userGender?: 'female' | 'male',
+ *  onShow?: () => void,
+ *  onHide?: () => void,
+ *  onAction?: (action: 'save' | 'share' | 'copylink') => void,
+ * }} props
+ * @returns
  */
-export const PushdyBanner = (props) => {
+const PushdyBannerR = forwardRef((props, ref) => {
   const webViewRef = useRef(null);
   const viewShotRef = useRef(null);
   // const translateY = useSharedValue(+Dimensions.get('window').height);
@@ -64,6 +74,7 @@ export const PushdyBanner = (props) => {
     onShow: () => {},
     translateY: Dimensions.get('window').height,
     btnCOpacity: 0,
+    bannerData: null,
   });
 
   const onPressOutside = () => {
@@ -72,10 +83,7 @@ export const PushdyBanner = (props) => {
 
   const onLoadEnd = () => {
     // inject javascript to get the size of the banner
-    const widthBanner = Math.min(
-      450,
-      SCREEN_WIDTH - state.margin * 3,
-    )
+    const widthBanner = Math.min(450, SCREEN_WIDTH - state.margin * 3);
     let jsCode = `
       var body = document.getElementsByTagName('body')[0];
       // // remove all in body but keep the banner div with class banner-pushdy
@@ -109,14 +117,26 @@ export const PushdyBanner = (props) => {
       // add user and avatar if have;
       var user_name = document.getElementsByClassName("userename")[0]
       var user_avatar = document.getElementById("avatar_")
-      let user_name_text = "${props.userName}"
-      let user_avatar_src = "${props.userAvatar}"
+      var greeting = document.getElementsByClassName("greeting")[0]
+      let user_name_text = "${props.userName ? props.userName : ''}"
+      let user_avatar_src = "${props.userAvatar ? props.userAvatar : ''}"
+      let user_gender = "${props.userGender ? props.userGender : ''}"
+
       if(user_name && user_name_text) {
         user_name.innerHTML = "${props.userName}"
       }
       if(user_avatar && user_avatar_src) {
         user_avatar.src = "${props.userAvatar}"
       }
+
+      if (greeting && user_gender) {
+        if (user_gender === 'male') {
+          greeting.innerHTML = "Kính tặng anh"
+        } else if (user_gender === 'female') {
+          greeting.innerHTML = "Kính tặng chị"
+        }
+      }
+      
       window.ReactNativeWebView.postMessage(JSON.stringify({bannerHeight: newHeight, bannerWidth: ${widthBanner} }));
     `;
 
@@ -180,6 +200,7 @@ export const PushdyBanner = (props) => {
     requestAnimationFrame(() => {
       animeHide();
       EventBus.emit(EventName.ON_HIDE_PUSHDY_BANNER, state.bannerId);
+      props.onHide && props.onHide();
     });
   };
 
@@ -194,7 +215,13 @@ export const PushdyBanner = (props) => {
     state.shareUrl = data?.shareUrl ?? '';
     state.bannerId = data?.bannerId ?? '';
     state.onShow = data?.onShow ?? (() => {});
-    EventBus.emit(EventName.ON_SHOW_PUSHDY_BANNER, data?.bannerId ?? '');
+    state.bannerData = data?.bannerData;
+    EventBus.emit(
+      EventName.ON_SHOW_PUSHDY_BANNER,
+      data?.bannerId ?? '',
+      state.bannerData
+    );
+    props.onShow && props.onShow();
   };
 
   const hideBanner = () => {
@@ -202,58 +229,77 @@ export const PushdyBanner = (props) => {
     hideBannerWithAnimation();
   };
 
-  const saveBannerToImage = () => {
-    state.border = 0;
-    setTimeout(() => {
-      captureRef(viewShotRef, {
-        result: 'tmpfile',
-        format: 'jpg',
-      })
-        .then(async (path) => {
-          let isGranted = await requestPermisionMediaAndroid();
-          if (isGranted) {
-            CameraRoll.save(path)
-              .then(() => {
-                // Alert to notify user that the banner is saved to gallery.
-                EventBus.emit(
-                  EventName.ON_ACTION_PUSHDY_BANNER,
-                  state.bannerId,
-                  'save',
-                  path
-                );
-              })
-              .catch((err) => {
-                // Alert to notify user that the banner is not saved to gallery.
-                EventBus.emit(
-                  EventName.ON_ERROR_PUSHDY_BANNER,
-                  state.bannerId,
-                  'save',
-                  err
-                );
-              });
-          } else {
-            // Alert to ask user to grant permission.
+  const saveBannerToImage = async (isSilent = false) => {
+    return new Promise((resolve, reject) => {
+      state.border = 0;
+      setTimeout(() => {
+        captureRef(viewShotRef, {
+          result: 'tmpfile',
+          format: 'jpg',
+        })
+          .then(async (path) => {
+            if (isSilent) {
+              resolve(path);
+              return;
+            }
+
+            let isGranted = await requestPermisionMediaAndroid();
+            if (isGranted) {
+              CameraRoll.save(path)
+                .then(() => {
+                  // Alert to notify user that the banner is saved to gallery.
+                  EventBus.emit(
+                    EventName.ON_ACTION_PUSHDY_BANNER,
+                    state.bannerId,
+                    'save',
+                    path,
+                    state.bannerData
+                  );
+
+                  props.onAction && props.onAction('save');
+
+                  resolve(path);
+                })
+                .catch((err) => {
+                  // Alert to notify user that the banner is not saved to gallery.
+                  EventBus.emit(
+                    EventName.ON_ERROR_PUSHDY_BANNER,
+                    state.bannerId,
+                    'save',
+                    err,
+                    state.bannerData
+                  );
+
+                  reject(err);
+                });
+            } else {
+              // Alert to ask user to grant permission.
+              EventBus.emit(
+                EventName.ON_ERROR_PUSHDY_BANNER,
+                state.bannerId,
+                'save',
+                'PERMISSION_NOT_GRANTED',
+                state.bannerData
+              );
+              reject('PERMISSION_NOT_GRANTED');
+            }
+          })
+          .catch((err) => {
+            console.log('{PushdyBanner} -> saveBannerToImage -> err', err);
             EventBus.emit(
-               EventName.ON_ERROR_PUSHDY_BANNER,
-                  state.bannerId,
+              EventName.ON_ERROR_PUSHDY_BANNER,
+              state.bannerId,
               'save',
-              "PERMISSION_NOT_GRANTED"
+              err,
+              state.bannerData
             );
-          }
-        })
-        .catch((err) => {
-          console.log('{PushdyBanner} -> saveBannerToImage -> err', err);
-          EventBus.emit(
-            EventName.ON_ERROR_PUSHDY_BANNER,
-            state.bannerId,
-            'save',
-            err
-          );
-        })
-        .finally(() => {
-          state.border = 10;
-        });
-    }, 250);
+            reject(err);
+          })
+          .finally(() => {
+            state.border = 10;
+          });
+      }, 250);
+    });
   };
 
   const onShown = () => {
@@ -271,7 +317,13 @@ export const PushdyBanner = (props) => {
 
   const onPressShare = () => {
     console.log('{PushdyBanner} -> onPressShare');
-    EventBus.emit(EventName.ON_ACTION_PUSHDY_BANNER, state.bannerId, 'share');
+    EventBus.emit(
+      EventName.ON_ACTION_PUSHDY_BANNER,
+      state.bannerId,
+      'share',
+      state.bannerData
+    );
+    props.onAction && props.onAction('share');
     // hideBanner();
     // share with base64.
     state.border = 0;
@@ -279,7 +331,7 @@ export const PushdyBanner = (props) => {
       captureRef(viewShotRef, {
         result: 'tmpfile',
         format: 'jpg',
-        result: 'base64'
+        result: 'base64',
       })
         .then(async (base64) => {
           let base64Format = `data:image/jpeg;base64,${base64}`;
@@ -293,24 +345,21 @@ export const PushdyBanner = (props) => {
             EventName.ON_ERROR_PUSHDY_BANNER,
             state.bannerId,
             'share',
-            err
+            err,
+            state.bannerData
           );
         })
         .finally(() => {
           state.border = 10;
         });
     }, 250);
-    
-
-   
-
   };
 
   const onPressCopylink = () => {
     Clipboard.setString(state.shareUrl);
 
     // Alert to notify user that the banner link is copied to clipboard.
-    EventBus.emit('show_toast', 'Đã sao chép link thiệp');
+    EventBus.emit('show_toast', 'Đã sao chép link thiệp', state.bannerData);
   };
 
   useEffect(() => {
@@ -359,6 +408,14 @@ export const PushdyBanner = (props) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.isShow]);
+
+  useImperativeHandle(ref, () => {
+    return {
+      showBanner,
+      hideBanner,
+      capture: saveBannerToImage,
+    };
+  });
 
   const conntainerStyles = {
     display: state.isShow ? undefined : 'none',
@@ -455,26 +512,41 @@ export const PushdyBanner = (props) => {
             />
           </View>
           <View style={btnCStyle}>
-            <TouchableOpacity style={[styles.btn, {
-              backgroundColor: '#E61D42'
-            }]} onPress={saveBannerToImage}>
+            <TouchableOpacity
+              style={[
+                styles.btn,
+                {
+                  backgroundColor: '#E61D42',
+                },
+              ]}
+              onPress={saveBannerToImage}
+            >
               <Image source={icSave} style={styles.icon} />
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.btn, {
-              backgroundColor:'#01BC75'
-            }]} onPress={onPressShare}>
+            <TouchableOpacity
+              style={[
+                styles.btn,
+                {
+                  backgroundColor: '#01BC75',
+                },
+              ]}
+              onPress={onPressShare}
+            >
               <Image source={icShare} size={16} style={styles.icon} />
             </TouchableOpacity>
             {/* <TouchableOpacity style={styles.btn} onPress={onPressCopylink}>
               <IconSvg name={'icCopy'} size={16} color={color.grey1} />
             </TouchableOpacity> */}
-            <TouchableOpacity style={[styles.btn, {
-              backgroundColor:'#DFDFDF'
-            }]} onPress={onPressOutside}>
-              <Image
-                source={icClose}
-                style={styles.iconClose}
-              />
+            <TouchableOpacity
+              style={[
+                styles.btn,
+                {
+                  backgroundColor: '#DFDFDF',
+                },
+              ]}
+              onPress={onPressOutside}
+            >
+              <Image source={icClose} style={styles.iconClose} />
             </TouchableOpacity>
           </View>
           {props.bottomView}
@@ -482,7 +554,9 @@ export const PushdyBanner = (props) => {
       </View>
     </SafeAreaView>
   );
-};
+});
+
+export const PushdyBanner = React.memo(PushdyBannerR);
 
 const styles = StyleSheet.create({
   hiddenTouch: {
@@ -516,11 +590,11 @@ const styles = StyleSheet.create({
   icon: {
     width: 40,
     height: 40,
-    tintColor: 'white'
+    tintColor: 'white',
   },
   iconClose: {
     width: 40,
     height: 40,
-    tintColor: '#7f7f7f'
-  }
+    tintColor: '#7f7f7f',
+  },
 });
