@@ -244,7 +244,6 @@ const PushdyBannerR = forwardRef((props, ref) => {
       data?.bannerId ?? '',
       state.bannerData
     );
-    props.onShow && props.onShow();
   };
 
   const hideBanner = () => {
@@ -335,6 +334,7 @@ const PushdyBannerR = forwardRef((props, ref) => {
 
     if (typeof state.onShow === 'function') {
       state.onShow();
+      props.onShow && props.onShow();
     }
   };
 
