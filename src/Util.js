@@ -10,6 +10,11 @@ export const isAndroidAbove = (version) => {
   return Platform.OS === 'android' && lte(coerce(version), coerce(osVersion));
 };
 
+export const isTablet = () => {
+  const DeviceModel = DeviceInfo.isTablet();
+  return DeviceModel;
+}
+
 export const requestPermisionMediaAndroid = async (callback = () => {}) => {
   try {
     if (Platform.OS === 'ios') {

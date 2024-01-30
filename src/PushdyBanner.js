@@ -23,7 +23,11 @@ import icSave from './assets/save.png';
 import icClose from './assets/close.png';
 import icShare from './assets/share.png';
 
-import { getStatusBarHeight, requestPermisionMediaAndroid } from './Util';
+import {
+  getStatusBarHeight,
+  requestPermisionMediaAndroid,
+  isTablet,
+} from './Util';
 import EventBus, { EventName } from './EventBus';
 
 const color = {
@@ -33,6 +37,9 @@ const color = {
 
 const SCREEN_WIDTH =
   Dimensions.get('window').width || Dimensions.get('screen').width;
+
+const SCREEN_HEIGHT =
+  Dimensions.get('window').height || Dimensions.get('screen').height;
 
 /**
  * How it works:
@@ -50,10 +57,13 @@ const SCREEN_WIDTH =
  *  onShow?: () => void,
  *  onHide?: () => void,
  *  onAction?: (action: 'save' | 'share' | 'copylink') => void,
+ *  bottomViewSize?: number,
  * }} props
  * @returns
  */
 const PushdyBannerR = forwardRef((props, ref) => {
+  const { bottomViewSize = 50 } = props;
+
   const webViewRef = useRef(null);
   const viewShotRef = useRef(null);
   // const translateY = useSharedValue(+Dimensions.get('window').height);
@@ -84,6 +94,10 @@ const PushdyBannerR = forwardRef((props, ref) => {
   const onLoadEnd = () => {
     // inject javascript to get the size of the banner
     const widthBanner = Math.min(450, SCREEN_WIDTH - state.margin * 3);
+    // check if the height of the banner is larger than 65% of the screen height when calculate.
+    // Consider reduce width of the banner to fit the screen.
+    let maxHeight = SCREEN_HEIGHT * (isTablet() ? 0.8 : 0.65) + bottomViewSize;
+
     let jsCode = `
       var body = document.getElementsByTagName('body')[0];
       // // remove all in body but keep the banner div with class banner-pushdy
@@ -107,12 +121,21 @@ const PushdyBannerR = forwardRef((props, ref) => {
       var banner = document.getElementsByClassName('banner-pushdy')[0];
       var bannerHeight = banner.offsetHeight;
       var bannerWidth = banner.offsetWidth;
-      const newHeight = Math.floor(bannerHeight*${widthBanner}/bannerWidth)
+      let newHeight = Math.floor(bannerHeight*${widthBanner}/bannerWidth)
+      let newWidth = ${widthBanner}
+
+      // check if the height of the banner is larger than maxHeight when calculate.
+      // Consider reduce width of the banner to fit the screen.
+      if (newHeight > ${maxHeight}) {
+        newWidth = Math.floor(bannerWidth*${maxHeight}/bannerHeight)
+        newHeight = Math.floor(${maxHeight})
+      }
+
       var styleContent = document.getElementsByClassName("wrap-card")[0]
-      styleContent.style.width = "${widthBanner}px"
+      styleContent.style.width = newWidth + "px"
       styleContent.style.height = newHeight + "px"
       var heightNew = newHeight + "px"
-      styleContent.style['background-size'] = "${widthBanner}px "+ heightNew;
+      styleContent.style['background-size'] = newWidth + "px "+ heightNew;
 
       // add user and avatar if have;
       var user_name = document.getElementsByClassName("userename")[0]
@@ -137,7 +160,7 @@ const PushdyBannerR = forwardRef((props, ref) => {
         }
       }
       
-      window.ReactNativeWebView.postMessage(JSON.stringify({bannerHeight: newHeight, bannerWidth: ${widthBanner} }));
+      window.ReactNativeWebView.postMessage(JSON.stringify({bannerHeight: newHeight, bannerWidth: newWidth }));
     `;
 
     webViewRef.current.injectJavaScript(jsCode);
@@ -331,12 +354,10 @@ const PushdyBannerR = forwardRef((props, ref) => {
       captureRef(viewShotRef, {
         result: 'tmpfile',
         format: 'jpg',
-        result: 'base64',
       })
-        .then(async (base64) => {
-          let base64Format = `data:image/jpeg;base64,${base64}`;
+        .then(async (path) => {
           Share.open({
-            urls: [base64Format],
+            url: path,
           });
         })
         .catch((err) => {
