@@ -762,12 +762,14 @@ class RNPushdyWrapper {
    */
   trackBanner = async (bannerId, type) => {
     // call trackBanner with track_id
-    if (this.mapIdWithTrackId[bannerId]) {
+
+    if (this.mapIdWithTrackId[bannerId] && this.mapIdWithTrackId[bannerId] != bannerId) {
       this.callNative(
         RNPushdy.trackBanner,
         this.mapIdWithTrackId[bannerId],
         type
       );
+      
     }
     return this.callNative(RNPushdy.trackBanner, bannerId, type);
   };
